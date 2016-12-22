@@ -1,0 +1,7 @@
+﻿rm XXX + git rm XXX : delete XXX from Git and workspace
+
+git rm --cached XXX : delete XXX only from Git
+
+git rm \*~ : 该命令为删除以 ~ 结尾的所有文件。
+
+git mv file_from file_to : e.g. git mv README.md README (rename)
