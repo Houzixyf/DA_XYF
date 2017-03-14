@@ -22,7 +22,7 @@ class Solver:
         The function for the jacobian matrix of the eqs
     
     x0: numpy.ndarray
-        The start value for the sover
+        The start value for the solver
     
     tol : float
         The (absolute) tolerance of the solver
@@ -32,18 +32,21 @@ class Solver:
     
     method : str
         The solver to use
+    par : np.array
     '''
-    
-    def __init__(self, F, DF, x0, tol=1e-5, reltol=2e-5, maxIt=100, method='leven'):
+    # Solver(F=G, DF=DG, x0=self.guess,
+    def __init__(self, F, DF, x0, tol=1e-5, reltol=2e-5, maxIt=100, method='leven', par_k = np.array([0.0])): # itemindex = 0
+        # x0 = free_param
         self.F = F
         self.DF = DF
-        self.x0 = x0
+        self.x0 = x0 # x0=self.guess initial: array([ 0.1,  0.1,  0.1, ...,  0.1,  0.1,  z0])
         self.tol = tol
         self.reltol = reltol
         self.maxIt = maxIt
         self.method = method
-        
+        # self.itemindex = itemindex
         self.sol = None
+        self.par = par_k
     
 
     def solve(self):
@@ -71,15 +74,15 @@ class Solver:
         For more information see: :ref:`levenberg_marquardt`
         '''
         i = 0
-        x = self.x0
-        res = 1
+        x = self.x0 # guess_value
+        res = 1 # residuum
         res_alt = -1
         
-        eye = scp.sparse.identity(len(self.x0))
+        eye = scp.sparse.identity(len(self.x0)) # diagonal matrix, (26*26), value: 1.0, danwei
 
         #mu = 1.0
         mu = 1e-4
-        mu_old = mu
+       # mu_old = mu
         
         # borders for convergence-control
         b0 = 0.2
@@ -87,9 +90,9 @@ class Solver:
 
         roh = 0.0
 
-        reltol = self.reltol
+        reltol = self.reltol # reltol=2e-5
         
-        Fx = self.F(x)
+        Fx = self.F(x) # G, self.F: method, self.F(x): calling function
         
         # measure the time for the LM-Algorithm
         T_start = time.time()
@@ -98,16 +101,17 @@ class Solver:
             i += 1
             
             #if (i-1)%4 == 0:
-            DFx = self.DF(x)
-            DFx = scp.sparse.csr_matrix(DFx)
+            DFx = self.DF(x) # Jacobi-Matrix J
+            DFx = scp.sparse.csr_matrix(DFx) 
+            # <21x26 sparse matrix of type '<type 'numpy.float64'>' with 393 stored elements in Compressed Sparse Row format>
             
             break_inner_loop = False
             while (not break_inner_loop):                
-                A = DFx.T.dot(DFx) + mu**2*eye
+                A = DFx.T.dot(DFx) + mu**2*eye # left side of equation, J'J=mu^2*I, Matrix.T=inv(Matrix)
 
-                b = DFx.T.dot(Fx)
+                b = DFx.T.dot(Fx) # right side of equation, J'f, (f=Fx)
                     
-                s = -scp.sparse.linalg.spsolve(A,b)
+                s = -scp.sparse.linalg.spsolve(A,b) # h
 
                 xs = x + np.array(s).flatten()
                 
@@ -116,8 +120,8 @@ class Solver:
                 normFx = norm(Fx)
                 normFxs = norm(Fxs)
 
-                R1 = (normFx**2 - normFxs**2)
-                R2 = (normFx**2 - (norm(Fx+DFx.dot(s)))**2)
+                R1 = (normFx**2 - normFxs**2) # F(x)^2-F(x+h)^2, F(x)=f
+                R2 = (normFx**2 - (norm(Fx+DFx.dot(s)))**2) # F(x)^2-(F(x)+F'(x)h)^2
                 
                 R1 = (normFx - normFxs)
                 R2 = (normFx - (norm(Fx+DFx.dot(s))))
@@ -149,8 +153,8 @@ class Solver:
                 # if the system more or less behaves linearly 
                 break_inner_loop = roh > b0
             
-            Fx = Fxs
-            x = xs
+            Fx = Fxs # F(x+h) -> Fx_new
+            x = xs # x+h -> x_new
             
             #roh = 0.0
             res_alt = res
@@ -164,4 +168,8 @@ class Solver:
         T_LM = time.time() - T_start
         self.avg_LM_time = T_LM / i
         
-        self.sol = x
+        self.sol = x # return (x+h)
+        self.par = np.array([self.sol[-1]]) # self.itemindex
+
+    def call_par(self):
+        return self.par

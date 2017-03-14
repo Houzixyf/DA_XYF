@@ -37,7 +37,7 @@ class IntegChain(object):
         elements = []
         for elem in lst:
             if isinstance(elem, sp.Symbol):
-                elements.append(elem.name)
+                elements.append(elem.name) # elem.name=('x1', 'x2', 'u1'), Symbol-> str
             elif isinstance(elem, str):
                 elements.append(elem)
             else:
@@ -58,7 +58,7 @@ class IntegChain(object):
     def __str__(self):
         s = ''
         for elem in self._elements:#[::-1]:
-            s += ' -> ' + elem
+            s += ' -> ' + elem # 'x1 -> x2 -> u1', 'x3' -> 'x4'  det(x1)=x2,det(x2)=u1; det(x3)=x4
         return s[4:]
     
     @property
@@ -74,7 +74,7 @@ class IntegChain(object):
         Returns the upper end of the integrator chain, i.e. the element
         of which all others are derivatives of.
         '''
-        return self._elements[0]
+        return self._elements[0] # ['x1'], ['x3']
     
     @property
     def lower(self):
@@ -82,7 +82,7 @@ class IntegChain(object):
         Returns the lower end of the integrator chain, i.e. the element
         which has no derivative in the integrator chain.
         '''
-        return self._elements[-1]
+        return self._elements[-1] # ['u1'], ['x4']
 
 
 def find_integrator_chains(dyn_sys):
@@ -110,17 +110,18 @@ def find_integrator_chains(dyn_sys):
     logging.debug("Looking for integrator chains")
 
     # create symbolic variables to find integrator chains
-    state_sym = sp.symbols(dyn_sys.states)
-    input_sym = sp.symbols(dyn_sys.inputs)
-    f = dyn_sys.f_sym(state_sym, input_sym)
-    
+    state_sym = sp.symbols(dyn_sys.states) # (x1, x2, x3, x4)
+    input_sym = sp.symbols(dyn_sys.inputs) # (u1,)
+    par_sym = sp.symbols(list(dyn_sys.par))
+    f = dyn_sys.f_sym(state_sym, input_sym, par_sym) # f_sym(sp.symbols_x, sp.symbols_u), f: concrete form
+    # f = array([x2, u1, x4, -u1*(0.9*cos(x3) + 1) - 0.9*x2**2*sin(x3)], dtype=object)
     assert dyn_sys.n_states == len(f)
     
     chaindict = {}
     for i in xrange(len(f)):
         # substitution because of sympy difference betw. 1.0 and 1
         if isinstance(f[i], sp.Basic):
-            f[i] = f[i].subs(1.0, 1)
+            f[i] = f[i].subs(1.0, 1) # daiti
 
         for xx in state_sym:
             if f[i] == xx:
@@ -130,7 +131,7 @@ def find_integrator_chains(dyn_sys):
             if f[i] == uu:
                 chaindict[uu] = state_sym[i]
 
-    # chaindict looks like this:  {u_1 : x_2, x_4 : x_3, x_2 : x_1}
+    # chaindict looks like this:  {x2: x1, u1: x2, x4: x3}
     # where x_4 = d/dt x_3 and so on
 
     # find upper ends of integrator chains
@@ -138,14 +139,14 @@ def find_integrator_chains(dyn_sys):
     for vv in chaindict.values():
         if (not chaindict.has_key(vv)):
             uppers.append(vv)
-
+    # uppers=[x1, x3]
     # create ordered lists that temporarily represent the integrator chains
     tmpchains = []
 
     # therefore we flip the dictionary to walk through its keys
     # (former values)
-    dictchain = {v:k for k,v in chaindict.items()}
-
+    dictchain = {v:k for k,v in chaindict.items()} # chaindict.items()=[(u1, x2), (x4, x3), (x2, x1)]
+    # {x1: x2, x2: u1, x3: x4}
     for var in uppers:
         tmpchain = []
         vv = var
@@ -154,29 +155,29 @@ def find_integrator_chains(dyn_sys):
         while dictchain.has_key(vv):
             vv = dictchain[vv]
             tmpchain.append(vv)
-
+            # 
         tmpchains.append(tmpchain)
-
+        # [[x1,x2,u1],[x3,x4]]
     # create an integrator chain object for every temporary chain
     chains = []
     for lst in tmpchains:
         ic = IntegChain(lst)
-        chains.append(ic)
+        chains.append(ic) # [class ic_1, class ic_2]
         logging.debug("--> found: " + str(ic))
     
     # now we determine the equations that have to be solved by collocation
     # (--> lower ends of integrator chains)
     eqind = []
     
-    if chains:
+    if chains: # chains !=[]
         # iterate over all integrator chains
         for ic in chains:
             # if lower end is a system variable
             # then its equation has to be solved
-            if ic.lower.startswith('x'):
-                idx = dyn_sys.states.index(ic.lower)
+            if ic.lower.startswith('x'): # ic.lower: ['u1'], ['x4']
+                idx = dyn_sys.states.index(ic.lower) # position in state-vector
                 eqind.append(idx)
-        eqind.sort()
+        eqind.sort() # only has x4, therfore eqind=[3], means in this chain, we only need to calculate x4
         
         # if every integrator chain ended with input variable
         if not eqind:
@@ -188,7 +189,7 @@ def find_integrator_chains(dyn_sys):
     
     return chains, eqind
 
-def sym2num_vectorfield(f_sym, x_sym, u_sym, vectorized=False, cse=False):
+def sym2num_vectorfield(f_sym, x_sym, u_sym, p_sym, vectorized=False, cse=False):
     '''
     This function takes a callable vector field of a control system that is to be evaluated with symbols
     for the state and input variables and returns a corresponding function that can be evaluated with
@@ -205,6 +206,8 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, vectorized=False, cse=False):
     
     u_sym : iterable
         The symbols for the input variables of the control system.
+    
+    p_sym : np.array
     
     vectorized : bool
         Whether or not to return a vectorized function.
@@ -224,10 +227,11 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, vectorized=False, cse=False):
 
     # get a representation of the symbolic vector field
     if callable(f_sym):
-        if all(isinstance(s, sp.Symbol) for s in x_sym + u_sym):
-            F_sym = f_sym(x_sym, u_sym)
-        elif all(isinstance(s, str) for s in x_sym + u_sym):
-            F_sym = f_sym(sp.symbols(x_sym), sp.symbols(u_sym))
+        if all(isinstance(s, sp.Symbol) for s in x_sym + u_sym + p_sym):
+            p_sym=['z_par']# (x1, x2, x3, x4, u1, k)
+            F_sym = f_sym(x_sym, u_sym, sp.symbols(list(p_sym)))
+        elif all(isinstance(s, str) for s in x_sym + u_sym + p_sym):
+            F_sym = f_sym(sp.symbols(x_sym), sp.symbols(u_sym), sp.symbols(list(p_sym))) # (x1, x2, x3, x4, u1, k)
     else:
         F_sym = f_sym
     
@@ -238,7 +242,7 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, vectorized=False, cse=False):
     # returns an array of same dimension
     if sym_type == np.ndarray:
         sym_dim = F_sym.ndim
-    elif sym_type == list:
+    elif sym_type == list: # list change to ndarray
         # if it is a list we have to determine if it consists
         # of nested lists
         sym_dim = np.array(F_sym).ndim
@@ -273,7 +277,8 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, vectorized=False, cse=False):
         # we pass the expression as a list so that the
         # created function also returns a list which then
         # can be easily transformed into an 1d-array
-        F_sym = np.array(F_sym).ravel(order='F').tolist()
+        F_sym = np.array(F_sym).ravel(order='F').tolist() 
+        # [x2, u1, x4, -u1*(0.9*cos(x3) + 1) - 0.9*x2**2*sin(x3)]
     elif sym_dim == 2:
         # if the the original dimension was equal to two
         # we pass the expression as a matrix
@@ -282,10 +287,10 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, vectorized=False, cse=False):
 
     # now we can create the numeric function
     if cse:
-        _f_num = cse_lambdify(x_sym + u_sym, F_sym,
+        _f_num = cse_lambdify(x_sym + u_sym + p_sym, F_sym,
                               modules=[{'ImmutableMatrix':np.array}, 'numpy'])
     else:
-        _f_num = sp.lambdify(x_sym + u_sym, F_sym,
+        _f_num = sp.lambdify(x_sym + u_sym + p_sym, F_sym, ########################
                              modules=[{'ImmutableMatrix':np.array}, 'numpy'])
     
     # create a wrapper as the actual function due to the behaviour
@@ -296,12 +301,12 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, vectorized=False, cse=False):
         stack = np.hstack
     
     if sym_dim == 1:
-        def f_num(x, u):
-            xu = stack((x, u))
+        def f_num(x, u, p):
+            xu = stack((x, u, p))
             return np.array(_f_num(*xu))
     else:
-        def f_num(x, u):
-            xu = stack((x, u))
+        def f_num(x, u, p):
+            xu = stack((x, u, p))
             return _f_num(*xu)
         
     return f_num
@@ -523,7 +528,7 @@ def saturation_functions(y_fnc, dy_fnc, y0, y1):
     return psi_y, dpsi_dy
 
 
-def consistency_error(I, x_fnc, u_fnc, dx_fnc, ff_fnc, npts=500, return_error_array=False):
+def consistency_error(I, x_fnc, u_fnc, dx_fnc, ff_fnc, par, npts=500, return_error_array=False):
     '''
     Calculates an error that shows how "well" the spline functions comply with the system
     dynamic given by the vector field.
@@ -545,6 +550,8 @@ def consistency_error(I, x_fnc, u_fnc, dx_fnc, ff_fnc, npts=500, return_error_ar
     
     ff_fnc : callable
         A function for the vectorfield of the control system.
+        
+    par: np.array
     
     npts : int
         Number of point to determine the error at.
@@ -570,7 +577,7 @@ def consistency_error(I, x_fnc, u_fnc, dx_fnc, ff_fnc, npts=500, return_error_ar
         x = x_fnc(t)
         u = u_fnc(t)
         
-        ff = ff_fnc(x, u)
+        ff = ff_fnc(x, u, par)
         dx = dx_fnc(t)
         
         error.append(ff - dx)
@@ -586,7 +593,7 @@ def consistency_error(I, x_fnc, u_fnc, dx_fnc, ff_fnc, npts=500, return_error_ar
 
 
 if __name__ == '__main__':
-    from sympy import sin, cos, exp
+    # from sympy import sin, cos, exp
     
     x, y, z = sp.symbols('x, y, z')
 
@@ -603,7 +610,3 @@ if __name__ == '__main__':
     f_num_check = np.array([[-3.0],
                             [-np.sin(3.0) + np.cos(1.0)],
                             [np.exp(-np.sin(3.0) + np.cos(1.0))]])
-    
-
-    
-    IPS()

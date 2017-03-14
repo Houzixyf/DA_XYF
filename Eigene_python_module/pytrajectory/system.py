@@ -10,13 +10,13 @@ import time
 from trajectories import Trajectory
 from collocation import CollocationSystem
 from simulation import Simulator
+from solver import Solver
 import auxiliary
 import visualisation
 from log import logging
 
 
 # DEBUGGING
-from IPython import embed as IPS
 
 class ControlSystem(object):
     '''
@@ -72,6 +72,7 @@ class ControlSystem(object):
         self._parameters['maxIt'] = kwargs.get('maxIt', 10)
         self._parameters['eps'] = kwargs.get('eps', 1e-2)
         self._parameters['ierr'] = kwargs.get('ierr', 1e-1)
+        # self._parameters['z_par'] = kwargs.get('k', 1.0)
 
         # create an object for the dynamical system
         self.dyn_sys = DynamicalSystem(f_sym=ff, a=a, b=b, xa=xa, xb=xb, ua=ua, ub=ub)
@@ -122,7 +123,9 @@ class ControlSystem(object):
 
             self.eqs.trajectories._parameters[param] = value
 
-        elif param in {'tol', 'method', 'coll_type', 'sol_steps'}:
+        elif param in {'tol', 'method', 'coll_type', 'sol_steps', 'k'}:
+            if param == 'k':
+                param = 'z_par'
             self.eqs._parameters[param] = value
 
         else:
@@ -279,6 +282,7 @@ class ControlSystem(object):
             elif self.nIt >= 3:
                 logging.info("{}th Iteration: {} spline parts".format(self.nIt+1, self.eqs.trajectories.n_parts_x))
 
+            print('k = {}'.format(self.park[0]))
             # start next iteration step
             self._iterate()
 
@@ -292,7 +296,7 @@ class ControlSystem(object):
         
         self.T_sol = time.time() - T_start
         # return the found solution functions
-        return self.eqs.trajectories.x, self.eqs.trajectories.u
+        return self.eqs.trajectories.x, self.eqs.trajectories.u, self.park[0] # self.eqs.trajectories.x, self.eqs.trajectories.u are functions, variable is t.  x(t), u(t) (value of x and u at t moment, not all the values (not a list with values for all the time))
 
     def _iterate(self):
         '''
@@ -313,25 +317,28 @@ class ControlSystem(object):
         self.eqs.trajectories.init_splines()
         
         # Get an initial value (guess)
-        self.eqs.get_guess()
+        self.eqs.get_guess() 
         
         # Build the collocation equations system
         C = self.eqs.build()
         G, DG = C.G, C.DG
         
         # Solve the collocation equation system
-        sol = self.eqs.solve(G, DG)
+        sol = self.eqs.solve(G, DG) # len(sol)=26=free-parameter, type(sol)=<type 'numpy.ndarray'>
         
         # Set the found solution
         self.eqs.trajectories.set_coeffs(sol)
+        
+        par = self.eqs.solver.call_par() # np.array
+        self.park = par
 
         # Solve the resulting initial value problem
-        self.simulate()
+        self.simulate(par)
         
         # check if desired accuracy is reached
         self.check_accuracy()
 
-    def simulate(self):
+    def simulate(self,par):
         '''
         This method is used to solve the resulting initial value problem
         after the computation of a solution for the input trajectories.
@@ -340,7 +347,8 @@ class ControlSystem(object):
         logging.debug("Solving Initial Value Problem")
 
         # calulate simulation time
-        T = self.dyn_sys.b - self.dyn_sys.a
+        T = self.dyn_sys.b - self.dyn_sys.a # T=1.8-0=1.8
+        # T = kT ????????
         
         # get list of start values
         start = []
@@ -350,20 +358,23 @@ class ControlSystem(object):
         else:
             sys = self.dyn_sys
             
-        x_vars = sys.states
+        x_vars = sys.states # ('x1', 'x2', 'x3', 'x4')
         start_dict = dict([(k, v[0]) for k, v in sys.boundary_values.items() if k in x_vars])
+        # {'x2': 0.0, 'x3': 1.2566370614359172, 'x1': 0.0, 'x4': 0.0}
         ff = sys.f_num
         
         for x in x_vars:
             start.append(start_dict[x])
-        
+            # [0.0, 0.0, 1.2566370614359172, 0.0]
         # create simulation object
-        S = Simulator(ff, T, start, self.eqs.trajectories.u)
+        S = Simulator(ff, T, start, self.eqs.trajectories.u, z_par0 = self.park[0])
         
         logging.debug("start: %s"%str(start))
         
         # start forward simulation
-        self.sim_data = S.simulate()
+        self.sim_data = S.simulate(par) # S.simulate() is a method, 
+                                     # returns a list [np.array(self.t), np.array(self.xt), np.array(self.ut)]
+                                     # self.sim_data is a new definit self.variable. (It is ok if self.variable not defined in self.__init__(self))
     
     def check_accuracy(self):
         '''
@@ -382,7 +393,7 @@ class ControlSystem(object):
         a = self.sim_data[0][0]
         b = self.sim_data[0][-1]
         xt = self.sim_data[1]
-        
+        par_k = self.park[0]
         # get boundary values at right border of the interval
         if self.constraints:
             bv = self._dyn_sys_orig.boundary_values
@@ -409,13 +420,13 @@ class ControlSystem(object):
         eps = self._parameters['eps']
         if ierr:
             # calculate maximum consistency error on the whole interval
-            maxH = auxiliary.consistency_error((a,b), self.eqs.trajectories.x, self.eqs.trajectories.u, self.eqs.trajectories.dx, self.dyn_sys.f_num)
+            maxH = auxiliary.consistency_error((a,b), self.eqs.trajectories.x, self.eqs.trajectories.u, self.eqs.trajectories.dx, self.dyn_sys.f_num, self.park)
             
-            reached_accuracy = (maxH < ierr) and (max(err) < eps)
+            reached_accuracy = (maxH < ierr) and (max(err) < eps) and (par_k > 0.0)
             logging.debug('maxH = %f'%maxH)
         else:
             # just check if tolerance for the boundary values is satisfied
-            reached_accuracy = max(err) < eps
+            reached_accuracy = (max(err) < eps) and (par_k > 0.0)
         
         if reached_accuracy:
             logging.info("  --> reached desired accuracy: "+str(reached_accuracy))
@@ -526,15 +537,15 @@ class DynamicalSystem(object):
 
         # set names of the state and input variables
         # (will be used as keys in various dictionaries)
-        self.states = tuple(['x{}'.format(i+1) for i in xrange(self.n_states)])
+        self.states = tuple(['x{}'.format(i+1) for i in xrange(self.n_states)]) # ('x1','x2',...)
         self.inputs = tuple(['u{}'.format(j+1) for j in xrange(self.n_inputs)])
-        
+        self.par = tuple(['z_par'])
         # init dictionary for boundary values
         self.boundary_values = self._get_boundary_dict_from_lists(xa, xb, ua, ub)
 
         # create a numeric counterpart for the vector field
         # for faster evaluation
-        self.f_num = auxiliary.sym2num_vectorfield(f_sym=self.f_sym, x_sym=self.states, u_sym=self.inputs,
+        self.f_num = auxiliary.sym2num_vectorfield(f_sym=self.f_sym, x_sym=self.states, u_sym=self.inputs, p_sym=self.par,
                                                    vectorized=False, cse=False)
 
     def _determine_system_dimensions(self, n):
@@ -560,13 +571,13 @@ class DynamicalSystem(object):
         # the vectorfield
         found_n_inputs = False
         x = np.ones(n_states)
-
+        par=[1]
         j = 0
         while not found_n_inputs:
             u = np.ones(j)
-
+            
             try:
-                self.f_sym(x, u)
+                self.f_sym(x, u, par)
                 # if no ValueError is raised j is the dimension of the inputs
                 n_inputs = j
                 found_n_inputs = True
@@ -598,10 +609,10 @@ class DynamicalSystem(object):
 
         # add state boundary values
         for i, x in enumerate(self.states):
-            boundary_values[x] = (xa[i], xb[i])
+            boundary_values[x] = (xa[i], xb[i]) # {'x1':(xa[0],xb[0]),...}
 
         # add input boundary values
         for j, u in enumerate(self.inputs):
             boundary_values[u] = (ua[j], ub[j])
 
-        return boundary_values
+        return boundary_values # {'x1':(xa[0],xb[0]),..., 'u1':(ua[0],ub[0])}

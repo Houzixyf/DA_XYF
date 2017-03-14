@@ -66,26 +66,28 @@ class Spline(object):
         self.b = b
         
         # number of polynomial parts
-        self.n = int(n)
+        self.n = int(n) # first round:10, 10 schnitt
         
         # 'name' of the spline
-        self.tag = tag
+        self.tag = tag # first calling:'x1', second: 'x2', ...
         
         # dictionary with boundary values
         #   key: order of the spline's derivative to which the values belong
         #   values: the boundary values the derivative should satisfy
-        self._boundary_values = bv
+        self._boundary_values = bv # every time only one: e.g. bv={0:(0.0,0.2*pi)}
         
         # create array of symbolic coefficients
-        self._coeffs = sp.symarray('c'+tag, (self.n, 4))
+        self._coeffs = sp.symarray('c'+tag, (self.n, 4)) 
+        # array([[cxi_0_0, cxi_0_1, cxi_0_2, cxi_0_3],...,[cxi_9_0, cxi_9_1, cxi_9_2, cxi_9_3]])
         self._coeffs_sym = self._coeffs.copy()
         
         # calculate nodes of the spline
         self.nodes = get_spline_nodes(self.a, self.b, self.n+1, nodes_type='equidistant')
+        # self.nodes = array([ 0.  ,  0.18,  0.36, ...,  1.44,  1.62,  1.8 ])
         self._nodes_type = 'equidistant' #nodes_type
         
         # size of each polynomial part
-        self._h = (self.b - self.a) / float(self.n)
+        self._h = (self.b - self.a) / float(self.n) # (1.8-0)/10=0.18
         
         # the polynomial spline parts
         #   key: spline part
@@ -95,13 +97,15 @@ class Spline(object):
             # create polynomials, e.g. for cubic spline:
             #   P_i(t)= c_i_3*t^3 + c_i_2*t^2 + c_i_1*t + c_i_0
             self._P[i] = np.poly1d(self._coeffs[i])
+            # self._P={0: poly1d([cxi_0_0, cxi_0_1, cxi_0_2, cxi_0_3], dtype=object),{1:cxi_1_0,...},{9:...}}
+            # to here _P is only for one state!!
         
         # initialise array for provisionally evaluation of the spline
         # if there are no values for its free parameters
         # 
         # they show how the spline coefficients depend on the free coefficients
-        self._dep_array = None  #np.array([])
-        self._dep_array_abs = None  #np.array([])
+        self._dep_array = None  # np.array([])
+        self._dep_array_abs = None  # np.array([])
         
         # steady flag is True if smoothness and boundary conditions are solved
         # --> make_steady()
@@ -113,7 +117,7 @@ class Spline(object):
         self._prov_flag = True
         
         # the free parameters of the spline
-        self._indep_coeffs = None #np.array([])
+        self._indep_coeffs = None #np.array([]), free parameters are a part of all spline para.
     
     def __getitem__(self, key):
         return self._P[key]
@@ -215,7 +219,7 @@ class Spline(object):
         '''
         make_steady(S=self)
         self._indep_coeffs_sym = self._indep_coeffs.copy()
-    
+    # array([cx1_0_0, cx1_1_0, cx1_2_0, ..., cx1_8_0, cx1_9_0, cx1_0_2])
     def differentiate(self, d=1, new_tag=''):
         '''
         Returns the `d`-th derivative of this spline function object.
@@ -241,7 +245,7 @@ class Spline(object):
         ----------
         
         points : float
-            The points to evaluate the provisionally spline at.
+            The points at which to evaluate the provisionally spline.
         
         d : int
             The derivation order.
@@ -270,7 +274,7 @@ class Spline(object):
         elif d == 3:
             tt = np.array([6.0, 0.0, 0.0, 0.0])
         
-        dep_vec = np.dot(tt, self._dep_array[i])
+        dep_vec = np.dot(tt, self._dep_array[i]) # actually it is S1(or S2 or Su) using indenpent elements.
         dep_vec_abs = np.dot(tt, self._dep_array_abs[i])
         
         return dep_vec, dep_vec_abs
@@ -566,32 +570,36 @@ def make_steady(S):
         return
     
     # get spline coefficients and interval size
-    coeffs = S._coeffs
-    h = S._h
-
+    coeffs = S._coeffs # =self._coeffs=array([[cxi_0_0,...,cxi_0_3],...,[cxi_9_0,...,cxi_9_3]])
+    h = S._h 
+    
     # nu represents degree of boundary conditions
-    nu = -1
-    for k, v in S._boundary_values.items():
-        if all(item is not None for item in v):
+    nu = -1 # equations about boundary conditions at the begin and end of the spline
+    for k, v in S._boundary_values.items(): # {0: (0.0, 0.6283185307179586)}.items(), {a:1,b:2}.items() returns [(a,1),(b,2)], 
+                                            # a and b are (k)keys, a and 2 are (v)values.
+                                            # k=0, v=(0.0, 0.6283185307179586) 
+        if all(item is not None for item in v): # 0 != None.
             nu += 1
     
     # now we determine the free parameters of the spline function
     if nu == -1:
-        a = np.hstack([coeffs[:,0], coeffs[0,1:]])
+        a = np.hstack([coeffs[:,0], coeffs[0,1:]])  # the 1st column and the 1st row but from the 2nd column to last column
+        # array([cxi_0_0, cxi_1_0, cxi_2_0, ...,cxi_9_0, (without cxi_0_0) cxi_0_1, cxi_0_2, cxi_0_3])
     elif nu == 0:
         a = np.hstack([coeffs[:,0], coeffs[0,2]])
+        # array([cx1_0_0, cx1_1_0, cx1_2_0, ..., cx1_8_0, cx1_9_0, cx1_0_2]) # n_part_x*n_states-((3*n_part_x-1)+2(nu-1))=11
     elif nu == 1:
         a = coeffs[:-1,0]
     elif nu == 2:
         a = coeffs[:-3,0]
     
     # `b` is, what is not in `a`
-    coeffs_set = set(coeffs.ravel())
-    a_set = set(a)
-    b_set = coeffs_set - a_set
+    coeffs_set = set(coeffs.ravel()) # ravel: bian ping hua
+    a_set = set(a) # type(a)=set, menge
+    b_set = coeffs_set - a_set # bu ji
     
     # transfer b_set to ordered list
-    b = sorted(list(b_set), key = lambda c: c.name)
+    b = sorted(list(b_set), key = lambda c: c.name) # type(b) = list, b contains the elements that not belongs to a
     #b = np.array(sorted(list(b_set), key = lambda c: c.name))
     
     # now we build the matrix for the equation system
@@ -603,7 +611,7 @@ def make_steady(S):
     
     # get matrix and right hand site of the equation system
     # that ensures smoothness and compliance with the boundary values
-    M, r = get_smoothness_matrix(S, N1, N2)
+    M, r = get_smoothness_matrix(S, N1, N2) # see the document: http://pytrajectory.readthedocs.io/en/master/guide/background.html#candidate-functions
     
     # get A and B matrix such that
     #
@@ -611,15 +619,15 @@ def make_steady(S):
     # A*a + B*b = r
     #         b = B^(-1)*(r-A*a)
     #
-    # we need B^(-1)*r [absolute part -> tmp1] and B^(-1)*A [coefficients of a -> tmp2]
+    # we need B^(-1)*r [absolute part -> tmp1] and B^(-1)*A [coefficients of a -> tmp2, because of (B^(-1)*A*a)]
 
     #a_mat = np.zeros((N2,N2-N1))
     #b_mat = np.zeros((N2,N1))
-    a_mat = sparse.lil_matrix((N2,N2-N1))
-    b_mat = sparse.lil_matrix((N2,N1))
+    a_mat = sparse.lil_matrix((N2,N2-N1)) # size(a_mat)=(40,11)
+    b_mat = sparse.lil_matrix((N2,N1)) # size(b_mat)=(40,29)
     
     for i,aa in enumerate(a):
-        tmp = aa.name.split('_')[-2:]
+        tmp = aa.name.split('_')[-2:] # aa= cx1_0_0, aa.name='cx1_0_0', tmp=['0','0']
         j = int(tmp[0])
         k = int(tmp[1])
         a_mat[4*j+k,i] = 1
@@ -634,7 +642,7 @@ def make_steady(S):
     a_mat = sparse.csr_matrix(a_mat)
     b_mat = sparse.csr_matrix(b_mat)
     
-    A = M.dot(a_mat)
+    A = M.dot(a_mat) # A=M*a
     B = M.dot(b_mat)
     
     # do the inversion
@@ -643,16 +651,15 @@ def make_steady(S):
     r = sparse.csc_matrix(r)
     
     tmp1 = spsolve(B,r)
-    tmp2 = spsolve(B,-A)
+    tmp2 = spsolve(B,-A) # b_mat=tmp1-tmp2
     
     if sparse.issparse(tmp1):
         tmp1 = tmp1.toarray()
     if sparse.issparse(tmp2):
         tmp2 = tmp2.toarray()
     
-    dep_array = np.zeros((coeffs.shape[0], coeffs.shape[1], a.size))
-    dep_array_abs = np.zeros_like(coeffs, dtype=float)
-    
+    dep_array = np.zeros((coeffs.shape[0], coeffs.shape[1], a.size)) # (10,4,11) 10 ge,everywith 4 row and 11 column.
+    dep_array_abs = np.zeros_like(coeffs, dtype=float) # (10L,4L)
     for i,bb in enumerate(b):
         tmp = bb.name.split('_')[-2:]
         j = int(tmp[0])
@@ -724,7 +731,7 @@ def get_smoothness_matrix(S, N1, N2):
                           [0.0, 0.0, 1.0, 0.0, -3*h**2, 2*h, -1.0, 0.0],
                           [0.0, 2.0, 0.0, 0.0,   6*h,  -2.0,  0.0, 0.0]])
         
-    for k in xrange(n-1):
+    for k in xrange(n-1): # joint point =9
         M[3*k:3*(k+1),4*k:4*(k+2)] = block
     
     ## add equations for boundary values
