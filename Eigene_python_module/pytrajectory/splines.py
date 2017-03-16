@@ -274,7 +274,7 @@ class Spline(object):
         elif d == 3:
             tt = np.array([6.0, 0.0, 0.0, 0.0])
         
-        dep_vec = np.dot(tt, self._dep_array[i]) # actually it is S1(or S2 or Su) using indenpent elements.
+        dep_vec = np.dot(tt, self._dep_array[i]) # actually it is Sx1 (or Sx2 or Su) described in indenpent elements.
         dep_vec_abs = np.dot(tt, self._dep_array_abs[i])
         
         return dep_vec, dep_vec_abs
