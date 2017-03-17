@@ -112,7 +112,7 @@ def find_integrator_chains(dyn_sys):
     # create symbolic variables to find integrator chains
     state_sym = sp.symbols(dyn_sys.states) # (x1, x2, x3, x4)
     input_sym = sp.symbols(dyn_sys.inputs) # (u1,)
-    par_sym = sp.symbols(list(dyn_sys.par))
+    par_sym = sp.symbols(dyn_sys.par)
     f = dyn_sys.f_sym(state_sym, input_sym, par_sym) # f_sym(sp.symbols_x, sp.symbols_u), f: concrete form
     # f = array([x2, u1, x4, -u1*(0.9*cos(x3) + 1) - 0.9*x2**2*sin(x3)], dtype=object)
     assert dyn_sys.n_states == len(f)
@@ -227,11 +227,14 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, p_sym, vectorized=False, cse=False)
 
     # get a representation of the symbolic vector field
     if callable(f_sym):
-        if all(isinstance(s, sp.Symbol) for s in x_sym + u_sym + p_sym):
-            p_sym=['z_par']
-            F_sym = f_sym(x_sym, u_sym, sp.symbols(list(p_sym)))
-        elif all(isinstance(s, str) for s in x_sym + u_sym + p_sym):
-            F_sym = f_sym(sp.symbols(x_sym), sp.symbols(u_sym), sp.symbols(list(p_sym))) ##:: ((x1, x2, x3, x4), (u1,), [k])
+        if all(isinstance(s, sp.Symbol) for s in x_sym + u_sym + (p_sym[0],)):
+            ##:: p_sym = []
+            ##:: p_sym.append(['z_par'])
+            F_sym = f_sym(x_sym, u_sym, p_sym) ##:: sp.symbols(p_sym)
+        elif all(isinstance(s, str) for s in x_sym + u_sym + (p_sym[0],)):
+            sp_p_sym = p_sym
+            sp_p_sym[0] = sp.symbols(sp_p_sym[0])
+            F_sym = f_sym(sp.symbols(x_sym), sp.symbols(u_sym), sp_p_sym) ##:: ((x1, x2, x3, x4), (u1,), [z_par])
     else:
         F_sym = f_sym
     
@@ -287,10 +290,10 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, p_sym, vectorized=False, cse=False)
 
     # now we can create the numeric function
     if cse:
-        _f_num = cse_lambdify(x_sym + u_sym + p_sym, F_sym,
+        _f_num = cse_lambdify(x_sym + u_sym + (p_sym,), F_sym,
                               modules=[{'ImmutableMatrix':np.array}, 'numpy'])
     else:
-        _f_num = sp.lambdify(x_sym + u_sym + p_sym, F_sym, ########################
+        _f_num = sp.lambdify(x_sym + u_sym + (p_sym,), F_sym, ########################
                              modules=[{'ImmutableMatrix':np.array}, 'numpy'])
     
     # create a wrapper as the actual function due to the behaviour

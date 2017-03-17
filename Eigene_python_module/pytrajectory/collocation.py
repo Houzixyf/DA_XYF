@@ -54,7 +54,7 @@ class CollocationSystem(object):
         # create vectorized versions of the control system's vector field
         # and its jacobian for the faster evaluation of the collocation equation system `G`
         # and its jacobian `DG` (--> see self.build())
-        f = sys.f_sym(sp.symbols(sys.states), sp.symbols(sys.inputs), sp.symbols(sys.par) ) ##:: f_sym is a function, but here the self-variable are already input, so f is value, not function. f = array([x2, u1, x4, -u1*(0.9*cos(x3) + 1) - 0.9*x2**2*sin(x3)])
+        f = sys.f_sym(sp.symbols(sys.states), sp.symbols(sys.inputs), sys.par ) ##:: f_sym is a function, but here the self-variable are already input, so f is value, not function. f = array([x2, u1, x4, -u1*(0.9*cos(x3) + 1) - 0.9*x2**2*sin(x3)])
         
         # TODO: check order of variables of differentiation ([x,u] vs. [u,x])
         #       because in dot products in later evaluation of `DG` with vector `c`
@@ -64,7 +64,7 @@ class CollocationSystem(object):
         # previously the jacobian was calculated wrt to strings which triggered strange
         # strange sympy behavior (bug) for systems with more than 9 variables
         # workarround: we use real symbols now
-        all_symbols = sp.symbols(sys.states + sys.inputs + sys.par) ##:: (x1, x2, x3, x4, u1)
+         all_symbols = sp.symbols(sys.states + sys.inputs + sys.par) ##:: (x1, x2, x3, x4, u1)
         Df = sp.Matrix(f).jacobian(all_symbols) ##:: sp.Matrix(f): Matrix([[x2],[u1],[x4],[-u1*(0.9*cos(x3) + 1) - 0.9*x2**2*sin(x3)]])
 
         self._ff_vectorized = sym2num_vectorfield(f, sys.states, sys.inputs, sys.par, vectorized=True, cse=True)

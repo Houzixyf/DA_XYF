@@ -154,7 +154,7 @@ class ControlSystem(object):
         # (as sympy matrix toenable replacement method)
         x = sp.symbols(self.dyn_sys.states)
         u = sp.symbols(self.dyn_sys.inputs)
-        par = sp.symbols(self.dyn_sys.par)
+        par = self.dyn_sys.par
         ff_mat = sp.Matrix(self.dyn_sys.f_sym(x, u, par))
 
         # get neccessary information form the dynamical system
@@ -531,7 +531,7 @@ class DynamicalSystem(object):
         self.f_sym = f_sym
         self.a = a
         self.b = b
-
+        self.par = []
         # analyse the given system
         self.n_states, self.n_inputs = self._determine_system_dimensions(n=len(xa))
 
@@ -539,8 +539,7 @@ class DynamicalSystem(object):
         # (will be used as keys in various dictionaries)
         self.states = tuple(['x{}'.format(i+1) for i in xrange(self.n_states)])
         self.inputs = tuple(['u{}'.format(j+1) for j in xrange(self.n_inputs)])
-        self.par = []
-        self.par.append(tuple(['z_par'])) ##:: [('z_par',)]
+        self.par.append('z_par') ##:: ['z_par']
         # init dictionary for boundary values
         self.boundary_values = self._get_boundary_dict_from_lists(xa, xb, ua, ub)
 
