@@ -1,0 +1,63 @@
+\begin{thebibliography}{10}
+
+\bibitem{brockett1983asymptotic}
+{\sc Brockett, R.~W.} \btxetalshort{.}: {\em Asymptotic stability and feedback
+  stabilization\/}.
+\newblock Differential geometric control theory, 27(1):181--191, 1983.
+
+\bibitem{bronstein2012taschenbuch}
+{\sc Bronstein, I.~N.}, {\sc J.~Hromkovic}, {\sc B.~Luderer}, {\sc H.-R.
+  Schwarz}, {\sc J.~Blath}, {\sc A.~Schied}, {\sc S.~Dempe}, {\sc G.~Wanka},
+  {\sc S.~Gottwald}, {\sc E.~Zeidler} \btxetalshort{.}: {\em Taschenbuch der
+  mathematik\/}, \btxvolumeshort{.}~1.
+\newblock Springer-Verlag, 2012.
+
+\bibitem{colonius2012nichtlineare}
+{\sc Colonius, F.}: {\em Nichtlineare Kontrolltheorie Sommersemester 2012\/}.
+\newblock 2012.
+
+\bibitem{coron2007control}
+{\sc Coron, J.-M.}: {\em Control and nonlinearity\/}.
+\newblock \Btxnumbershort{.}\ 136. American Mathematical Soc., 2007.
+
+\bibitem{grosche2003teubner}
+{\sc Grosche, G.}, {\sc V.~Ziegler}, {\sc E.~Zeidler} \btxandshort{.}\ {\sc
+  D.~Ziegler}: {\em Teubner-Taschenbuch der Mathematik\/}.
+\newblock Springer-Verlag, 2003.
+
+\bibitem{oriolo1991control}
+{\sc Oriolo, G.} \btxandshort{.}\ {\sc Y.~Nakamura}: {\em Control of mechanical
+  systems with second-order nonholonomic constraints: Underactuated
+  manipulators\/}.
+\newblock \Btxinshort{.}\ {\em Decision and Control, 1991., Proceedings of the
+  30th IEEE Conference on\/}, \btxpagesshort{.}\ 2398--2403. IEEE, 1991.
+
+\bibitem{orsi2003necessary}
+{\sc Orsi, R.}, {\sc L.~Praly} \btxandshort{.}\ {\sc I.~Mareels}: {\em
+  Necessary conditions for stability and attractivity of continuous systems\/}.
+\newblock International Journal of Control, 76(11):1070--1077, 2003.
+
+\bibitem{rudin2009analysis}
+{\sc Rudin, W.}: {\em Analysis, 4\/}.
+\newblock Aufl. Oldenburg, M{\"u}nchen, Wien, 2009.
+
+\bibitem{sontag2013mathematical}
+{\sc Sontag, E.~D.}: {\em Mathematical control theory: deterministic finite
+  dimensional systems\/}, \btxvolumeshort{.}~6.
+\newblock Springer Science \& Business Media, 2013.
+
+\bibitem{stern2002brockett}
+{\sc Stern, R.}: {\em Brockett's stabilization condition under state
+  constraints\/}.
+\newblock Systems \& control letters, 47(4):335--341, 2002.
+
+\bibitem{tu2010introduction}
+{\sc Tu, L.~W.}: {\em An introduction to manifolds\/}.
+\newblock Springer Science \& Business Media, 2010.
+
+\bibitem{wilson1967structure}
+{\sc Wilson, F.~W.}: {\em The structure of the level surfaces of a Lyapunov
+  function\/}.
+\newblock Journal of Differential Equations, 3(3):323--329, 1967.
+
+\end{thebibliography}

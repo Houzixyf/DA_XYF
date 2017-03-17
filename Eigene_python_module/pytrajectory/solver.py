@@ -35,11 +35,11 @@ class Solver:
     par : np.array
     '''
     # Solver(F=G, DF=DG, x0=self.guess,
-    def __init__(self, F, DF, x0, tol=1e-5, reltol=2e-5, maxIt=100, method='leven', par_k = np.array([0.0])): # itemindex = 0
+    def __init__(self, F, DF, x0, tol=1e-5, reltol=2e-5, maxIt=100, method='leven', par_k = np.array([0.0])):
         # x0 = free_param
         self.F = F
         self.DF = DF
-        self.x0 = x0 # x0=self.guess initial: array([ 0.1,  0.1,  0.1, ...,  0.1,  0.1,  z0])
+        self.x0 = x0 ##:: x0=self.guess initial: array([ 0.1,  0.1,  0.1, ...,  0.1,  0.1,  z0])
         self.tol = tol
         self.reltol = reltol
         self.maxIt = maxIt
@@ -63,7 +63,7 @@ class Solver:
             logging.warning("Wrong solver, returning initial value.")
             return self.x0
         else:
-            return self.sol
+            return self.sol, self.par
 
 
     def leven(self):
@@ -74,11 +74,11 @@ class Solver:
         For more information see: :ref:`levenberg_marquardt`
         '''
         i = 0
-        x = self.x0 # guess_value
-        res = 1 # residuum
+        x = self.x0 ##:: guess_value
+        res = 1 ##:: residuum
         res_alt = -1
         
-        eye = scp.sparse.identity(len(self.x0)) # diagonal matrix, (26*26), value: 1.0, danwei
+        eye = scp.sparse.identity(len(self.x0)) ##:: diagonal matrix, value: 1.0, danwei
 
         #mu = 1.0
         mu = 1e-4
@@ -101,17 +101,16 @@ class Solver:
             i += 1
             
             #if (i-1)%4 == 0:
-            DFx = self.DF(x) # Jacobi-Matrix J
-            DFx = scp.sparse.csr_matrix(DFx) 
-            # <21x26 sparse matrix of type '<type 'numpy.float64'>' with 393 stored elements in Compressed Sparse Row format>
+            DFx = self.DF(x) ##:: part of Jacobi-Matrix J
+            DFx = scp.sparse.csr_matrix(DFx)
             
             break_inner_loop = False
             while (not break_inner_loop):                
-                A = DFx.T.dot(DFx) + mu**2*eye # left side of equation, J'J=mu^2*I, Matrix.T=inv(Matrix)
+                A = DFx.T.dot(DFx) + mu**2*eye ##:: left side of equation, J'J+mu^2*I, Matrix.T=inv(Matrix)
 
-                b = DFx.T.dot(Fx) # right side of equation, J'f, (f=Fx)
+                b = DFx.T.dot(Fx) ##:: right side of equation, J'f, (f=Fx)
                     
-                s = -scp.sparse.linalg.spsolve(A,b) # h
+                s = -scp.sparse.linalg.spsolve(A,b) ##:: h
 
                 xs = x + np.array(s).flatten()
                 
@@ -120,7 +119,7 @@ class Solver:
                 normFx = norm(Fx)
                 normFxs = norm(Fxs)
 
-                R1 = (normFx**2 - normFxs**2) # F(x)^2-F(x+h)^2, F(x)=f
+                R1 = (normFx**2 - normFxs**2) ##:: F(x)^2-F(x+h)^2, F(x)=f
                 R2 = (normFx**2 - (norm(Fx+DFx.dot(s)))**2) # F(x)^2-(F(x)+F'(x)h)^2
                 
                 R1 = (normFx - normFxs)
@@ -171,5 +170,5 @@ class Solver:
         self.sol = x # return (x+h)
         self.par = np.array([self.sol[-1]]) # self.itemindex
 
-    def call_par(self):
-        return self.par
+    # def call_par(self):
+    #     return self.par

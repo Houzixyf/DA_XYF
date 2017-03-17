@@ -37,9 +37,9 @@ class Simulator(object):
         self.t = []
 
         # get the values at t=0
-        self.xt.append(start) # [[0.0, 0.0, 1.2566370614359172, 0.0]]
-        self.ut.append(self.u(0.0)) # array([ 0.])
-        self.t.append(0.0) #[0.0]
+        self.xt.append(start)
+        self.ut.append(self.u(0.0)) ##:: array([ 0.])
+        self.t.append(0.0)
         #initialise our ode solver
         self.solver = ode(self.rhs)
         self.solver.set_initial_value(start)
@@ -76,7 +76,7 @@ class Simulator(object):
 
         return t, x
 
-    def simulate(self,par):
+    def simulate(self): ##!!  wonder it useful to save par here (self,,par)
         '''
         Starts the simulation
 
@@ -88,13 +88,12 @@ class Simulator(object):
         '''
         t = 0
         while t <= self.T:
-            t, y = self.calcStep() # return t, x (in reality this t and y are not important)
-                                   # important is self.t, self.xt,self.ut
-        if type(par) == np.ndarray:
-            pass
-        elif type(par) == list:
-            par = np.array(par)
-        elif type(par) == int or type(par) == float:
-            par = np.array([par])
+            t, y = self.calcStep()
+        # if type(par) == np.ndarray:
+        #     pass
+        # elif type(par) == list:
+        #     par = np.array(par)
+        # elif type(par) == int or type(par) == float:
+        #     par = np.array([par])
             
-        return [np.array(self.t), np.array(self.xt), np.array(self.ut), par]
+        return [np.array(self.t), np.array(self.xt), np.array(self.ut)]

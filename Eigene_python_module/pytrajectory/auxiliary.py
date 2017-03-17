@@ -228,10 +228,10 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, p_sym, vectorized=False, cse=False)
     # get a representation of the symbolic vector field
     if callable(f_sym):
         if all(isinstance(s, sp.Symbol) for s in x_sym + u_sym + p_sym):
-            p_sym=['z_par']# (x1, x2, x3, x4, u1, k)
+            p_sym=['z_par']
             F_sym = f_sym(x_sym, u_sym, sp.symbols(list(p_sym)))
         elif all(isinstance(s, str) for s in x_sym + u_sym + p_sym):
-            F_sym = f_sym(sp.symbols(x_sym), sp.symbols(u_sym), sp.symbols(list(p_sym))) # (x1, x2, x3, x4, u1, k)
+            F_sym = f_sym(sp.symbols(x_sym), sp.symbols(u_sym), sp.symbols(list(p_sym))) ##:: ((x1, x2, x3, x4), (u1,), [k])
     else:
         F_sym = f_sym
     
@@ -290,7 +290,7 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, p_sym, vectorized=False, cse=False)
         _f_num = cse_lambdify(x_sym + u_sym + p_sym, F_sym,
                               modules=[{'ImmutableMatrix':np.array}, 'numpy'])
     else:
-        _f_num = sp.lambdify(x_sym + u_sym + p_sym, F_sym, ########################
+        _f_num = sp.lambdify(x_sym + u_sym + p_sym, F_sym,
                              modules=[{'ImmutableMatrix':np.array}, 'numpy'])
     
     # create a wrapper as the actual function due to the behaviour

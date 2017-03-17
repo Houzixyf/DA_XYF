@@ -72,7 +72,7 @@ class ControlSystem(object):
         self._parameters['maxIt'] = kwargs.get('maxIt', 10)
         self._parameters['eps'] = kwargs.get('eps', 1e-2)
         self._parameters['ierr'] = kwargs.get('ierr', 1e-1)
-        # self._parameters['z_par'] = kwargs.get('k', 1.0)
+        ##:: self._parameters['z_par'] = kwargs.get('k', 1.0)
 
         # create an object for the dynamical system
         self.dyn_sys = DynamicalSystem(f_sym=ff, a=a, b=b, xa=xa, xb=xb, ua=ua, ub=ub)
@@ -154,7 +154,8 @@ class ControlSystem(object):
         # (as sympy matrix toenable replacement method)
         x = sp.symbols(self.dyn_sys.states)
         u = sp.symbols(self.dyn_sys.inputs)
-        ff_mat = sp.Matrix(self.dyn_sys.f_sym(x, u))
+        par = sp.symbols(self.dyn_sys.par)
+        ff_mat = sp.Matrix(self.dyn_sys.f_sym(x, u, par))
 
         # get neccessary information form the dynamical system
         a = self.dyn_sys.a
@@ -324,13 +325,13 @@ class ControlSystem(object):
         G, DG = C.G, C.DG
         
         # Solve the collocation equation system
-        sol = self.eqs.solve(G, DG) # len(sol)=26=free-parameter, type(sol)=<type 'numpy.ndarray'>
-        
+        sol, par = self.eqs.solve(G, DG) ##:: len(sol)=free-parameter, type(sol)=<type 'numpy.ndarray'>
+        self.park = par
         # Set the found solution
         self.eqs.trajectories.set_coeffs(sol)
         
-        par = self.eqs.solver.call_par() # np.array
-        self.park = par
+        ##!! par = self.eqs.solver.call_par() # np.array
+
 
         # Solve the resulting initial value problem
         self.simulate(par)
@@ -347,8 +348,8 @@ class ControlSystem(object):
         logging.debug("Solving Initial Value Problem")
 
         # calulate simulation time
-        T = self.dyn_sys.b - self.dyn_sys.a # T=1.8-0=1.8
-        # T = kT ????????
+        T = self.dyn_sys.b - self.dyn_sys.a
+        # Todo T = par[0] * T
         
         # get list of start values
         start = []
@@ -358,23 +359,22 @@ class ControlSystem(object):
         else:
             sys = self.dyn_sys
             
-        x_vars = sys.states # ('x1', 'x2', 'x3', 'x4')
-        start_dict = dict([(k, v[0]) for k, v in sys.boundary_values.items() if k in x_vars])
-        # {'x2': 0.0, 'x3': 1.2566370614359172, 'x1': 0.0, 'x4': 0.0}
+        x_vars = sys.states ##:: ('x1', 'x2', 'x3', 'x4')
+        start_dict = dict([(k, v[0]) for k, v in sys.boundary_values.items() if k in x_vars]) ##:: {'x2': start value of x2, 'x3': 1.2566370614359172, 'x1': 0.0, 'x4': 0.0}
         ff = sys.f_num
         
         for x in x_vars:
             start.append(start_dict[x])
-            # [0.0, 0.0, 1.2566370614359172, 0.0]
         # create simulation object
         S = Simulator(ff, T, start, self.eqs.trajectories.u, z_par0 = self.park[0])
         
         logging.debug("start: %s"%str(start))
         
         # start forward simulation
-        self.sim_data = S.simulate(par) # S.simulate() is a method, 
+        self.sim_data = S.simulate() # S.simulate() is a method,
                                      # returns a list [np.array(self.t), np.array(self.xt), np.array(self.ut)]
                                      # self.sim_data is a new definit self.variable. (It is ok if self.variable not defined in self.__init__(self))
+        self.sim_data.append(par)
     
     def check_accuracy(self):
         '''
@@ -402,7 +402,7 @@ class ControlSystem(object):
             bv = self.dyn_sys.boundary_values
             x_sym = self.dyn_sys.states
             
-        xb = dict([(k, v[1]) for k, v in bv.items() if k in x_sym])
+        xb = dict([(k, v[1]) for k, v in bv.items() if k in x_sym]) ##:: end boundary value
         
         # what is the error
         logging.debug(40*"-")
@@ -410,7 +410,7 @@ class ControlSystem(object):
 
         err = np.empty(xt.shape[1])
         for i, xx in enumerate(x_sym):
-            err[i] = abs(xb[xx] - xt[-1][i])
+            err[i] = abs(xb[xx] - xt[-1][i]) ##:: error (x1,x2) at end time
             logging.debug(str(xx)+" : %f     %f    %f"%(xt[-1][i], xb[xx], err[i]))
         
         logging.debug(40*"-")
@@ -537,8 +537,11 @@ class DynamicalSystem(object):
 
         # set names of the state and input variables
         # (will be used as keys in various dictionaries)
-        self.states = tuple(['x{}'.format(i+1) for i in xrange(self.n_states)]) # ('x1','x2',...)
+        self.states = tuple(['x{}'.format(i+1) for i in xrange(self.n_states)])
         self.inputs = tuple(['u{}'.format(j+1) for j in xrange(self.n_inputs)])
+        #Todo: if self.par is a list,then the following 2 sentences
+        # self.par = []
+        # self.par.append(tuple('z_par')) ##:: [('z_par',)]
         self.par = tuple(['z_par'])
         # init dictionary for boundary values
         self.boundary_values = self._get_boundary_dict_from_lists(xa, xb, ua, ub)
@@ -609,10 +612,10 @@ class DynamicalSystem(object):
 
         # add state boundary values
         for i, x in enumerate(self.states):
-            boundary_values[x] = (xa[i], xb[i]) # {'x1':(xa[0],xb[0]),...}
+            boundary_values[x] = (xa[i], xb[i]) ##:: bv = {'x1':(xa[0],xb[0]),...}
 
         # add input boundary values
         for j, u in enumerate(self.inputs):
             boundary_values[u] = (ua[j], ub[j])
 
-        return boundary_values # {'x1':(xa[0],xb[0]),..., 'u1':(ua[0],ub[0])}
+        return boundary_values
