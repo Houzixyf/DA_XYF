@@ -93,7 +93,18 @@ class CollocationSystem(object):
         # compute dependence matrices
         Mx, Mx_abs, Mdx, Mdx_abs, Mu, Mu_abs, Mp, Mp_abs = self._build_dependence_matrices(indic)
 
-        # in the later evaluation of the equation system `G` and its jacobian `DG`
+        # TODO: self._build_dependence_matrices should already return this container
+        MC = Container()
+        MC.Mx = Mx
+        MC.Mx_abs = Mx_abs
+        MC.Mdx = Mdx
+        MC.Mdx_abs = Mdx_abs
+        MC.Mu = Mu
+        MC.Mu_abs = Mu_abs
+        MC.Mp = Mp
+        MC.Mp_abs = Mp_abs
+
+    # in the later evaluation of the equation system `G` and its jacobian `DG`
         # there will be created the matrices `F` and DF in which every nx rows represent the 
         # evaluation of the control systems vectorfield and its jacobian in a specific collocation
         # point, where nx is the number of state variables
@@ -142,36 +153,81 @@ class CollocationSystem(object):
         Df_vec = self._Df_vectorized
 
         # transform matrix formats for faster dot products
-        Mx = Mx.tocsr()
-        Mx_abs = Mx_abs.tocsr()
-        Mdx = Mdx.tocsr()
-        Mdx_abs = Mdx_abs.tocsr()
-        Mu = Mu.tocsr()
-        Mu_abs = Mu_abs.tocsr()
-        Mp = Mp.tocsr()
-        Mp_abs = Mp_abs.tocsr()
+        # Sparse Matrix Container:
+        SMC = Container()
+        # convert all 2d arrays (from MC) to sparse datatypes
+        for k, v in MC.__dict__.items():
+            SMC.__dict__[k] = v.tocsr()
+
 
         DdX = DdX.tocsr()
-        
-        # define the callable functions for the eqs
-        
-        def G(c, info=False):
-            # TODO: check if both spline approaches result in same values here
-            X = Mx.dot(c)[:,None] + Mx_abs ##:: X = [S1(t=0), S2(0), S1(0.5), S2(0.5), S1(1), S2(1)]
-            U = Mu.dot(c)[:,None] + Mu_abs ##:: U = [Su(t=0), Su(0.5), Su(1)]
-            P = Mp.dot(c)[:,None] + Mp_abs ##:: init: P = [1.0,1.0,1.0]
-            
-            X = np.array(X).reshape((n_states, -1), order='F') ##:: X = array([[S1(0), S1(0.5), S1(1)],[S2(0),S2(0.5),S2(1)]])
+
+        def get_X_U_P(c, sparse=True):
+
+            if sparse:
+                C = SMC
+            else:
+                C = MC
+            X = C.Mx.dot(c)[:, None] + C.Mx_abs  ##:: X = [S1(t=0), S2(0), S1(0.5), S2(0.5), S1(1), S2(1)]
+            U = C.Mu.dot(c)[:, None] + C.Mu_abs  ##:: U = [Su(t=0), Su(0.5), Su(1)]
+            P = C.Mp.dot(c)[:, None] + C.Mp_abs  ##:: init: P = [1.0,1.0,1.0]
+
+            X = np.array(X).reshape((n_states, -1),
+                                 order='F')  ##:: X = array([[S1(0), S1(0.5), S1(1)],[S2(0),S2(0.5),S2(1)]])
             U = np.array(U).reshape((n_inputs, -1), order='F')
             P = np.array(P).reshape((1, -1), order='F')
+
+            return X, U, P
+
+
+        # define the callable functions for the eqs
+        
+        def G(c, info=False, symbeq=False):
+            """
+            :param c: main argument (free parameters)
+            :param info: flag for debug
+            :param symbeq: flag for calling this function with symbolic c
+                            (for debugging)
+            :return:
+            """
+
+            # we only can multiply dense arrays with "symbolic arrays" (dtype=object)
+            sparseflag = not symbeq
+            X, U, P = get_X_U_P(c, sparseflag)
+
+            # TODO: check if both spline approaches result in same values here
+
             # evaluate system equations and select those related
             # to lower ends of integrator chains (via eqind)
             # other equations need not be solved
-            F = ff_vec(X, U, P).ravel(order='F').take(take_indices, axis=0)[:,None] ##:: F now numeric
-            dX = Mdx.dot(c)[:,None] + Mdx_abs
-            dX = dX.take(take_indices, axis=0)
-            #dX = np.array(dX).reshape((x_len, -1), order='F').take(eqind, axis=0)
-    
+
+            # this is the regular path
+            if symbeq:
+                # reshape flattened X again to nx times nc Matrix
+                # nx: number of states, nc: number of collocation points
+                X2 = X.reshape(self.dyn_sys.n_states, -1)
+                nc = X2.shape[1]
+
+                U2 = X.reshape(self.dyn_sys.n_inputs, -1)
+                U2 = X.reshape(self.dyn_sys.n_inputs, -1)
+
+
+                eq_list = []
+
+                # iterate over the columns of X2 and U2
+                for i in range(nc):
+                    self.dyn_sys.f_sym(X2[:,i], U2[:,i], pp)
+                    # !! noch linke Seite (Xdot) subtrahieren
+
+
+
+                resC = Container(X=X2, U=U2, P=P, F=eq_list)
+            else:
+                F = ff_vec(X, U, P).ravel(order='F').take(take_indices, axis=0)[:,None] ##:: F now numeric
+                dX = Mdx.dot(c)[:,None] + Mdx_abs
+                dX = dX.take(take_indices, axis=0)
+                #dX = np.array(dX).reshape((x_len, -1), order='F').take(eqind, axis=0)
+
             G = F - dX
             res = np.asarray(G).ravel(order='F')
 
@@ -187,12 +243,8 @@ class CollocationSystem(object):
         def DG(c):
             # first we calculate the x and u values in all collocation points
             # with the current numerical values of the free parameters
-            X = Mx.dot(c)[:,None] + Mx_abs
-            X = np.array(X).reshape((n_states, -1), order='F')
-            U = Mu.dot(c)[:,None] + Mu_abs
-            U = np.array(U).reshape((n_inputs, -1), order='F')
-            P = Mp.dot(c)[:,None] + Mp_abs
-            P = np.array(P).reshape((1, -1), order='F')
+            X, U, P = get_X_U_P(c, sparse=True)
+
             
             # get the jacobian blocks and turn them into the right shape
             DF_blocks = Df_vec(X,U,P).transpose([2,0,1])

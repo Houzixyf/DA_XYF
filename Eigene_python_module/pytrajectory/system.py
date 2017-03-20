@@ -323,6 +323,9 @@ class ControlSystem(object):
         # Build the collocation equations system
         C = self.eqs.build()
         G, DG = C.G, C.DG
+
+        from IPython import embed as IPS
+        IPS()
         
         # Solve the collocation equation system
         sol, par = self.eqs.solve(G, DG) ##:: len(sol)=free-parameter, type(sol)=<type 'numpy.ndarray'>
