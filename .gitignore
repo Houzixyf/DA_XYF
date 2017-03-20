@@ -87,3 +87,7 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Pycharm
+
+Eigene_python_module/Project/.idea/
