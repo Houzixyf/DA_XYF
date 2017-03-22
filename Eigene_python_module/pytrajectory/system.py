@@ -322,17 +322,18 @@ class ControlSystem(object):
         
         # Build the collocation equations system
         C = self.eqs.build()
+#        from IPython import embed as IPS
+#        IPS()
         G, DG = C.G, C.DG
 
-        from IPython import embed as IPS
-        IPS()
+        # from IPython import embed as IPS
+        # IPS()
         
         # Solve the collocation equation system
         sol, par = self.eqs.solve(G, DG) ##:: len(sol)=free-parameter, type(sol)=<type 'numpy.ndarray'>
         self.park = par
         # Set the found solution
         self.eqs.trajectories.set_coeffs(sol)
-        
         ##!! par = self.eqs.solver.call_par() # np.array
 
 

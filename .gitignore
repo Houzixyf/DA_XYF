@@ -91,3 +91,5 @@ ENV/
 # Pycharm
 
 Eigene_python_module/Project/.idea/
+
+/DG_data.txt

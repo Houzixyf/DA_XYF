@@ -46,7 +46,7 @@ class Trajectory(object):
         
         # This will be the free parameters of the control problem
         # (list of all independent spline coefficients)
-        self.indep_coeffs = []
+        self.indep_vars = []
         
         self._old_splines = None
 
@@ -184,7 +184,7 @@ class Trajectory(object):
                             splines[upper]._boundary_values[i+1] = bv[lower]
         
                 # solve smoothness and boundary conditions
-                splines[upper].make_steady()
+                splines[upper].make_smooth_C2()
         
                 # calculate derivatives
                 for i, elem in enumerate(chain.elements):
@@ -216,7 +216,7 @@ class Trajectory(object):
                 splines[xx] = Spline(self.sys.a, self.sys.b, n=self.n_parts_x, bv={0:bv[xx]}, tag=xx,
                                      nodes_type=self._parameters['nodes_type'],
                                      use_std_approach=self._parameters['use_std_approach'])
-                splines[xx].make_steady()
+                splines[xx].make_smooth_C2()
                 splines[xx].type = 'x'
                 x_fnc[xx] = splines[xx].f
         # offset = self.sys.n_states ##:: 4
@@ -227,19 +227,19 @@ class Trajectory(object):
                 splines[uu] = Spline(self.sys.a, self.sys.b, n=self.n_parts_u, bv={0:bv[uu]}, tag=uu,
                                      nodes_type=self._parameters['nodes_type'],
                                      use_std_approach=self._parameters['use_std_approach'])
-                splines[uu].make_steady()
+                splines[uu].make_smooth_C2()
                 splines[uu].type = 'u'
                 u_fnc[uu] = splines[uu].f
         
         # calculate derivatives of every state variable spline
         for xx in self.sys.states:
             dx_fnc[xx] = differentiate(x_fnc[xx]) ##:: dx_fnc={'x1': method Spline.df, 'x2': Spline.ddf, 'x3': Spline.df, 'x4': Spline.ddf}
-        indep_coeffs = dict()
+        indep_vars = dict()
         for ss in splines.keys(): ##:: because key of dict(splines) is only 'upper' (splines[upper]), ##:: splines{'x1': class Spline, 'x3': class Spline}
-            indep_coeffs[ss] = splines[ss]._indep_coeffs ##:: indep_coeffs[x1] = array([cx1_0_0, cx1_1_0, cx1_2_0, ..., cx1_14_0, cx1_15_0, cx1_16_0])
-        indep_coeffs['z_par'] = np.array([sp.symbols('k')])
+            indep_vars[ss] = splines[ss]._indep_coeffs ##:: indep_coeffs[x1] = array([cx1_0_0, cx1_1_0, cx1_2_0, ..., cx1_14_0, cx1_15_0, cx1_16_0])
+        indep_vars['z_par'] = np.array([sp.symbols('k')])
 
-        self.indep_coeffs = indep_coeffs
+        self.indep_vars = indep_vars
         self.splines = splines
         self.x_fnc = x_fnc ##:: x_fnc={'x2': <bound method Spline.f of <pytrajectory.splines.Spline object >>, 'x3': <bound method Spline.f of <pytrajectory.splines.Spline object>>, 'x1': <bound method Spline.f of <pytrajectory.splines.Spline object>>, 'x4': <bound method Spline.f of <pytrajectory.splines.Spline object>>}
         self.u_fnc = u_fnc
@@ -257,7 +257,7 @@ class Trajectory(object):
         ----------
         
         sol : numpy.ndarray
-            The solution vector for the free parameters, i.e. the independent coefficients.
+            The solution vector for the free parameters, i.e. the independent variables.
         
         '''
         # TODO: look for bugs here!
@@ -266,7 +266,7 @@ class Trajectory(object):
         sol_bak = sol.copy()
         subs = dict()
 
-        for k, v in sorted(self.indep_coeffs.items(), key=lambda (k, v): k): ##:: {'x3': array([cx3_0_0, cx3_1_0, cx3_2_0, cx3_3_0, cx3_4_0, cx3_5_0, cx3_6_0, cx3_7_0, cx3_8_0], dtype=object),'x1': array([cx1_0_0, cx1_1_0, cx1_2_0, ..., cx1_14_0, cx1_15_0, cx1_16_0], dtype=object)}
+        for k, v in sorted(self.indep_vars.items(), key=lambda (k, v): k): ##:: {'x3': array([cx3_0_0, cx3_1_0, cx3_2_0, cx3_3_0, cx3_4_0, cx3_5_0, cx3_6_0, cx3_7_0, cx3_8_0], dtype=object),'x1': array([cx1_0_0, cx1_1_0, cx1_2_0, ..., cx1_14_0, cx1_15_0, cx1_16_0], dtype=object)}
             i = len(v)
             subs[k] = sol[:i] # set numerical value to symbolical value
             sol = sol[i:] ##:: sol = []
@@ -280,10 +280,10 @@ class Trajectory(object):
         # set numerical coefficients for each spline and derivative
         ##!! spline_key_plus_k = self.splines.keys().append('k')
         for k in self.splines.keys(): ##:: ['x1','x3']
-            self.splines[k].set_coefficients(free_coeffs=subs[k]) ##:: self._indep_coeffs = free_coeffs (self.splines[k]._indep_coeffs=free_coeffs) makes symbols changing into numbers. {'x1': <Spline object>, 'x3': <Spline object>}, Spline._P[k] saves the polynomial.
+            self.splines[k].set_coefficients(free_coeffs=subs[k]) ##:: self._indep_vars = free_coeffs (self.splines[k]._indep_coeffs=free_coeffs) makes symbols changing into numbers. {'x1': <Spline object>, 'x3': <Spline object>}, Spline._P[k] saves the polynomial.
         # yet another dictionary for solution and coeffs
-#       ##!! indep_coeffs['z_par'] = np.array([sp.symbols('k')])
-#       ##!! self.indep_coeffs = indep_coeffs
+#       ##!! indep_vars['z_par'] = np.array([sp.symbols('k')])
+#       ##!! self.indep_vars = indep_vars
         
         coeffs_sol = dict()
 
@@ -291,7 +291,7 @@ class Trajectory(object):
         i = 0
         j = 0
 
-        for k, v in sorted(self.indep_coeffs.items(), key=lambda (k, v): k): ##:: ['x1': array([0.12,0.13,...,]), 'x3':...] symbols change into numbers
+        for k, v in sorted(self.indep_vars.items(), key=lambda (k, v): k): ##:: ['x1': array([0.12,0.13,...,]), 'x3':...] symbols change into numbers
             j += len(v)
             coeffs_sol[k] = sol_bak[i:j]
             i = j

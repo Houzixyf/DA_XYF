@@ -5,19 +5,13 @@ PyTrajectory as well as its visualisation capabilities.
 
 # import all we need for solving the problem
 from pytrajectory import ControlSystem
-import numpy as np
-from sympy import cos, sin
-from numpy import pi
 
 # the next imports are necessary for the visualisatoin of the system
-import sys
-import matplotlib as mpl
-from pytrajectory.visualisation import Animation
 
 
 # first, we define the function that returns the vectorfield
 def f(x, u, par):
-    x1, x2 = x  # system variables
+    x1, x2= x  # system variables
     u1, = u  # input variable
     k = par[0]
 
@@ -39,7 +33,7 @@ ua = [0.0]
 ub = [0.0]
 par = [1.23, 2.0]
 # now we create our Trajectory object and alter some method parameters via the keyword arguments
-S = ControlSystem(f, a, b, xa, xb, ua, ub, su=2, sx=2, kx=2, use_chains=False, k=par[0])
+S = ControlSystem(f, a, b, xa, xb, ua, ub, su=1, sx=1, kx=2, use_chains=False, k=par[0])
 
 # time to run the iteration
 x, u, par[0] = S.solve()

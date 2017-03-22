@@ -108,7 +108,7 @@ class Spline(object):
         self._dep_array_abs = None  ##:: np.array([])
         
         # steady flag is True if smoothness and boundary conditions are solved
-        # --> make_steady()
+        # --> make_smooth_C2()
         self._steady_flag = False
         
         # provisionally flag is True as long as there are no numerical values
@@ -134,7 +134,7 @@ class Spline(object):
                    use_std_approach=not self._use_std_approach)
         
         # solve smoothness conditions to get dependence arrays
-        S.make_steady()
+        S.make_smooth_C2()
         
         # copy the attributes of the spline
         self._dep_array = S._dep_array
@@ -213,11 +213,11 @@ class Spline(object):
     def boundary_values(self, value):
         self._boundary_values = value
     
-    def make_steady(self):
+    def make_smooth_C2(self):
         '''
-        Please see :py:func:`pytrajectory.splines.make_steady`
+        Please see :py:func:`pytrajectory.splines.make_smooth_C2`
         '''
-        make_steady(S=self)
+        make_smooth_C2(S=self)
         self._indep_coeffs_sym = self._indep_coeffs.copy()
     # array([cx1_0_0, cx1_1_0, cx1_2_0, ..., cx1_8_0, cx1_9_0, cx1_0_2])
     def differentiate(self, d=1, new_tag=''):
@@ -550,7 +550,7 @@ def differentiate(spline_fnc):
     else:
         raise NotImplementedError()
     
-def make_steady(S):
+def make_smooth_C2(S):
     '''
     This method sets up and solves equations that satisfy boundary conditions and
     ensure steadiness and smoothness conditions of the spline `S` in every joining point.
@@ -830,7 +830,7 @@ def _switch_coeffs(S, all_coeffs=False, dep_arrays=None):
             S = Spline(a=S.a, b=S.b, n=S.n,
                        bv=S._boundary_values,
                        use_std_approach=not S._use_std_approach)
-            S.make_steady()
+            S.make_smooth_C2()
 
             new_M = S._dep_array
             new_m = S._dep_array_abs
@@ -859,7 +859,7 @@ if __name__ == '__main__':
           1 : [1.0, 0.0]}
     
     A = Spline(a=0.0, b=1.0, n=10, bv=bv, use_std_approach=True)
-    A.make_steady()
+    A.make_smooth_C2()
 
     s = np.size(A._indep_coeffs)
     c = np.random.randint(0, 10, s)
