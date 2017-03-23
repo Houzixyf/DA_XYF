@@ -36,8 +36,8 @@ par = [1.23, 2.0]
 S = ControlSystem(f, a, b, xa, xb, ua, ub, su=1, sx=1, kx=2, use_chains=False, k=par) # k must be a list
 
 # time to run the iteration
-x, u, par[0] = S.solve()
-print('x1(b)={}, x2(b)={}, u(b)={}, k={}'.format(S.sim_data[1][-1][0], S.sim_data[1][-1][1], S.sim_data[2][-1][0], S.sim_data[-1][0]))
+x, u, par = S.solve()
+print('x1(b)={}, x2(b)={}, u(b)={}, k={}'.format(S.sim_data[1][-1][0], S.sim_data[1][-1][1], S.sim_data[2][-1][0], S.sim_data[-1][0][0]))
 
 # now that we (hopefully) have found a solution,
 # we can visualise our systems dynamic
