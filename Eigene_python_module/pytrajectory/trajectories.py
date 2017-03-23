@@ -237,8 +237,8 @@ class Trajectory(object):
         indep_vars = dict()
         for ss in splines.keys(): ##:: because key of dict(splines) is only 'upper' (splines[upper]), ##:: splines{'x1': class Spline, 'x3': class Spline}
             indep_vars[ss] = splines[ss]._indep_coeffs ##:: indep_coeffs[x1] = array([cx1_0_0, cx1_1_0, cx1_2_0, ..., cx1_14_0, cx1_15_0, cx1_16_0])
-        indep_vars['z_par'] = np.array([sp.symbols('k')])
-
+        for pp in xrange(self.sys.n_par):
+            indep_vars['z_par_{}'.format(pp + 1)] = np.array([sp.symbols('k{}'.format(pp))])
         self.indep_vars = indep_vars
         self.splines = splines
         self.x_fnc = x_fnc ##:: x_fnc={'x2': <bound method Spline.f of <pytrajectory.splines.Spline object >>, 'x3': <bound method Spline.f of <pytrajectory.splines.Spline object>>, 'x1': <bound method Spline.f of <pytrajectory.splines.Spline object>>, 'x4': <bound method Spline.f of <pytrajectory.splines.Spline object>>}

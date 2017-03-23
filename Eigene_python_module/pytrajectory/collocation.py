@@ -46,13 +46,13 @@ class CollocationSystem(object):
         
         # set parameters
         self._parameters = dict()
-        self._parameters['tol'] = kwargs.get('tol', 1e-5) ##:: Toleranz
+        self._parameters['tol'] = kwargs.get('tol', 1e-5) ##:: Tolerance
         self._parameters['reltol'] = kwargs.get('reltol', 2e-5)
         self._parameters['sol_steps'] = kwargs.get('sol_steps', 100)
         self._parameters['method'] = kwargs.get('method', 'leven')
         self._parameters['coll_type'] = kwargs.get('coll_type', 'equidistant')
         self._parameters['z_par'] = kwargs.get('k', 1.0)
-        
+        ##!! self.n_par = self._parameters['z_par'].__len__()
         # we don't have a soution, yet
         self.sol = None
         
@@ -61,11 +61,11 @@ class CollocationSystem(object):
         # and its jacobian `DG` (--> see self.build())
         f = sys.f_sym(sp.symbols(sys.states), sp.symbols(sys.inputs), sp.symbols(sys.par) ) ##:: f_sym is a function, but here the self-variable are already input, so f is value, not function. f = array([x2, u1, x4, -u1*(0.9*cos(x3) + 1) - 0.9*x2**2*sin(x3)])
         
-        # TODO: check order of variables of differentiation ([x,u] vs. [u,x])
+        # TODO_ok: check order of variables of differentiation ([x,u] vs. [u,x])
         #       because in dot products in later evaluation of `DG` with vector `c`
         #       values for u come first in `c`
         
-        # TODO: remove this comment after reviewing the problem
+        # TODO_ok: remove this comment after reviewing the problem
         # previously the jacobian was calculated wrt to strings which triggered strange
         # strange sympy behavior (bug) for systems with more than 9 variables
         # workarround: we use real symbols now
@@ -144,9 +144,10 @@ class CollocationSystem(object):
         DXUP = []
         n_states = self.sys.n_states
         n_inputs = self.sys.n_inputs
+        n_par = self.sys.n_par
 
         for i in xrange(n_cpts):
-            DXUP.append(np.vstack(( MC.Mx[n_states * i : n_states * (i+1)].toarray(), MC.Mu[n_inputs * i : n_inputs * (i+1)].toarray(), MC.Mp[1 * i : 1 * (i+1)].toarray() )))
+            DXUP.append(np.vstack(( MC.Mx[n_states * i : n_states * (i+1)].toarray(), MC.Mu[n_inputs * i : n_inputs * (i+1)].toarray(), MC.Mp[n_par * i : n_par * (i+1)].toarray() )))
             
         # XU_old = DXU
         DXUP = np.vstack(DXUP)
@@ -184,7 +185,7 @@ class CollocationSystem(object):
             X = np.array(X).reshape((n_states, -1),
                                  order='F')  ##:: X = array([[S1(0), S1(0.5), S1(1)],[S2(0),S2(0.5),S2(1)]])
             U = np.array(U).reshape((n_inputs, -1), order='F')
-            P = np.array(P).reshape((1, -1), order='F')
+            P = np.array(P).reshape((n_par, -1), order='F') ##:: P = array([[k1,k1,k1],[k2,k2,k2]])
 
             return X, U, P
 
@@ -200,15 +201,15 @@ class CollocationSystem(object):
             :return:
             """
             ##for debugging symbolic display
-#            symbeq = True
-#            c = np.hstack(sorted(self.trajectories.indep_vars.values(), key=lambda arr: arr[0].name))
+            # symbeq = True
+            # c = np.hstack(sorted(self.trajectories.indep_vars.values(), key=lambda arr: arr[0].name))
 
 
             # we can only multiply dense arrays with "symbolic arrays" (dtype=object)
             sparseflag = symbeq ##!! not
             X, U, P = get_X_U_P(c, sparseflag)
 
-            # TODO: check if both spline approaches result in same values here
+            # TODO_ok: check if both spline approaches result in same values here
 
             # evaluate system equations and select those related
             # to lower ends of integrator chains (via eqind)
@@ -256,8 +257,8 @@ class CollocationSystem(object):
             """
 
             # for debugging symbolic display
-#            symbeq = True
-#            c = np.hstack(sorted(self.trajectories.indep_vars.values(), key=lambda arr: arr[0].name))
+            # symbeq = True
+            # c = np.hstack(sorted(self.trajectories.indep_vars.values(), key=lambda arr: arr[0].name))
             
             # we can only multiply dense arrays with "symbolic arrays" (dtype=object)
             # first we calculate the x and u values in all collocation points
@@ -371,7 +372,7 @@ class CollocationSystem(object):
 
         lx = len(cpts) * self.sys.n_states ##:: number of points * number of states
         lu = len(cpts) * self.sys.n_inputs
-        lp = len(cpts) * 1
+        lp = len(cpts) * self.sys.n_par
         
         # initialize sparse dependence matrices
         Mx = sparse.lil_matrix((lx, n_dof))
@@ -429,7 +430,7 @@ class CollocationSystem(object):
                 # get dependence vector for the collocation point and spline variable
                 mp, mp_abs = self.get_dependence_vectors_p(p) # actually it is no need to call the function since mp is always 1.0 and mp_abs always 0.
 
-                k = ip * 1 + ipar
+                k = ip * self.sys.n_par + ipar
                 
                 Mp[k, i:j] = mp # mp = 1
                 Mp_abs[k] = mp_abs    # mp_abs = 0
@@ -487,8 +488,10 @@ class CollocationSystem(object):
                 free_vars_all = np.hstack(self.trajectories.indep_vars.values()) ##:: self.trajectories.indep_vars.values() contains all the free-par. (5*11), free_coeffs_all = array([cx3_0_0, cx3_1_0, ..., cx3_8_0, cx1_0_0, ..., cx1_14_0, cx1_15_0, cx1_16_0, k]
                 guess = 0.1 * np.ones(free_vars_all.size) ##:: init. guess = 0.1
                 ##!! itemindex = np.argwhere(free_coeffs_all == sp.symbols('k'))
-                # Todo: change guess to guess[-nz:]
+                # Todo: change guess to guess[-n_par:]
+                guess[-self.sys.n_par:] = self._parameters['z_par']
                 #guess[-1] = self._parameters['z_par'] # in 1st round, the last element of guess is the value of z_par
+
                 from IPython import embed as IPS
                 #IPS()
                 
@@ -516,13 +519,13 @@ class CollocationSystem(object):
                         free_vars_guess = 0.1 * np.ones(len(v))
 
                     guess = np.hstack((guess, free_vars_guess))
-                    guess[-1] = self._parameters['z_par']
+                    guess[-self.sys.n_par:] = self._parameters['z_par']
         else:
             guess = np.empty(0)
             # now we compute a new guess for every free coefficient of every new (finer) spline
             # by interpolating the corresponding old (coarser) spline
             for k, v in sorted(self.trajectories.indep_vars.items(), key = lambda (k, v): k):
-                # TODO: introduce a parameter `ku` (factor for increasing spline resolution for u)
+                # TODO_ok: introduce a parameter `ku` (factor for increasing spline resolution for u)
                 # formerly its spline resolution was constant
                 # (from that period stems the following if-statement)
                 # currently the input is handled like the states
@@ -545,7 +548,7 @@ class CollocationSystem(object):
                     guess = np.hstack((guess, free_vars_guess))
                     
                 elif (spline_type == 'p'):
-                    guess = np.hstack((guess, self.sol[-1])) # sequence of guess is (u,x,p)
+                    guess = np.hstack((guess, self.sol[-self.sys.n_par:])) # sequence of guess is (u,x,p)
         
         # the new guess
         self.guess = guess

@@ -72,11 +72,9 @@ class ControlSystem(object):
         self._parameters['maxIt'] = kwargs.get('maxIt', 10)
         self._parameters['eps'] = kwargs.get('eps', 1e-2)
         self._parameters['ierr'] = kwargs.get('ierr', 1e-1)
-        ##:: self._parameters['z_par'] = kwargs.get('k', 1.0)
 
         # create an object for the dynamical system
-        self.dyn_sys = DynamicalSystem(f_sym=ff, a=a, b=b, xa=xa, xb=xb, ua=ua, ub=ub)
-
+        self.dyn_sys = DynamicalSystem(f_sym=ff, a=a, b=b, xa=xa, xb=xb, ua=ua, ub=ub, **kwargs)
         # handle eventual system constraints
         self.constraints = constraints
         if self.constraints is not None:
@@ -370,7 +368,7 @@ class ControlSystem(object):
         for x in x_vars:
             start.append(start_dict[x])
         # create simulation object
-        S = Simulator(ff, T, start, self.eqs.trajectories.u, z_par0 = self.park[0])
+        S = Simulator(ff, T, start, self.eqs.trajectories.u, z_par = self.park)
         
         logging.debug("start: %s"%str(start))
         
@@ -531,11 +529,13 @@ class DynamicalSystem(object):
         The initial and final conditions for the input variables
     '''
 
-    def __init__(self, f_sym, a=0., b=1., xa=[], xb=[], ua=[], ub=[]):
+    def __init__(self, f_sym, a=0., b=1., xa=[], xb=[], ua=[], ub=[], **kwargs):
         self.f_sym = f_sym
         self.a = a
         self.b = b
 
+        self.z_par = kwargs.get('k', [1.0])
+        self.n_par = self.z_par.__len__()
         # analyse the given system
         self.n_states, self.n_inputs = self._determine_system_dimensions(n=len(xa))
 
@@ -546,7 +546,7 @@ class DynamicalSystem(object):
         #Todo: if self.par is a list,then the following 2 sentences
         # self.par = []
         # self.par.append(tuple('z_par')) ##:: [('z_par',)]
-        self.par = tuple(['z_par'])
+        self.par = tuple(['z_par_{}'.format(k+1) for k in xrange(self.n_par)]) # z_par_1, z_par_2, ...
         # init dictionary for boundary values
         self.boundary_values = self._get_boundary_dict_from_lists(xa, xb, ua, ub)
 

@@ -33,7 +33,7 @@ ua = [0.0]
 ub = [0.0]
 par = [1.23, 2.0]
 # now we create our Trajectory object and alter some method parameters via the keyword arguments
-S = ControlSystem(f, a, b, xa, xb, ua, ub, su=1, sx=1, kx=2, use_chains=False, k=par[0])
+S = ControlSystem(f, a, b, xa, xb, ua, ub, su=1, sx=1, kx=2, use_chains=False, k=par) # k must be a list
 
 # time to run the iteration
 x, u, par[0] = S.solve()
