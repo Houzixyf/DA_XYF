@@ -23,7 +23,7 @@ class Simulator(object):
         Time step.
     '''
 
-    def __init__(self, ff, T, start, u, z_par0, dt=0.01):
+    def __init__(self, ff, T, start, u, z_par, dt=0.01):
         self.ff = ff
         self.T = T
         self.u = u # self.eqs.trajectories.u
@@ -32,7 +32,7 @@ class Simulator(object):
         # this is where the solutions go
         self.xt = []
         self.ut = []
-        self.pt = [z_par0]
+        self.pt = z_par
         # time steps
         self.t = []
 

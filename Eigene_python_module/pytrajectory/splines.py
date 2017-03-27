@@ -571,7 +571,7 @@ def make_smooth_C2(S):
     
     # get spline coefficients and interval size
     coeffs = S._coeffs ##:: =self._coeffs=array([[cxi_0_0,...,cxi_0_3],...,[cxi_9_0,...,cxi_9_3]])
-    h = S._h 
+    h = S._h
     
     # nu represents degree of boundary conditions
     nu = -1 ##:: equations about boundary conditions at the begin and end of the spline

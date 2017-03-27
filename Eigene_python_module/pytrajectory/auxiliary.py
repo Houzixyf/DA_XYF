@@ -223,13 +223,12 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, p_sym, vectorized=False, cse=False)
     '''
 
     # make sure we got symbols as arguments
-     
 
     # get a representation of the symbolic vector field
     if callable(f_sym):
         if all(isinstance(s, sp.Symbol) for s in x_sym + u_sym + p_sym):
-            p_sym=['z_par']
-            F_sym = f_sym(x_sym, u_sym, sp.symbols(list(p_sym)))
+            # p_sym=['z_par_{}'.format(k+1) for k in xrange(len(p_sym))] # ['z_par']
+            F_sym = f_sym(x_sym, u_sym, p_sym) # sp.symbols(list(p_sym))
         elif all(isinstance(s, str) for s in x_sym + u_sym + p_sym):
             F_sym = f_sym(sp.symbols(x_sym), sp.symbols(u_sym), sp.symbols(list(p_sym))) ##:: ((x1, x2, x3, x4), (u1,), [k])
     else:

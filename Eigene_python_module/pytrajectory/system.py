@@ -281,7 +281,7 @@ class ControlSystem(object):
             elif self.nIt >= 3:
                 logging.info("{}th Iteration: {} spline parts".format(self.nIt+1, self.eqs.trajectories.n_parts_x))
 
-            print('k = {}'.format(self.park[0]))
+            print('k = {}'.format(self.par[0]))
             # start next iteration step
             self._iterate()
 
@@ -295,7 +295,7 @@ class ControlSystem(object):
         
         self.T_sol = time.time() - T_start
         # return the found solution functions
-        return self.eqs.trajectories.x, self.eqs.trajectories.u, self.park[0] # self.eqs.trajectories.x, self.eqs.trajectories.u are functions, variable is t.  x(t), u(t) (value of x and u at t moment, not all the values (not a list with values for all the time))
+        return self.eqs.trajectories.x, self.eqs.trajectories.u, self.par # self.eqs.trajectories.x, self.eqs.trajectories.u are functions, variable is t.  x(t), u(t) (value of x and u at t moment, not all the values (not a list with values for all the time))
 
     def _iterate(self):
         '''
@@ -329,7 +329,7 @@ class ControlSystem(object):
         
         # Solve the collocation equation system
         sol, par = self.eqs.solve(G, DG) ##:: len(sol)=free-parameter, type(sol)=<type 'numpy.ndarray'>
-        self.park = par
+        self.par = par
         # Set the found solution
         self.eqs.trajectories.set_coeffs(sol)
         ##!! par = self.eqs.solver.call_par() # np.array
@@ -368,7 +368,7 @@ class ControlSystem(object):
         for x in x_vars:
             start.append(start_dict[x])
         # create simulation object
-        S = Simulator(ff, T, start, self.eqs.trajectories.u, z_par = self.park)
+        S = Simulator(ff, T, start, self.eqs.trajectories.u, z_par = self.par)
         
         logging.debug("start: %s"%str(start))
         
@@ -395,7 +395,7 @@ class ControlSystem(object):
         a = self.sim_data[0][0]
         b = self.sim_data[0][-1]
         xt = self.sim_data[1]
-        par_k = self.park[0]
+        par_k = self.par[0]
         # get boundary values at right border of the interval
         if self.constraints:
             bv = self._dyn_sys_orig.boundary_values
@@ -422,7 +422,7 @@ class ControlSystem(object):
         eps = self._parameters['eps']
         if ierr:
             # calculate maximum consistency error on the whole interval
-            maxH = auxiliary.consistency_error((a,b), self.eqs.trajectories.x, self.eqs.trajectories.u, self.eqs.trajectories.dx, self.dyn_sys.f_num, self.park)
+            maxH = auxiliary.consistency_error((a,b), self.eqs.trajectories.x, self.eqs.trajectories.u, self.eqs.trajectories.dx, self.dyn_sys.f_num, self.par) #park
             
             reached_accuracy = (maxH < ierr) and (max(err) < eps) and (par_k > 0.0)
             logging.debug('maxH = %f'%maxH)

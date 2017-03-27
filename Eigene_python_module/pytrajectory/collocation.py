@@ -51,7 +51,7 @@ class CollocationSystem(object):
         self._parameters['sol_steps'] = kwargs.get('sol_steps', 100)
         self._parameters['method'] = kwargs.get('method', 'leven')
         self._parameters['coll_type'] = kwargs.get('coll_type', 'equidistant')
-        self._parameters['z_par'] = kwargs.get('k', 1.0)
+        self._parameters['z_par'] = kwargs.get('k', [1.0])
         ##!! self.n_par = self._parameters['z_par'].__len__()
         # we don't have a soution, yet
         self.sol = None
@@ -100,15 +100,6 @@ class CollocationSystem(object):
         MC = self._build_dependence_matrices(indic)
 
         # TODO: self._build_dependence_matrices should already return this container
-        # MC = Container()
-        # MC.Mx = Mx
-        # MC.Mx_abs = Mx_abs
-        # MC.Mdx = Mdx
-        # MC.Mdx_abs = Mdx_abs
-        # MC.Mu = Mu
-        # MC.Mu_abs = Mu_abs
-        # MC.Mp = Mp
-        # MC.Mp_abs = Mp_abs
 
     # in the later evaluation of the equation system `G` and its jacobian `DG`
         # there will be created the matrices `F` and DF in which every nx rows represent the 
@@ -576,7 +567,7 @@ class CollocationSystem(object):
                              reltol=self._parameters['reltol'],
                              maxIt=self._parameters['sol_steps'],
                              method=self._parameters['method'],
-                             par_k=np.array([self.guess[-1]])) ##!! , itemindex = self.itemindex #
+                             par=np.array(self.guess[-self.sys.n_par:])) ##!! , itemindex = self.itemindex # par_k
 
         # solve the equation system
         self.sol, par = self.solver.solve()
@@ -600,7 +591,7 @@ class CollocationSystem(object):
         save['sol'] = self.sol
     
         # k
-        save['z_par'] = self.sol[-1] 
+        save['z_par'] = self.sol[-self.sys.n_par]
 
         return save
 

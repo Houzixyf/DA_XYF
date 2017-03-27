@@ -35,7 +35,7 @@ class Solver:
     par : np.array
     '''
     # Solver(F=G, DF=DG, x0=self.guess,
-    def __init__(self, F, DF, x0, tol=1e-5, reltol=2e-5, maxIt=100, method='leven', par_k = np.array([0.0])):
+    def __init__(self, F, DF, x0, tol=1e-5, reltol=2e-5, maxIt=100, method='leven', par = np.array([0.0])):
         # x0 = free_param
         self.F = F
         self.DF = DF
@@ -46,7 +46,7 @@ class Solver:
         self.method = method
         # self.itemindex = itemindex
         self.sol = None
-        self.par = par_k
+        self.par = par
     
 
     def solve(self):
@@ -168,7 +168,7 @@ class Solver:
         self.avg_LM_time = T_LM / i
         
         self.sol = x # return (x+h)
-        self.par = np.array([self.sol[-1]]) # self.itemindex
+        self.par = np.array(self.sol[-len(self.par):]) # self.itemindex
 
     # def call_par(self):
     #     return self.par
