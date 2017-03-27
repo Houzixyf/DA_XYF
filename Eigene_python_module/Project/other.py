@@ -5,29 +5,28 @@ import math
 
 # first, we define the function that returns the vectorfield
 def f(x, u, par):
-    x1, x2= x  # system variables
+    x1, x2 = x  # system variables
     u1, = u  # input variable
     k = par[0]
 
     # this is the vectorfield
-    ff = [k*u1,
-          (k-1)*x2]
-    return ff
-    # return [k * eq for eq in ff]
+    ff = [x2**2 + 1,
+          u1]
+    return [k * eq for eq in ff]
 
 
 # then we specify all boundary conditions
 a = 0.0
-xa = [0.0, 1.0]
+xa = [1.0, 0.0]
 
 b = 1.0
-xb = [1.0, math.e]# math.e
+xb = [4*math.e**2 - 16*math.e + 23, 2*math.e - 2] # math.e
 
-ua = [0.0]
-ub = [0.0]
-par = [1.23,2.0]
+ua = [1.0]
+ub = [math.e]
+par = [10.23, 2.0]
 # now we create our Trajectory object and alter some method parameters via the keyword arguments
-S = ControlSystem(f, a, b, xa, xb, ua, ub, su=3, sx=3, kx=2, use_chains=False, k=par)  # k must be a list
+S = ControlSystem(f, a, b, xa, xb, ua, ub, su=4, sx=4, kx=2, use_chains=False, k=par)  # k must be a list
 
 # time to run the iteration
 x, u, par = S.solve()
@@ -63,4 +62,3 @@ plt.xlabel('t')
 plt.ylabel(r'$u_{1}$')
 plt.show()
 
-#  k = 1.9999675611

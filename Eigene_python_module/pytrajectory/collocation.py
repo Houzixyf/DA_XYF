@@ -472,7 +472,6 @@ class CollocationSystem(object):
 
         The solution of this system is the new start value for the solver.
         '''
-
         if not self.trajectories._old_splines:
             # user doesn't define initial value of free coefficients
             if self._first_guess is None:
@@ -513,34 +512,37 @@ class CollocationSystem(object):
                     guess[-self.sys.n_par:] = self._parameters['z_par']
         else:
             guess = np.empty(0)
+            guess_add_finish = False
             # now we compute a new guess for every free coefficient of every new (finer) spline
             # by interpolating the corresponding old (coarser) spline
             for k, v in sorted(self.trajectories.indep_vars.items(), key = lambda (k, v): k):
-                # TODO_ok: introduce a parameter `ku` (factor for increasing spline resolution for u)
-                # formerly its spline resolution was constant
-                # (from that period stems the following if-statement)
-                # currently the input is handled like the states
-                # thus the else branch is switched off
-                if (k != 'z_par'):
-                    spline_type = self.trajectories.splines[k].type
-                elif (k == 'z_par'):
-                    spline_type = 'p'
-                    
-                if (spline_type == 'x') or (spline_type == 'u'):
-                    logging.debug("Get new guess for spline {}".format(k))
-                    
-                    s_new = self.trajectories.splines[k]
-                    s_old = self.trajectories._old_splines[k]
+                if guess_add_finish == False: # must sure that 'self.sys.par' is the last one for 'k'
+                    # TODO_ok: introduce a parameter `ku` (factor for increasing spline resolution for u)
+                    # formerly its spline resolution was constant
+                    # (from that period stems the following if-statement)
+                    # currently the input is handled like the states
+                    # thus the else branch is switched off
+                    if (self.sys.states.__contains__(k) or self.sys.inputs.__contains__(k)):
+                        spline_type = self.trajectories.splines[k].type
+                    elif (self.sys.par.__contains__(k)):
+                        spline_type = 'p'
 
-                    df0 = s_old.df(self.sys.a)
-                    dfn = s_old.df(self.sys.b)
 
-                    free_vars_guess = s_new.interpolate(s_old.f, m0=df0, mn=dfn)
-                    guess = np.hstack((guess, free_vars_guess))
-                    
-                elif (spline_type == 'p'):
-                    guess = np.hstack((guess, self.sol[-self.sys.n_par:])) # sequence of guess is (u,x,p)
-        
+                    if (spline_type == 'x') or (spline_type == 'u'):
+                        logging.debug("Get new guess for spline {}".format(k))
+
+                        s_new = self.trajectories.splines[k]
+                        s_old = self.trajectories._old_splines[k]
+
+                        df0 = s_old.df(self.sys.a)
+                        dfn = s_old.df(self.sys.b)
+
+                        free_vars_guess = s_new.interpolate(s_old.f, m0=df0, mn=dfn)
+                        guess = np.hstack((guess, free_vars_guess))
+
+                    elif (spline_type == 'p' ):#  if self.sys.par is not the last one, then add (and guess_add_finish == False) here.
+                        guess = np.hstack((guess, self.sol[-self.sys.n_par:])) # sequence of guess is (u,x,p)
+                        guess_add_finish = True
         # the new guess
         self.guess = guess
     
