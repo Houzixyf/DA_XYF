@@ -2,64 +2,65 @@
 import numpy as np
 import sympy as sp
 from scipy import sparse
+from collections import OrderedDict
 from scipy import linalg
 
 from log import logging, Timer
 from trajectories import Trajectory
 from solver import Solver
 
-from auxiliary import sym2num_vectorfield
+from auxiliary import sym2num_vectorfield, Container, NanError
 
+from ipHelp import IPS
 
-np.set_printoptions(threshold='nan')    
- 
-
-# from IPython import embed as IPS
-
-class Container(object):
-    """
-    Simple data structure to store additional internal information for
-    debugging and checking the algorithms.
-    Some of the attributes might indeed be neccessary
-    """
-    def __init__(self, **kwargs):
-        for key, value in kwargs.iteritems():
-            self.__setattr__(str(key), value)
+np.set_printoptions(threshold='nan') ##??
 
 
 class CollocationSystem(object):
-    '''
+    """
     This class represents the collocation system that is used
     to determine a solution for the free parameters of the
-    control system, i.e. the independent variables of the
+    control system, i.e. the independent coefficients of the
     trajectory splines.
-    
+
     Parameters
     ----------
-    
+
     sys : system.DynamicalSystem
         Instance of a dynamical system
-    '''
+    """
 
-    def __init__(self, sys, **kwargs):
-        self.sys = sys # sys=self.dyn_sys
-        
+    def __init__(self, masterobject, dynsys, **kwargs):
+        self.masterobject = masterobject  # reference for the supervising object
+
+        self.sys = dynsys  # the dynamical system under consideration
+
         # set parameters
         self._parameters = dict()
-        self._parameters['tol'] = kwargs.get('tol', 1e-5) ##:: Tolerance
+        self._parameters['tol'] = kwargs.get('tol', 1e-5)
         self._parameters['reltol'] = kwargs.get('reltol', 2e-5)
-        self._parameters['sol_steps'] = kwargs.get('sol_steps', 100)
+        self._parameters['sol_steps'] = kwargs.get('sol_steps', 50)
         self._parameters['method'] = kwargs.get('method', 'leven')
         self._parameters['coll_type'] = kwargs.get('coll_type', 'equidistant')
-        self._parameters['z_par'] = kwargs.get('k', [1.0])
+        
+        # TODO: maybe this should be implemented more elegantly
+        self._parameters['z_par'] = kwargs.get('k', [1.0]) # introduce the free parameters
+        
         ##!! self.n_par = self._parameters['z_par'].__len__()
-        # we don't have a soution, yet
+        
+        # yet we don't have objects for solver, soution, guess
+        self.solver = None
         self.sol = None
+        self. guess = None
         
         # create vectorized versions of the control system's vector field
         # and its jacobian for the faster evaluation of the collocation equation system `G`
         # and its jacobian `DG` (--> see self.build())
-        f = sys.f_sym(sp.symbols(sys.states), sp.symbols(sys.inputs), sp.symbols(sys.par) ) ##:: f_sym is a function, but here the self-variable are already input, so f is value, not function. f = array([x2, u1, x4, -u1*(0.9*cos(x3) + 1) - 0.9*x2**2*sin(x3)])
+        
+        ## ??
+        ##:: f_sym is a function, but here the self-variable are already input, so f is value, not function. f = array([x2, u1, x4, -u1*(0.9*cos(x3) + 1) - 0.9*x2**2*sin(x3)])
+        f = sys.f_sym(sp.symbols(sys.states), sp.symbols(sys.inputs), sp.symbols(sys.par) ) 
+        
         
         # TODO_ok: check order of variables of differentiation ([x,u] vs. [u,x])
         #       because in dot products in later evaluation of `DG` with vector `c`
@@ -69,39 +70,44 @@ class CollocationSystem(object):
         # previously the jacobian was calculated wrt to strings which triggered strange
         # strange sympy behavior (bug) for systems with more than 9 variables
         # workarround: we use real symbols now
-        all_symbols = sp.symbols(sys.states + sys.inputs + sys.par) ##:: (x1, x2, x3, x4, u1)
-        Df = sp.Matrix(f).jacobian(all_symbols) ##:: sp.Matrix(f): Matrix([[x2],[u1],[x4],[-u1*(0.9*cos(x3) + 1) - 0.9*x2**2*sin(x3)]])
-
-        self._ff_vectorized = sym2num_vectorfield(f, sys.states, sys.inputs, sys.par, vectorized=True, cse=True)
-        self._Df_vectorized = sym2num_vectorfield(Df, sys.states, sys.inputs, sys.par, vectorized=True, cse=True)
+        all_symbols = sp.symbols(dynsys.states + dynsys.inputs + dynsys.par) 
+        Df = sp.Matrix(f).jacobian(all_symbols)
+        
+        self._ff_vectorized = sym2num_vectorfield(f, dynsys.states, dynsys.inputs, dynsys.par, vectorized=True, cse=True)
+        self._Df_vectorized = sym2num_vectorfield(Df, dynsys.states, dynsys.inputs, dynsys.par, vectorized=True, cse=True)
         self._f = f
         self._Df = Df
-    
-        self.trajectories = Trajectory(sys, **kwargs)
+
+        self.trajectories = Trajectory(masterobject, dynsys, **kwargs)
 
         self._first_guess = kwargs.get('first_guess', None)
 
-    def build(self): # C = self.eqs.build()
-                     # self.eqs = CollocationSystem(sys=self.dyn_sys, **kwargs)
-        '''
+    def build(self):
+         ## C = self.eqs.build()
+         ## self.eqs = CollocationSystem(sys=self.dyn_sys, **kwargs)
+        """
         This method is used to set up the equations for the collocation equation system
         and defines functions for the numerical evaluation of the system and its jacobian.
-        '''
+        """
         logging.debug("Building Equation System")
         
         # make symbols local
-        states = self.sys.states ##:: ('x1', 'x2', 'x3', 'x4')
-        # determine for each spline the index range of its free vars in the concatenated
-        # vector of all free vars
-        indic = self._get_index_dict() ##:: {'x1': (0, 17), 'x2': (0, 17), 'u1': (0, 17), 'x3': (17, 26), 'x4': (17, 26)}, from 0th to 16th coeff. belong to chain (x1,x2,x3), from 17th to 25th belong to chain(x3,x4)
+        states = self.sys.states  ##:: ('x1', 'x2', 'x3', 'x4')
+        inputs = self.sys.inputs
         
+        # determine for each spline the index range of its free coeffs in the concatenated
+        # vector of all free coeffs
+        # Note: this call also sets the variable self.all_free_parameters
+        indic = self._get_index_dict()  ##:: e.g. {'x1': (0, 17), 'x2': (0, 17), 'u1': (0, 17), 'x3': (17, 26), 'x4': (17, 26)}, from 0th to 16th coeff. belong to chain (x1,x2,x3), from 17th to 25th belong to chain(x3,x4)
+
+
         # compute dependence matrices
         # Mx, Mx_abs, Mdx, Mdx_abs, Mu, Mu_abs, Mp, Mp_abs = self._build_dependence_matrices(indic)
         MC = self._build_dependence_matrices(indic)
 
         # TODO: self._build_dependence_matrices should already return this container
 
-    # in the later evaluation of the equation system `G` and its jacobian `DG`
+        # in the later evaluation of the equation system `G` and its jacobian `DG`
         # there will be created the matrices `F` and DF in which every nx rows represent the 
         # evaluation of the control systems vectorfield and its jacobian in a specific collocation
         # point, where nx is the number of state variables
@@ -120,13 +126,15 @@ class CollocationSystem(object):
         # that have to be solved
         delta = 2
         n_cpts = self.trajectories.n_parts_x * delta + 1
+        
+        # relevant for integrator chains
         # this (-> `take_indices`) will be the array with indices of the rows we need
         # 
         # to get these indices we iterate over all rows and take those whose indices
         # are contained in `eqind` (modulo the number of state variables -> `x_len`)
         # when eqind=[3],that is (x4):
         take_indices = np.tile(eqind, (n_cpts,)) + np.arange(n_cpts).repeat(len(eqind)) * len(states)
-        
+
         # here we determine the jacobian matrix of the derivatives of the system state functions
         # (as they depend on the free parameters in a linear fashion its just the above matrix Mdx)
         DdX = MC.Mdx[take_indices, :] ##:: in e.g.4: the 3rd,7th,...row, <21x26 sparse matrix>
@@ -136,11 +144,12 @@ class CollocationSystem(object):
         n_states = self.sys.n_states
         n_inputs = self.sys.n_inputs
         n_par = self.sys.n_par
+        n_vars = n_states + n_inputs + n_par
 
         for i in xrange(n_cpts):
             DXUP.append(np.vstack(( MC.Mx[n_states * i : n_states * (i+1)].toarray(), MC.Mu[n_inputs * i : n_inputs * (i+1)].toarray(), MC.Mp[n_par * i : n_par * (i+1)].toarray() )))
             
-        # XU_old = DXU
+        # DXU_old = DXU  # obsolete
         DXUP = np.vstack(DXUP)
 
         DXUP = sparse.csr_matrix(DXUP)
@@ -161,14 +170,14 @@ class CollocationSystem(object):
 
         self.n_cpts = n_cpts
         DdX = DdX.tocsr()
-
+        
         def get_X_U_P(c, sparse=True):
-
+        
             if sparse: # for debug
                 C = SMC
-                
             else: # original codes
                 C = MC
+
             X = C.Mx.dot(c)[:, None] + C.Mx_abs  ##:: X = [S1(t=0), S2(0), S1(0.5), S2(0.5), S1(1), S2(1)]
             U = C.Mu.dot(c)[:, None] + C.Mu_abs  ##:: U = [Su(t=0), Su(0.5), Su(1)]
             P = C.Mp.dot(c)[:, None] + C.Mp_abs  ##:: init: P = [1.0,1.0,1.0]
@@ -182,7 +191,7 @@ class CollocationSystem(object):
 
 
         # define the callable functions for the eqs
-        
+
         def G(c, info=False, symbeq=False):
             """
             :param c: main argument (free parameters)
@@ -206,7 +215,7 @@ class CollocationSystem(object):
             # to lower ends of integrator chains (via eqind)
             # other equations need not be solved
 
-            # this is the regular path
+            # this is the regular path  ##?? really??
             if symbeq:
                 # reshape flattened X again to nx times nc Matrix
                 # nx: number of states, nc: number of collocation points
@@ -220,27 +229,63 @@ class CollocationSystem(object):
 
                 resC = Container(X, U, P, G=eq_list)
                 return resC
-            
+
             else:
-                F = ff_vec(X, U, P).ravel(order='F').take(take_indices, axis=0)[:,None] ##:: F now numeric
+
+                # original line. split up for separation of penalty terms and better readability
+                # F0 = ff_vec(X, U, P).ravel(order='F').take(take_indices, axis=0)[:,None] ##:: F now numeric
+                
+                F0 = ff_vec(X, U, P)  # shape: (ns + np)  x  nc
+                # ns: number of states
+                # np: number of penalty constraints
+                # nc: number of collocation points
+
+                # now, this 2d array should be rearranged to a flattened vector
+                # the constraint-values should be handled separately (they are not part of ff(x)-xdot)
+                F1 = F0[:n_states, :]
+                C = F0[n_states:, :]
+
+                # ravel-docs:
+                # 'F' means to index the elements in column-major, Fortran-style order, with the
+                # first index changing fastest, and the last index changing slowest.
+                F = F1.ravel(order='F').take(take_indices, axis=0)[:, None]
+
+                
+                
+                # calculate xdot:
                 dX = MC.Mdx.dot(c)[:,None] + MC.Mdx_abs
+                # dX has shape (ns*nc) x 1
+                
                 dX = dX.take(take_indices, axis=0)
                 #dX = np.array(dX).reshape((x_len, -1), order='F').take(eqind, axis=0)
 
                 G = F - dX
-                res = np.asarray(G).ravel(order='F')
+                assert G.shape[1] == 1
+                
+                # now, append the values of the constraints
+                # res = np.asarray(G).ravel(order='F')
+                res = np.concatenate((np.asarray(G).ravel(order='F'), C.ravel(order='F')))
+
     
                 # debug:
                 if info:
                     # see Container docstring for motivation
-                    iC = Container(X=X, U=U, F=F, P=P, dX=dX, res=res)
+                    iC = Container(X=X, U=U, F=F, P=P, dX=dX, res=res, MC=MC)
                     res = iC
     
                 return res
 
-        # and its jacobian
-        def DG(c, symbeq=False):
-            """
+        # save the dimension of the result and the argument for this function
+        # this is correct without penalty constraints
+        G.dim, G.argdim = Mx.shape
+        # TODO: Check if this is correct together with free parameters
+
+        # regard additional constraint equations
+        G.dim += n_cpts*self.sys.n_pconstraints
+
+        # now define jacobian
+        def DG(c, debug=False, symbeq=False):
+             """
             :param c: main argument (free parameters)
             :param symbeq: flag for calling this function with symbolic c
                     (for debugging)
@@ -252,44 +297,92 @@ class CollocationSystem(object):
             # c = np.hstack(sorted(self.trajectories.indep_vars.values(), key=lambda arr: arr[0].name))
             
             # we can only multiply dense arrays with "symbolic arrays" (dtype=object)
+            sparseflag = symbeq  # default: False
+            
             # first we calculate the x and u values in all collocation points
             # with the current numerical values of the free parameters
-            sparseflag = symbeq # not
             X, U, P = get_X_U_P(c, sparseflag)
-            
+
             if symbeq:
+                msg= "this is for debugging and is not yet adapted to the presence of penalty constraints. Should not be hard."
+                raise NotImplementedError(msg)
                 DF_blocks = Df_vec(X,U,P).transpose([2,0,1])
                 DF_sym = linalg.block_diag(*DF_blocks).dot(DXUP.toarray()) ##:: array(dtype=object)
                 if self.trajectories._parameters['use_chains']:
                     DF_sym = DF_sym.take(take_indices, axis=0)
                 DG = DF_sym - SMC.DdX
-                
+
                 # the following makes DG easier to read
                 DG = DG.reshape(self.n_cpts, self.sys.n_states, -1)
 
                 return DG
-                
+
             else:
                 # Todo:
                 # get the jacobian blocks and turn them into the right shape
-                DF_blocks = Df_vec(X,U,P).transpose([2,0,1])
-    
-                # build a block diagonal matrix from the blocks
-                DF_csr = sparse.block_diag(DF_blocks, format='csr').dot(DXUP)
-            
+                DF_blocks0 = Df_vec(X,U,P).transpose([2,0,1])
+                
+                # it might happen that some expressions from the penalty-constraints
+                # like eg (exp(100 - u1)) lead to nan in the lambdified version
+                # -> use sympy evalf as fallback
+
+                flag_arr = np.isnan(DF_blocks0)
+                if np.any(flag_arr):
+                    nan_idcs = np.argwhere(flag_arr)
+                    for i1, i2, i3 in nan_idcs:
+                        x = X[:, i1]
+                        u = U[:, i1]
+                        # TODO: handle free parameters !!
+                        args = zip(self.sys.states, x) + zip(self.sys.inputs, u)
+                        sym_res = np.float(self._Df.subs(args).evalf()[i2, i3])
+                        if np.isnan(sym_res):
+                            msg = "NaN-fallback did not work"
+                            raise NanError(msg)
+                        DF_blocks0[i1, i2, i3] = sym_res
+
+                # index-meaning:
+                # TODO: handle additional free parameters !!
+                # axis: 0 -> collocation point
+                # axis: 1 -> equation (of vectorfiled)
+                # axis: 2 -> variable (x_i or u_j)
+                # DF_blocks0.shape -> nc x (ns + np) x (ns + ni)
+                # nc: collocation points, ns: states, ni: inputs, np: penalty constraints
+
+                # extract the part corresponding to the main vf-equations
+                DF_blocks1 = DF_blocks0[:, :n_states, :]
+                # rearrange this 3d array to a sparse block-diagonal matrix
+                # first axis is the block number (corresponding to the collocation point)
+                # also multiply by DXUP (to get the jac. w.r.t. the (total) free parameters
+                # instead of the specific X and U values)
+                DF_csr_main = sparse.block_diag(DF_blocks1, format='csr').dot(DXUP)
+                
                 # if we make use of the system structure
                 # we have to select those rows which correspond to the equations
                 # that have to be solved
                 if self.trajectories._parameters['use_chains']:
-                    DF_csr = sparse.csr_matrix(DF_csr.toarray().take(take_indices, axis=0))
+                    DF_csr_main = sparse.csr_matrix(DF_csr_main.toarray().take(take_indices, axis=0))
                     # TODO: is the performance gain that results from not having to solve
                     #       some equations (use integrator chains) greater than
                     #       the performance loss that results from transfering the
                     #       sparse matrix to a full numpy array and back to a sparse matrix?
-            
-                DG = DF_csr - DdX
-            
-                return DG
+
+                DG = DF_csr_main - DdX
+
+                # now, extract the part corresponding to the penalty constraints
+                Jac_constr0 = DF_blocks0[:, n_states:, :]
+
+                # arrange these blocks to a blockdiagonal and multiply by DXU (see above)
+                Jac_constr1 = sparse.block_diag(Jac_constr0, format='csr').dot(DXU)
+
+                # now stack this hyperrow below DF_csr0
+                res = sparse.vstack((DG, Jac_constr1))
+
+                return res
+
+        # dbg (call the new functions)
+        z = np.zeros((G.argdim,))
+        G(z)
+        DG(z)
 
         C = Container(G=G, DG=DG,
                       Mx=MC.Mx, Mx_abs=MC.Mx_abs,
@@ -304,30 +397,42 @@ class CollocationSystem(object):
         # store internal information for diagnose purposes
         C.take_indices = take_indices
         self.C = C
+
         return C
 
     def _get_index_dict(self):
-        # here we do something that will be explained after we've done it  ;-)
+        """
+        Determine the order of the free parameters and the corresponding indices for each quantity
+
+        :return:    dict of index-pairs
+        """
+        # see below for explanation
         indic = dict()
         i = 0
         j = 0
+
+        self.all_free_parameters = []  # this means free coeffs for X, U (and additional parameters P?)
     
-        # iterate over spline quantities
-        for k, v in sorted(self.trajectories.indep_vars.items(), key=lambda (k, v): k): ##:: items:(key,value)
-            # increase j by the number of indep variables on which it depends
+        # iterate over spline quantities (OrderedDict)
+        for k, v in self.trajectories.indep_coeffs.items():
+            # increase j by the number of indep coeffs on which it depends
             j += len(v)
-            indic[k] = (i, j) ##:: indic={'x1':(0,17), 'x3':(17,26)}
+            indic[k] = (i, j)
             i = j
-    
+            self.all_free_parameters.extend(v)
+
+        # TODO: Do we have to take care of additional parameters here ??
         # iterate over all quantities including inputs
         # and take care of integrator chain elements
         if self.trajectories._parameters['use_chains']:
             for sq in self.sys.states + self.sys.inputs:
                 for ic in self.trajectories._chains:
-                    if sq in ic: ##:: if sq is a key of ic
-                        indic[sq] = indic[ic.upper]  ##:: {'x1': (0, 17), 'x2': (0, 17), 'u1': (0, 17), 'x3': (17, 26), 'x4': (17, 26)}
+                    if sq in ic:
+                        msg = "Not sure whether self.all_free_parametes is affected."
+                        raise NotImplementedError(msg)
+                        indic[sq] = indic[ic.upper]
     
-        # as promised: here comes the explanation
+        # explanation:
         #
         # now, the dictionary 'indic' looks something like
         #
@@ -337,15 +442,16 @@ class CollocationSystem(object):
         # the 0th up to the 5th item [remember: Python starts indexing at 0 and leaves out the last]
         # belong to the spline created for u1, the items with indices from 6 to 11 belong to the
         # spline created for x1 and so on...
-        
+
         return indic
 
     def _build_dependence_matrices(self, indic):
         # first we compute the collocation points
         cpts = collocation_nodes(a=self.sys.a, b=self.sys.b,
                                  npts=self.trajectories.n_parts_x * 2 + 1,
-                                 coll_type=self._parameters['coll_type']) ##:: cpts = array([ 0.  ,  0.09,  0.18, ...,  1.62,  1.71,  1.8 ]), n_parts_x mot defined by users in e.g.4, default=10
-        x_fnc = self.trajectories.x_fnc ##:: {'x1': methode Spline.f, ...}
+                                 coll_type=self._parameters['coll_type'])
+
+        x_fnc = self.trajectories.x_fnc  ##:: {'x1': methode Spline.f, ...}
         dx_fnc = self.trajectories.dx_fnc
         u_fnc = self.trajectories.u_fnc
 
@@ -354,12 +460,13 @@ class CollocationSystem(object):
         par = self.sys.par
         
         # total number of independent variables
+        # TODO: check if this sorting is consistent with the rest of the code
         free_param = np.hstack(sorted(self.trajectories.indep_vars.values(), key=lambda arr: arr[0].name)) ##:: array([cu1_0_0, cu1_1_0, cu1_2_0, ..., cx4_8_0, cx4_9_0, cx4_0_2, k])
         n_dof = free_param.size
         
         # store internal information:
         self.dbgC = Container(cpts=cpts, indic=indic, dx_fnc=dx_fnc, x_fnc=x_fnc, u_fnc=u_fnc)
-        self.dbgC.free_param=free_param
+        self.dbgC.free_param = free_param
 
         lx = len(cpts) * self.sys.n_states ##:: number of points * number of states
         lu = len(cpts) * self.sys.n_inputs
@@ -381,7 +488,7 @@ class CollocationSystem(object):
         for ip, p in enumerate(cpts):
             for ix, xx in enumerate(states):
                 # get index range of `xx` in vector of all indep variables
-                i,j = indic[xx] ##:: indic = {'x2': (0, 17), 'x3': (17, 26), 'x1': (0, 17), 'u1': (0, 17), 'x4': (17, 26)}
+                i, j = indic[xx] ##:: indic = {'x2': (0, 17), 'x3': (17, 26), 'x1': (0, 17), 'u1': (0, 17), 'x4': (17, 26)}
 
                 # determine derivation order according to integrator chains
                 dorder_fx = _get_derivation_order(x_fnc[xx])
@@ -394,13 +501,13 @@ class CollocationSystem(object):
 
                 k = ip * self.sys.n_states + ix
                 
-                Mx[k, i:j] = mx ##:: Mx.shape = (lx,n_dof)
+                Mx[k, i:j] = mx ##:: Mx.shape = (lx, n_dof)
                 Mx_abs[k] = mx_abs
 
                 Mdx[k, i:j] = mdx
                 Mdx_abs[k] = mdx_abs
                 
-            for iu, uu in enumerate(inputs):
+            for iu, uu in enumerate(self.sys.inputs):
                 # get index range of `xx` in vector of all indep vars
                 i,j = indic[uu]
 
@@ -413,7 +520,7 @@ class CollocationSystem(object):
                 
                 Mu[k, i:j] = mu
                 Mu_abs[k] = mu_abs
-                
+
             for ipar, ppar in enumerate(par):
                 # get index range of `xx` in vector of all indep vars
                 i,j = indic[ppar]
@@ -438,7 +545,8 @@ class CollocationSystem(object):
        
         # return Mx, Mx_abs, Mdx, Mdx_abs, Mu, Mu_abs, Mp, Mp_abs
         return MC
-    
+
+    # TODO: This method was not in the original code. Where is it used??
     def get_dependence_vectors_p(self, p):
         dep_array_k = np.array([1.0]) # dep_array_k is always 1 for p[0]=k
         dep_array_k_abs = np.array([0.0]) # dep_array_k_abs is always 0 for p[0]=k
@@ -458,7 +566,7 @@ class CollocationSystem(object):
         return dep_vec_k, dep_vec_abs_k
 
     def get_guess(self):
-        '''
+        """
         This method is used to determine a starting value (guess) for the
         solver of the collocation equation system.
 
@@ -471,37 +579,28 @@ class CollocationSystem(object):
         in these points.
 
         The solution of this system is the new start value for the solver.
-        '''
-        if not self.trajectories._old_splines:
-            # user doesn't define initial value of free coefficients
-            if self._first_guess is None:
-                free_vars_all = np.hstack(self.trajectories.indep_vars.values()) ##:: self.trajectories.indep_vars.values() contains all the free-par. (5*11), free_coeffs_all = array([cx3_0_0, cx3_1_0, ..., cx3_8_0, cx1_0_0, ..., cx1_14_0, cx1_15_0, cx1_16_0, k]
-                guess = 0.1 * np.ones(free_vars_all.size) ##:: init. guess = 0.1
-                ##!! itemindex = np.argwhere(free_coeffs_all == sp.symbols('k'))
-                # Todo: change guess to guess[-n_par:]
-                guess[-self.sys.n_par:] = self._parameters['z_par']
-                #guess[-1] = self._parameters['z_par'] # in 1st round, the last element of guess is the value of z_par
+        """
 
-                from IPython import embed as IPS
-                #IPS()
-                
-                ##!! self.itemindex = itemindex[0][0]
-                ##!! p = np.array([2.5])
-                ##!! guess = np.hstack((guess,p[0])
-            # user defines initial value of free coefficients
-            else:
+        if not self.trajectories._old_splines:
+            # we are at the first iteration (no old splines exist)
+            if self._first_guess is not None:
+                # user defines initial value of free coefficients
+                assert self.masterobject.refsol is None  # together, `guess` and `refsol` make no sense
+
                 guess = np.empty(0)
+
+                # iterate over the system quantities (x_i, u_j)
             
-                for k, v in sorted(self.trajectories.indep_vars.items(), key = lambda (k, v): k):
+                for k, v in self.trajectories.indep_vars.items():
                     logging.debug("Get new guess for spline {}".format(k))
 
-                    if self._first_guess.has_key(k):
+                    if k in self._first_guess:
                         s = self.trajectories.splines[k]
                         f = self._first_guess[k]
 
                         free_vars_guess = s.interpolate(f)
 
-                    elif self._first_guess.has_key('seed'):
+                    elif 'seed' in self._first_guess:
                         np.random.seed(self._first_guess.get('seed'))
                         free_vars_guess = np.random.random(len(v))
                         
@@ -510,24 +609,60 @@ class CollocationSystem(object):
 
                     guess = np.hstack((guess, free_vars_guess))
                     guess[-self.sys.n_par:] = self._parameters['z_par']
+                    
+            elif self.masterobject.refsol is not None:
+                # TODO: handle free parameters
+                guess = self.interpolate_refsol()
+            
+            
+            else:
+                # first_guess and refsol are None
+                # user neither defines initial value of free coefficients nor reference solution
+
+                free_vars_all = np.hstack(self.trajectories.indep_vars.values())
+                ##:: self.trajectories.indep_vars.values() contains all the free-par. e.g.:
+                ##:: (5 x 11): free_coeffs_all = array([cx3_0_0, cx3_1_0, ..., cx3_8_0, cx1_0_0, ..., cx1_14_0, cx1_15_0, cx1_16_0, k]
+                guess = 0.1 * np.ones(free_vars_all.size) ##:: init. guess = 0.1
+                ##!! itemindex = np.argwhere(free_coeffs_all == sp.symbols('k'))
+                # Todo: change guess to guess[-n_par:]
+                guess[-self.sys.n_par:] = self._parameters['z_par']
+                #guess[-1] = self._parameters['z_par'] # in 1st round, the last element of guess is the value of z_par
+
+
+                ##!! self.itemindex = itemindex[0][0]
+                ##!! p = np.array([2.5])
+                ##!! guess = np.hstack((guess,p[0])
+
+            # TODO: Check inendation levels (mistake is probable)
+
+
+
+
         else:
+            # old_splines do exist
             guess = np.empty(0)
             guess_add_finish = False
             # now we compute a new guess for every free coefficient of every new (finer) spline
             # by interpolating the corresponding old (coarser) spline
-            for k, v in sorted(self.trajectories.indep_vars.items(), key = lambda (k, v): k):
-                if guess_add_finish == False: # must sure that 'self.sys.par' is the last one for 'k'
-                    # TODO_ok: introduce a parameter `ku` (factor for increasing spline resolution for u)
+            for k, v in self.trajectories.indep_vars.items():
+                if guess_add_finish == False: # must be sure that 'self.sys.par' is the last one for 'k'
+                    # TODO: introduce a parameter `ku` (factor for increasing spline resolution for u)
                     # formerly its spline resolution was constant
                     # (from that period stems the following if-statement)
                     # currently the input is handled like the states
                     # thus the else branch is switched off
+                    
+                    # This was the original (ck)
+                    ## if True or (self.trajectories.splines[k].type == 'x'):
+                    
+                    # TODO: Examnine signification and simplify
                     if (self.sys.states.__contains__(k) or self.sys.inputs.__contains__(k)):
                         spline_type = self.trajectories.splines[k].type
                     elif (self.sys.par.__contains__(k)):
                         spline_type = 'p'
+                    # TODO: handle unexpected case: exception
 
-
+                    # This is equivalent to `if True` from above
                     if (spline_type == 'x') or (spline_type == 'u'):
                         logging.debug("Get new guess for spline {}".format(k))
 
@@ -537,45 +672,92 @@ class CollocationSystem(object):
                         df0 = s_old.df(self.sys.a)
                         dfn = s_old.df(self.sys.b)
 
-                        free_vars_guess = s_new.interpolate(s_old.f, m0=df0, mn=dfn)
-                        guess = np.hstack((guess, free_vars_guess))
+                        try:
+                            free_coeffs_guess = s_new.interpolate(s_old.f, m0=df0, mn=dfn)
+                        except TypeError as e:
+                            IPS()
+                        guess = np.hstack((guess, free_coeffs_guess))
 
                     elif (spline_type == 'p' ):#  if self.sys.par is not the last one, then add (and guess_add_finish == False) here.
                         guess = np.hstack((guess, self.sol[-self.sys.n_par:])) # sequence of guess is (u,x,p)
                         guess_add_finish = True
+
+                    else:
+                        # FIXME: This code is currently not executed (see remark about `ku` above)
+                        assert False
+                        # if it is a input variable, just take the old solution
+                        guess = np.hstack((guess, self.trajectories._old_splines[k]._indep_coeffs))
+
         # the new guess
         self.guess = guess
-    
-    
-    def solve(self, G, DG):
-        '''
+
+    # TODO: handle free parameters
+    def interpolate_refsol(self):
+        """
+
+        :return:    guess (vector of values for free parameters)
+        """
+        fnc_list = self.masterobject.refsol.xxfncs + self.masterobject.refsol.uufncs
+        assert isinstance(self.trajectories.indep_coeffs, OrderedDict)
+
+        guess = np.empty(0)
+
+        # assume that both fnc_list and indep_coeffs.items() are sorted like
+        # [x1, ... xn, u1, ..., un]
+        for fnc, (k, v) in zip(fnc_list, self.trajectories.indep_coeffs.items()):
+            logging.debug("Get guess from refsol for spline {}".format(k))
+            s_new = self.trajectories.splines[k]
+            free_coeffs_guess = s_new.interpolate(fnc)
+            guess = np.hstack((guess, free_coeffs_guess))
+
+        return guess
+
+    def solve(self, G, DG, new_solver=True):
+        """
         This method is used to solve the collocation equation system.
-        
+
         Parameters
         ----------
-        
+
         G : callable
             Function that "evaluates" the equation system.
-        
+
         DG : callable
             Function for the jacobian.
-        '''
+
+        new_solver : bool
+                     flag to determine whether a new solver instance should
+                     be initialized (default True)
+        """
 
         logging.debug("Solving Equation System")
         
         # create our solver
-        self.solver = Solver(F=G, DF=DG, x0=self.guess, ##:: x0 = [u,x,z_par]
-                             tol=self._parameters['tol'],
-                             reltol=self._parameters['reltol'],
-                             maxIt=self._parameters['sol_steps'],
-                             method=self._parameters['method'],
-                             par=np.array(self.guess[-self.sys.n_par:])) ##!! , itemindex = self.itemindex # par_k
+        ##:: note: x0 = [u,x,z_par]
+        if new_solver:
+            self.solver = Solver(masterobject=self.masterobject, F=G, DF=DG, x0=self.guess,
+                                 tol=self._parameters['tol'],
+                                 reltol=self._parameters['reltol'],
+                                 maxIt=self._parameters['sol_steps'],
+                                 method=self._parameters['method'],
+                                 par=np.array(self.guess[-self.sys.n_par:])) ##!! , itemindex = self.itemindex # par_k
+        else:
+            # assume self.solver exists and at we already did a solution run
+            assert self.solver.solve_count > 0
 
         # solve the equation system
+        
+        # TODO !! par should be part of sol (or at least should be stored in self)
         self.sol, par = self.solver.solve()
         return self.sol, par
 
     def save(self):
+        """
+        create a dictionary which contains all relevant information about that object
+        (used for serialization)
+
+        :return:    dict
+        """
 
         save = dict()
 
@@ -591,7 +773,7 @@ class CollocationSystem(object):
         
         # solution
         save['sol'] = self.sol
-    
+
         # k
         save['z_par'] = self.sol[-self.sys.n_par]
 
@@ -666,13 +848,14 @@ def _get_derivation_order(fnc):
         raise ValueError()
 
 def _build_sol_from_free_coeffs(splines):
-    '''
+    """
     Concatenates the values of the independent coeffs
     of all splines in given dict to build pseudo solution.
-    '''
+    """
 
     sol = np.empty(0)
-    for k, v in sorted(splines.items(), key = lambda (k, v): k):
+    assert isinstance(splines, OrderedDict)
+    for k, v in splines.items():
         assert not v._prov_flag
         sol = np.hstack([sol, v._indep_coeffs])
 

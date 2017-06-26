@@ -35,7 +35,7 @@ def f(x,u, par):
             s*(-m*l*x4**2*c+g*(M+m))/(M*l+m*l*s**2)+c/(M*l+l*m*s**2)*u1
                 ])
 
-    return [k**2 * eq for eq in ff]
+    return [k * eq for eq in ff]
 
 
 # then we specify all boundary conditions
