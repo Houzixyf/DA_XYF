@@ -136,8 +136,9 @@ def find_integrator_chains(dyn_sys):
     state_sym = sp.symbols(dyn_sys.states) # e.g. (x1, x2, x3, x4)
     input_sym = sp.symbols(dyn_sys.inputs) # e.g. (u1,)
     par_sym = sp.symbols(list(dyn_sys.par))
-    f = dyn_sys.f_sym(state_sym, input_sym, par_sym)
-        assert dyn_sys.n_states == len(f)
+    # f = dyn_sys.f_sym(state_sym, input_sym, par_sym)
+    f = dyn_sys.f_sym_matrix
+    assert dyn_sys.n_states == len(f)
 
     chaindict = {}
     for i in xrange(len(f)):
@@ -262,11 +263,15 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, p_sym, vectorized=False, cse=False,
             msg = "unexpected types in {}".format(x_sym + u_sym + p_sym)
             raise TypeError(msg)
 
+        # construct the arguments
+        args = [x_sym, u_sym, p_sym]
         if f_sym.has_constraint_penalties:
             assert evalconstr is not None
-            F_sym = f_sym(x_sym, u_sym, p_sym, evalconstr)
-        else:
-            F_sym = f_sym(x_sym, u_sym, p_sym)
+            args.append(evalconstr)
+
+        # get the the symbolic expression by evaluation
+        F_sym = f_sym(*args)
+
     else:
         # f_sym was not a callable
         if evalconstr is not None:
@@ -291,6 +296,11 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, p_sym, vectorized=False, cse=False,
         raise TypeError(str(sym_type))
 
     if vectorized:
+
+        # TODO: Check and clean up
+        # All this code seems to be obsolete
+        # we now use explicit broadcasting of the result (see below)
+
         # in order to make the numeric function vectorized
         # we have to check if the symbolic expression contains
         # constant numbers as a single expression
@@ -306,10 +316,10 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, p_sym, vectorized=False, cse=False,
                     # we add an expression which evaluates to zero, but enables us
                     # to put an array into the matrix where there is now a single number
                     #
-                    # we just take an arbitrary input, multiply it with 0 and add it
+                    # we just take an arbitrary state, multiply it with 0 and add it
                     # to the current element (constant)
-                    zero_expr = sp.Mul(0.0, sp.Symbol(x_sym[0]), evaluate=False)
-                    F_sym[i,j] = sp.Add(F_sym[i,j], zero_expr, evaluate=False)
+                    zero_expr = sp.Mul(0.0, sp.Symbol(str(x_sym[0])), evaluate=False)
+                    F_sym[i, j] = sp.Add(F_sym[i, j], zero_expr, evaluate=False)
 
     if sym_dim == 1:
         # if the original dimension was equal to one
@@ -331,7 +341,7 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, p_sym, vectorized=False, cse=False,
         _f_num = cse_lambdify(x_sym + u_sym + p_sym, F_sym,
                               modules=[{'ImmutableMatrix': np.array}, 'numpy'])
     else:
-        _f_num = sp.lambdify(x_sym + u_sym, F_sym,
+        _f_num = sp.lambdify(x_sym + u_sym + p_sym, F_sym,
                              modules=[{'ImmutableMatrix': np.array}, 'numpy'])
 
     # create a wrapper as the actual function due to the behaviour
@@ -343,12 +353,14 @@ def sym2num_vectorfield(f_sym, x_sym, u_sym, p_sym, vectorized=False, cse=False,
 
     if sym_dim == 1:
         def f_num(x, u, p):
-            xu = stack((x, u, p))
-            return np.array(_f_num(*xu))
+            xup = stack((x, u, p))
+            raw = _f_num(*xup)  # list of arrays of potentially different length (1 or n)
+            return np.array(np.broadcast_arrays(*raw))
     else:
         def f_num(x, u, p):
-            xu = stack((x, u, p))
-            return _f_num(*xu)
+            xup = stack((x, u, p))
+            raw = _f_num(*xup)  # list of arrays of potentially different length (1 or n)
+            return np.array(np.broadcast_arrays(*raw))
 
     return f_num
 
@@ -369,6 +381,7 @@ def check_expression(expr):
     else:
         if not isinstance(expr, sp.Basic) and not isinstance(expr, sp.Matrix):
             raise TypeError("Not a sympy expression!")
+
 
 def make_cse_eval_function(input_args, replacement_pairs, ret_filter=None, namespace=None):
     """
@@ -887,3 +900,29 @@ def random_refsol_xx(tt, xa, xb, n_points, x_lower, x_upper, seed=0):
         res[:, i] = spln(tt)
 
     return res
+
+
+def reshape_wrapper(arr, dim=None, **kwargs):
+    """
+    This functions is a wrapper to np-reshape that has better handling of zero-sized arrays
+
+    :param arr:
+    :param dim:
+    :return: reshaped array
+    """
+
+    if dim is None:
+        return arr
+    if not len(dim) == 2:
+        raise NotImplementedError()
+    d1, d2 = dim
+    if not d1*d2 == 0:
+        return arr.reshape(dim, **kwargs)
+    else:
+        # one axis has length 0
+        # numpy can not do reshape((0, -1))
+        if d1 == -1:
+            return np.zeros((1, 0))
+        else:
+            return np.zeros((0, 1))
+

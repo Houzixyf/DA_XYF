@@ -2,6 +2,8 @@ import numpy as np
 import inspect
 from scipy.integrate import ode
 
+from ipHelp import IPS
+
 
 class Simulator(object):
     """
@@ -25,7 +27,7 @@ class Simulator(object):
         Time step.
     """
 
-    def __init__(self, ff, T, start, u,, z_par dt=0.01):
+    def __init__(self, ff, T, start, u, z_par, dt=0.01):
         """
 
         :param ff:      vectorfield function

@@ -104,7 +104,7 @@ class Spline(object):
 
             # poly1d expects coeffs in decreasing order ->  [::-1]
             self._P[i] = np.poly1d(self._coeffs[i][::-1])
-            note:  here _P is only for one state/input-component!!
+            ## note:  here _P is only for one state/input-component!!
 
         # initialise array for provisionally evaluation of the spline
         # if there are no values for its free parameters
@@ -498,7 +498,7 @@ class Spline(object):
         # -> allow extrapolation for small excess
         if tt[-1] < self.nodes[-1]:
             dt = tt[1] - tt[0]
-            assert self.nodes[-1] - tt[-1] < dt/100
+            assert self.nodes[-1] - tt[-1] < dt/10
 
         return interp1d(tt, xx, fill_value="extrapolate")
 

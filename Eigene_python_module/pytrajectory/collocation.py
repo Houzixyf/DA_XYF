@@ -9,7 +9,7 @@ from log import logging, Timer
 from trajectories import Trajectory
 from solver import Solver
 
-from auxiliary import sym2num_vectorfield, Container, NanError
+from auxiliary import sym2num_vectorfield, Container, NanError, reshape_wrapper
 
 from ipHelp import IPS
 
@@ -43,8 +43,14 @@ class CollocationSystem(object):
         self._parameters['method'] = kwargs.get('method', 'leven')
         self._parameters['coll_type'] = kwargs.get('coll_type', 'equidistant')
         
-        # TODO: maybe this should be implemented more elegantly
-        self._parameters['z_par'] = kwargs.get('k', [1.0]) # introduce the free parameters
+        tmp_par = kwargs.get('k', [1.0]*self.sys.n_par)
+        if len(tmp_par) > self.sys.n_par:
+            logging.warning("Ignoring superfluous default values for afp.")
+            tmp_par = tmp_par[:self.sys.n_par]
+        elif len(tmp_par) < self.sys.n_par:
+            raise ValueError("Insufficient number of default values for afp.")
+        self._parameters['z_par'] = tmp_par
+
         
         ##!! self.n_par = self._parameters['z_par'].__len__()
         
@@ -59,10 +65,12 @@ class CollocationSystem(object):
         
         ## ??
         ##:: f_sym is a function, but here the self-variable are already input, so f is value, not function. f = array([x2, u1, x4, -u1*(0.9*cos(x3) + 1) - 0.9*x2**2*sin(x3)])
-        f = sys.f_sym(sp.symbols(sys.states), sp.symbols(sys.inputs), sp.symbols(sys.par) ) 
+
+        xx, uu, pp = sp.symbols(dynsys.states), sp.symbols(dynsys.inputs), sp.symbols(dynsys.par)
+        f = dynsys.f_sym(xx, uu, pp)
         
         
-        # TODO_ok: check order of variables of differentiation ([x,u] vs. [u,x])
+        # TODO_ok: check order of variables of differentiation ([x,u] vs. [u, x])
         #       because in dot products in later evaluation of `DG` with vector `c`
         #       values for u come first in `c`
         
@@ -185,7 +193,11 @@ class CollocationSystem(object):
             X = np.array(X).reshape((n_states, -1),
                                  order='F')  ##:: X = array([[S1(0), S1(0.5), S1(1)],[S2(0),S2(0.5),S2(1)]])
             U = np.array(U).reshape((n_inputs, -1), order='F')
-            P = np.array(P).reshape((n_par, -1), order='F') ##:: P = array([[k1,k1,k1],[k2,k2,k2]])
+
+            # TODO: this should be tested with systems with additional free parameters
+            if not n_par == 0:
+                assert P.size % self.n_cpts == 0
+            P = np.array(P).reshape((n_par, n_cpts), order='F')  ##:: P = array([[k1,k1,k1],[k2,k2,k2]])
 
             return X, U, P
 
@@ -203,7 +215,6 @@ class CollocationSystem(object):
             ##for debugging symbolic display
             # symbeq = True
             # c = np.hstack(sorted(self.trajectories.indep_vars.values(), key=lambda arr: arr[0].name))
-
 
             # we can only multiply dense arrays with "symbolic arrays" (dtype=object)
             sparseflag = symbeq ##!! not
@@ -234,7 +245,7 @@ class CollocationSystem(object):
 
                 # original line. split up for separation of penalty terms and better readability
                 # F0 = ff_vec(X, U, P).ravel(order='F').take(take_indices, axis=0)[:,None] ##:: F now numeric
-                
+
                 F0 = ff_vec(X, U, P)  # shape: (ns + np)  x  nc
                 # ns: number of states
                 # np: number of penalty constraints
@@ -250,8 +261,6 @@ class CollocationSystem(object):
                 # first index changing fastest, and the last index changing slowest.
                 F = F1.ravel(order='F').take(take_indices, axis=0)[:, None]
 
-                
-                
                 # calculate xdot:
                 dX = MC.Mdx.dot(c)[:,None] + MC.Mdx_abs
                 # dX has shape (ns*nc) x 1
@@ -277,7 +286,7 @@ class CollocationSystem(object):
 
         # save the dimension of the result and the argument for this function
         # this is correct without penalty constraints
-        G.dim, G.argdim = Mx.shape
+        G.dim, G.argdim = SMC.Mx.shape
         # TODO: Check if this is correct together with free parameters
 
         # regard additional constraint equations
@@ -285,7 +294,7 @@ class CollocationSystem(object):
 
         # now define jacobian
         def DG(c, debug=False, symbeq=False):
-             """
+            """
             :param c: main argument (free parameters)
             :param symbeq: flag for calling this function with symbolic c
                     (for debugging)
@@ -372,7 +381,7 @@ class CollocationSystem(object):
                 Jac_constr0 = DF_blocks0[:, n_states:, :]
 
                 # arrange these blocks to a blockdiagonal and multiply by DXU (see above)
-                Jac_constr1 = sparse.block_diag(Jac_constr0, format='csr').dot(DXU)
+                Jac_constr1 = sparse.block_diag(Jac_constr0, format='csr').dot(DXUP)
 
                 # now stack this hyperrow below DF_csr0
                 res = sparse.vstack((DG, Jac_constr1))
@@ -414,7 +423,7 @@ class CollocationSystem(object):
         self.all_free_parameters = []  # this means free coeffs for X, U (and additional parameters P?)
     
         # iterate over spline quantities (OrderedDict)
-        for k, v in self.trajectories.indep_coeffs.items():
+        for k, v in self.trajectories.indep_vars.items():
             # increase j by the number of indep coeffs on which it depends
             j += len(v)
             indic[k] = (i, j)
@@ -565,6 +574,16 @@ class CollocationSystem(object):
         
         return dep_vec_k, dep_vec_abs_k
 
+    @property
+    def _afp_index(self):
+        """
+        :return: the index from which the additional free parameters begin
+
+        Background:  guess[-self.sys.n_par:] does not work in case of zero parameters
+        """
+        n = len(self.trajectories.indep_var_list)
+        return n - self.sys.n_par
+
     def get_guess(self):
         """
         This method is used to determine a starting value (guess) for the
@@ -585,7 +604,8 @@ class CollocationSystem(object):
             # we are at the first iteration (no old splines exist)
             if self._first_guess is not None:
                 # user defines initial value of free coefficients
-                assert self.masterobject.refsol is None  # together, `guess` and `refsol` make no sense
+                # together, `guess` and `refsol` make no sense
+                assert self.masterobject.refsol is None
 
                 guess = np.empty(0)
 
@@ -608,12 +628,11 @@ class CollocationSystem(object):
                         free_vars_guess = 0.1 * np.ones(len(v))
 
                     guess = np.hstack((guess, free_vars_guess))
-                    guess[-self.sys.n_par:] = self._parameters['z_par']
+                    guess[self._afp_index:] = self._parameters['z_par']
                     
             elif self.masterobject.refsol is not None:
                 # TODO: handle free parameters
                 guess = self.interpolate_refsol()
-            
             
             else:
                 # first_guess and refsol are None
@@ -624,19 +643,16 @@ class CollocationSystem(object):
                 ##:: (5 x 11): free_coeffs_all = array([cx3_0_0, cx3_1_0, ..., cx3_8_0, cx1_0_0, ..., cx1_14_0, cx1_15_0, cx1_16_0, k]
                 guess = 0.1 * np.ones(free_vars_all.size) ##:: init. guess = 0.1
                 ##!! itemindex = np.argwhere(free_coeffs_all == sp.symbols('k'))
-                # Todo: change guess to guess[-n_par:]
-                guess[-self.sys.n_par:] = self._parameters['z_par']
+                guess[self._afp_index:] = self._parameters['z_par']
                 #guess[-1] = self._parameters['z_par'] # in 1st round, the last element of guess is the value of z_par
-
 
                 ##!! self.itemindex = itemindex[0][0]
                 ##!! p = np.array([2.5])
                 ##!! guess = np.hstack((guess,p[0])
 
-            # TODO: Check inendation levels (mistake is probable)
 
-
-
+            # End of case discrimination between first_guess and refsol and None of these
+            # TODO: Check indentation levels (mistake is probable)
 
         else:
             # old_splines do exist
@@ -675,7 +691,8 @@ class CollocationSystem(object):
                         try:
                             free_coeffs_guess = s_new.interpolate(s_old.f, m0=df0, mn=dfn)
                         except TypeError as e:
-                            IPS()
+                            # IPS()
+                            raise e
                         guess = np.hstack((guess, free_coeffs_guess))
 
                     elif (spline_type == 'p' ):#  if self.sys.par is not the last one, then add (and guess_add_finish == False) here.
@@ -698,13 +715,13 @@ class CollocationSystem(object):
         :return:    guess (vector of values for free parameters)
         """
         fnc_list = self.masterobject.refsol.xxfncs + self.masterobject.refsol.uufncs
-        assert isinstance(self.trajectories.indep_coeffs, OrderedDict)
+        assert isinstance(self.trajectories.indep_vars, OrderedDict)
 
         guess = np.empty(0)
 
-        # assume that both fnc_list and indep_coeffs.items() are sorted like
-        # [x1, ... xn, u1, ..., un]
-        for fnc, (k, v) in zip(fnc_list, self.trajectories.indep_coeffs.items()):
+        # assume that both fnc_list and indep_vars.items() are sorted like
+        # [x_1, ... x_n, u_1, ..., u_m, p_1, ..., p_k]
+        for fnc, (k, v) in zip(fnc_list, self.trajectories.indep_vars.items()):
             logging.debug("Get guess from refsol for spline {}".format(k))
             s_new = self.trajectories.splines[k]
             free_coeffs_guess = s_new.interpolate(fnc)
@@ -747,9 +764,8 @@ class CollocationSystem(object):
 
         # solve the equation system
         
-        # TODO !! par should be part of sol (or at least should be stored in self)
-        self.sol, par = self.solver.solve()
-        return self.sol, par
+        self.sol = self.solver.solve()
+        return self.sol
 
     def save(self):
         """
@@ -852,6 +868,8 @@ def _build_sol_from_free_coeffs(splines):
     Concatenates the values of the independent coeffs
     of all splines in given dict to build pseudo solution.
     """
+
+    # TODO: handle additional free parameters in this function
 
     sol = np.empty(0)
     assert isinstance(splines, OrderedDict)
