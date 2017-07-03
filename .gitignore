@@ -23,6 +23,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+*.orig
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -91,5 +92,7 @@ ENV/
 # Pycharm
 
 Eigene_python_module/Project/.idea/
+Eigene_python_module/pytrajectory/.idea/
+
 
 /DG_data.txt
