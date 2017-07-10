@@ -175,7 +175,7 @@ try:
     
     # now, we immediately  apply this new excepthook.
     # consequence: often its sufficient jsut to import this module
-    color_exepthook()
+    #color_exepthook()
     
 
     def ip_extra_syshook(fnc, pdb=0, filename=None):

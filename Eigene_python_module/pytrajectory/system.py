@@ -352,7 +352,7 @@ class TransitionProblem(object):
             for i in range(self.refsol.n_raise_spline_parts):
                 self.eqs.trajectories._raise_spline_parts()
 
-            if 1:
+            if 0:
                 # dbg visualization
 
                 C = self.eqs.trajectories.init_splines(export=True)
@@ -577,7 +577,7 @@ class TransitionProblem(object):
 
             labels = self.dyn_sys.states + self.dyn_sys.inputs
 
-            if 0: #1
+            if 1: #1
                 plt.figure(figsize=fs)
                 for i in xrange(len(data)):
                     plt.subplot(rows, 2, i+1)

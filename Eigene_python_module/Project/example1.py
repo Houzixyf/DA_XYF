@@ -6,8 +6,7 @@ from sympy import sin, cos
 import numpy as np
 from numpy import pi
 # define the function that returns the vectorfield
-def f(x,u,par):
-    k = par[0]
+def f(x,u):
     x1, x2, x3, x4 = x       # system state variables
     u1, = u                  # input variable
 
@@ -34,10 +33,9 @@ xb = [1.0, 0.0, 0.0, 0.0]
 
 ua = [0.0]
 ub = [0.0]
-par = [1]
 # con = {0 : [-0.1, 1.6]}
 # now we create our Trajectory object and alter some method parameters via the keyword arguments
-S = ControlSystem(f, a, b, xa, xb, ua, ub, su=2, sx=2, kx=2, use_chains=False,  par=par,  maxIt=10) #constraints=con,
+S = ControlSystem(f, a, b, xa, xb, ua, ub, su=2, sx=2, kx=2, use_chains=False, maxIt=10) #constraints=con,
 # time to run the iteration
 x, u, par = S.solve()
 print('x1(b)={}, x2(b)={}, u(b)={}, k={}'.format(S.sim_data[1][-1][0], S.sim_data[1][-1][1], S.sim_data[2][-1][0], S.sim_data[-1][0]))

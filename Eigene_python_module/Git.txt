@@ -30,3 +30,7 @@ git mv file_from file_to : e.g. git mv README.md README (rename)
 5.git remote add origin http://github/Houzixyf/DA_XYF
 
 6.git push origin master
+
+版本回退: git reset --hard HEAD^ 回到上一版本
+
+回退到任意版本: 先查版本号 git log 再回退 git reset --hard 版本号
