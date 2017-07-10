@@ -52,7 +52,6 @@ par = [10.23, 2.0]
 S = ControlSystem(f, a, b, xa, xb, ua, ub, su=2, sx=2, kx=2, use_chains=False, k=par)  # k must be a list
 
 # time to run the iteration
-S.solve()
 x, u, par = S.solve()
 print('x1(b)={}, x2(b)={}, u(b)={}, k={}'.format(S.sim_data[1][-1][0], S.sim_data[1][-1][1], S.sim_data[2][-1][0], S.sim_data[-1][0]))
 

@@ -764,8 +764,8 @@ class CollocationSystem(object):
 
         # solve the equation system
         
-        self.sol = self.solver.solve()
-        return self.sol
+        self.sol, k_list  = self.solver.solve()
+        return self.sol, k_list
 
     def save(self):
         """

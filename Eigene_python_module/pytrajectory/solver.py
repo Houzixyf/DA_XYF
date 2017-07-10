@@ -1,5 +1,5 @@
 import numpy as np
-from numpy.linalg import solve, norm
+from numpy.linalg import norm
 import scipy as scp
 import time
 
@@ -105,8 +105,8 @@ class Solver:
             logging.warning("Wrong solver, returning initial value.")
             return self.x0
         else:
-            # TODO: include par into sol??
-            return self.sol
+            # TODO_Ok: include par into sol??
+            return self.sol, self.k_list
 
     def set_weights(self, mode=None):
         """
@@ -161,6 +161,8 @@ class Solver:
         b1 = 0.8
 
         rho = 0.0
+
+        k_list = [self.x0[-1]]
 
         reltol = self.reltol
 
@@ -266,7 +268,7 @@ class Solver:
             
             # store for possible future usage
             self.x0 = xs
-            
+            k_list.append(xs[-1])
             # rho = 0.0
             self.res_old = self.res
             self.res = normFx
@@ -334,7 +336,7 @@ class Solver:
         # -> it might be worth to continue 
 
         self.sol = x
-        
+        self.k_list = k_list
         # TODO: not so good style (redundancy) because `par` is already a part of sol
         # this line does not work in case of len(par) == 0
         # self.par = np.array(self.sol[-len(self.par):]) # self.itemindex

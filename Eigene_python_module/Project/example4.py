@@ -18,55 +18,50 @@ log.console_handler.setLevel(10)
 # first, we define the function that returns the vectorfield
 def f(x,u, par, evalconstr=True):
     k, = par
-    x1, x2, x3, x4 = x       # system state variables
-    u1, = u                  # input variable
+    x1, x2, x3, x4 = x  # state variables
+    u1, = u  # input variable
 
-    l = 0.5     # length of the pendulum rod (distance to center of mass)
-    g = 9.81    # gravitational acceleration
+    e = 0.9  # inertia coupling
 
     s = sin(x3)
     c = cos(x3)
 
-    ff = [  x2,
-            u1,
-            x4,
-            -(1 / l) * (g * sin(x3) + u1 * cos(x3)) # -g/l*s - 1/l*c*u1
-        ]
+    ff = [x2,
+                   u1,
+                   x4,
+                   -e * x2 ** 2 * s - (1 + e * c) * u1
+                   ]
 
-    # ff = [k * eq for eq in ff]
 
     if evalconstr:
-        res = pe(k, 0.1, 10) #  pe(k, 0, 10)
-        ff.append(res)
+            res = pe(k, -5, 5) #  pe(k, 0, 10)
+            ff.append(res)
     return ff
 
 
-if 0:
-    from matplotlib import pyplot as plt
-    from ipHelp import IPS
-    import sympy as sp
-    kk = np.linspace(-6, 6)
-    x = sp.Symbol('x')
-    pefnc = sp.lambdify(x, pe(x, -5, 5), modules='numpy')
-    plt.semilogy(kk, pefnc(kk))
-    plt.show()
+xa = [  0.0,
+        0.0,
+        0.4*np.pi,
+        0.0]
 
+xb = [  0.2*np.pi,
+        0.0,
+        0.2*np.pi,
+        0.0]
 
-# then we specify all boundary conditions
-a = 0.0
-xa = [0.0, 0.0, 0.0, 0.0]
-
-b = 1.0
-xb = [1.0, 0.0, 0.0, 0.0]
-
+# boundary values for the inputs
 ua = [0.0]
 ub = [0.0]
-par = [1, 2.0]
+
+a = 0.0
+b = 1.0
+par = [1.5]
 # now we create our Trajectory object and alter some method parameters via the keyword arguments
 S = ControlSystem(f, a, b, xa, xb, ua, ub,
-                  su=2, sx=2, kx=2, use_chains=False, k=par, sol_steps=100, maxIt=10 )  # k must be a list
+                  su=2, sx=2, kx=2, use_chains=False, k=par, sol_steps=100)  # k must be a list
 
 # time to run the iteration
+S.solve()
 x, u, par = S.solve()
 print('x1(b)={}, x2(b)={}, u(b)={}, k={}'.format(S.sim_data[1][-1][0], S.sim_data[1][-1][1], S.sim_data[2][-1][0], S.eqs.sol[-1]))
 
@@ -110,8 +105,3 @@ for i in ax:
     plt.ylabel(r'$u_{}$'.format(i + 1))
 
 plt.show()
-
-plt.figure(3)
-plt.plot(range(len(S.k_list)), S.k_list, '.')
-plt.show()
-print len(S.k_list)

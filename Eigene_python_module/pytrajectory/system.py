@@ -108,6 +108,7 @@ class TransitionProblem(object):
         self._parameters['accIt'] = kwargs.get('accIt', 5)
         self._parameters['localEsc'] = kwargs.get('localEsc', 0)
         self._parameters['reltol'] = kwargs.get('reltol', 2e-5)
+        self.k_list = []
 
         self.refsol = kwargs.get('refsol', None)  # this serves to reproduce a given trajectory
 
@@ -351,7 +352,7 @@ class TransitionProblem(object):
             for i in range(self.refsol.n_raise_spline_parts):
                 self.eqs.trajectories._raise_spline_parts()
 
-            if 0:
+            if 1:
                 # dbg visualization
 
                 C = self.eqs.trajectories.init_splines(export=True)
@@ -509,8 +510,8 @@ class TransitionProblem(object):
 
         new_solver = True
         while True:
-            self.tmp_sol = self.eqs.solve(G, DG, new_solver=new_solver)
-
+            self.tmp_sol, k_list = self.eqs.solve(G, DG, new_solver=new_solver)
+            self.k_list.extend(k_list)
             # in the following iterations we want to use the same solver
             # object (we just had an intermediate look, whether the solution
             # of the initial value problem is already sufficient accurate.)
@@ -576,7 +577,7 @@ class TransitionProblem(object):
 
             labels = self.dyn_sys.states + self.dyn_sys.inputs
 
-            if 1:
+            if 0: #1
                 plt.figure(figsize=fs)
                 for i in xrange(len(data)):
                     plt.subplot(rows, 2, i+1)
@@ -950,11 +951,7 @@ class DynamicalSystem(object):
         # (will be used as keys in various dictionaries)
         self.states = tuple(['x{}'.format(i+1) for i in xrange(self.n_states)])
         self.inputs = tuple(['u{}'.format(j+1) for j in xrange(self.n_inputs)])
-        
-        # TODO_ck: what does this mean??
-        # Todo_yx: if self.par is a list,then the following 2 sentences
-        # self.par = []
-        # self.par.append(tuple('z_par')) ##:: [('z_par',)]
+
 
         self.par = tuple(['z_par_{}'.format(k+1) for k in xrange(self.n_par)]) # z_par_1, z_par_2,
 
