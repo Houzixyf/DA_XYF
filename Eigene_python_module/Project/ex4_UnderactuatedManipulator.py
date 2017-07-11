@@ -22,9 +22,11 @@ def f(x,u,par):
                     -e*x2**2*s-(1+e*c)*u1
                     ])
     
-    return ff
+    return [k * eq for eq in ff]
 
 # system state boundary values for a = 0.0 [s] and b = 1.8 [s]
+
+
 xa = [  0.0,
         0.0,
         0.4*np.pi,

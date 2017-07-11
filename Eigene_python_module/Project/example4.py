@@ -16,6 +16,12 @@ log.console_handler.setLevel(10)
 
 
 # first, we define the function that returns the vectorfield
+
+
+
+
+
+
 def f(x,u, par, evalconstr=True):
     k, = par
     x1, x2, x3, x4 = x  # state variables
@@ -26,7 +32,7 @@ def f(x,u, par, evalconstr=True):
     s = sin(x3)
     c = cos(x3)
 
-    ff = [x2,
+    ff = [         x2,
                    u1,
                    x4,
                    -e * x2 ** 2 * s - (1 + e * c) * u1
@@ -34,9 +40,10 @@ def f(x,u, par, evalconstr=True):
 
 
     if evalconstr:
-            res = pe(k, -5, 5) #  pe(k, 0, 10)
+            res = pe(k, 0.1, 5) #  pe(k, 0, 10)
             ff.append(res)
-    return ff
+
+    return [k * eq for eq in ff]
 
 
 xa = [  0.0,
@@ -54,14 +61,13 @@ ua = [0.0]
 ub = [0.0]
 
 a = 0.0
-b = 1.0
+b = 1.8
 par = [1.5]
 # now we create our Trajectory object and alter some method parameters via the keyword arguments
 S = ControlSystem(f, a, b, xa, xb, ua, ub,
-                  su=2, sx=2, kx=2, use_chains=False, k=par, sol_steps=100)  # k must be a list
+                  su=20, sx=10, kx=3, use_chains=True, k=par, sol_steps=100)  # k must be a list,  k=par,
 
 # time to run the iteration
-S.solve()
 x, u, par = S.solve()
 print('x1(b)={}, x2(b)={}, u(b)={}, k={}'.format(S.sim_data[1][-1][0], S.sim_data[1][-1][1], S.sim_data[2][-1][0], S.eqs.sol[-1]))
 
