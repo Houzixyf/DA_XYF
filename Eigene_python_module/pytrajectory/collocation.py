@@ -1,6 +1,7 @@
 # IMPORTS
 import numpy as np
 import sympy as sp
+import pickle
 from scipy import sparse
 from collections import OrderedDict
 from scipy import linalg
@@ -186,7 +187,9 @@ class CollocationSystem(object):
             else: # original codes
                 C = MC
 
+            # IPS()
             X = C.Mx.dot(c)[:, None] + C.Mx_abs  ##:: X = [S1(t=0), S2(0), S1(0.5), S2(0.5), S1(1), S2(1)]
+
             U = C.Mu.dot(c)[:, None] + C.Mu_abs  ##:: U = [Su(t=0), Su(0.5), Su(1)]
             P = C.Mp.dot(c)[:, None] + C.Mp_abs  ##:: init: P = [1.0,1.0,1.0]
 
@@ -555,7 +558,7 @@ class CollocationSystem(object):
         # return Mx, Mx_abs, Mdx, Mdx_abs, Mu, Mu_abs, Mp, Mp_abs
         return MC
 
-    # TODO: This method was not in the original code. Where is it used??
+    # TODO: This method was not in the original code. Where is it used?? (line 538)
     def get_dependence_vectors_p(self, p):
         dep_array_k = np.array([1.0]) # dep_array_k is always 1 for p[0]=k
         dep_array_k_abs = np.array([0.0]) # dep_array_k_abs is always 0 for p[0]=k
@@ -629,6 +632,8 @@ class CollocationSystem(object):
 
                     guess = np.hstack((guess, free_vars_guess))
                     guess[self._afp_index:] = self._parameters['z_par']
+
+
                     
             elif self.masterobject.refsol is not None:
                 # TODO: handle free parameters
@@ -650,6 +655,13 @@ class CollocationSystem(object):
                 ##!! p = np.array([2.5])
                 ##!! guess = np.hstack((guess,p[0])
 
+
+
+                cx_cu = False
+                if cx_cu:
+                    load_sol_for_k = open('d:\\cx_cu.plk', 'rb')
+                    guess = pickle.load(load_sol_for_k)
+                    load_sol_for_k.close()
 
             # End of case discrimination between first_guess and refsol and None of these
             # TODO: Check indentation levels (mistake is probable)
@@ -726,7 +738,7 @@ class CollocationSystem(object):
             s_new = self.trajectories.splines[k]
             free_coeffs_guess = s_new.interpolate(fnc)
             guess = np.hstack((guess, free_coeffs_guess))
-
+# guess
         return guess
 
     def solve(self, G, DG, new_solver=True):

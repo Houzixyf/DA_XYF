@@ -1,0 +1,93 @@
+\chapter{Theorie}
+\label{Theorie}
+%Dieser Kapitel befasst sich einige Erläuterungen von Brockett-Bedingung...
+% ====================================================
+\section{Erläuterung zur Brockett-Bedingung}
+\label{Erläuterung zur Brockett-Bedingung}
+In Anbetracht von der mathematische Beschreibung und dem Beweis für Brockett-Bedingung ist zuerst die Erklärung einiger mathematischen Terme notwendig.    
+\begin{description} 
+\item[Stetigkeit(engl. continuous)]\cite{grosche2003teubner}($s.250$)
+:~Es sei $a\subseteq M$. Die Funktion $f:M\subseteq\Reals\to\Reals$ ist genau dann im Punkt $a$ stetig, wenn es zu jeder reellen Zahl $\varepsilon>0$ eine reelle Zahl $\delta>0$ gibt, sodass
+$\left | f\left ( x \right )-f\left ( a \right ) \right |< \varepsilon$ für alle $x\subseteq M$ mit $\left | x-a \right |< \delta $ gilt.  
+\end{description}
+\vspace{-0.8em}
+d.h. eine stetige Funktion erfüllt die Bedingung: wenn der Abstand zweier Elemente der Definitionsmenge infinitesimal ist, muss der Abstand ihrer entsprechenden Wertemenge auch infinitesimal sein.
+\begin{description}
+\item[stetig Differenzierbarkeit(engl. continuously differentiable)]\cite{rudin2009analysis}($s.256$)
+:~Eine differenzierbare Abbildung $\vect{f}:E\subset\Reals^{n}\to \Reals^{m}$ sei stetig differenzierbar in $E$, wenn ${\vect{f}}'$ eine stetige Abbildung von $E$ in $L\left ( \Reals^{n},\Reals^{m} \right )$ ist, wobei $E$ eine offene Menge und $L\left ( X,Y \right )$ Raum linearer Abbildungen ist.
+\item[Typ $C^{k}$(engl. type $C^{k}$)]\cite{grosche2003teubner}($s.265$)
+:~Eine Funktion auf einer offenen Umgebung des Punktes $p$ stetige Ableitungen bis zur Ordnung $k$ besitzt.
+\end{description}
+\vspace{-0.8em}
+Basiert auf die obige Definition hat eine Funktion von Typ $C^{1}$ die Ableitung 1. Ordnung, die auch stetig ist.
+\begin{description}
+\item[Glatte Funktion (engl.: smooth function)]
+\cite[S. 5]{tu2010introduction}:~Ein Synonym für $C^{\infty}$ ist ``Glatt''.
+\end{description}
+\vspace{-0.8em}
+Eine glatte Funktion ist nämlich eine Funktion mit stetigen Ableitungen zur unendlichen Ordnung.
+\begin{description}
+\item[Surjektiv(engl. onto)]\cite{grosche2003teubner}($s.931$)
+:~Gegeben sei die Abbildung $f:X \to Y$. Betrachtet die Gleichung $f\left ( x \right )=y$. Wenn die Gleichung für jedes $y\in Y$ eine Lösung $x\in X$ besitzt, d.h. $f\left ( X \right )=Y$, dann heißt $f$ genau dann \emph{surjektiv}.
+\end{description}
+\vspace{-0.8em}
+Jedes Element $y$ der Wertemenge $Y$ kann erreicht werden, dann ist diese Abbildung surjektiv. 
+\begin{description}
+\item[Homotopie(engl. homotopy)]\cite{}($s.47$)!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+\end{description}
+\vspace{-0.8em}
+\begin{description}
+\item[Häufungspunkt(engl. limit point)]\cite{rudin2009analysis}($s.35$)
+:~Ein Punkt $p$ ist ein \emph{Häufungspunkt} der Menge $E$, wenn in jeder Umgebung von $p$ ein Punkt $q\in E$ mit $q\neq p$ liegt.
+\item[Abgeschlossene Menge(engl. closed set)]\cite{rudin2009analysis}($s.36$)
+:~$E$ heißt abgeschlossen, wenn jeder Häufungspunkt von $E$ in $E$ liegt.
+\item[Beschränkte Menge(engl. bounded set)]\cite{rudin2009analysis}($s.36$)
+:~$E$ ist beschränkt, wenn eine reelle Zahl $M$ und ein Punkt $q\in X$ existieren, sodass der Abstand von $(p,q)$ kleiner als $M$ für alle $p\in E$ gilt. $X$ ist hier ein metrischer Raum, dessen Teilmenge $E$ ist.
+\item[Kompakte Menge(engl. compact set)]\cite{rudin2009analysis}($s.45$)
+:~(Satz,nicht Definition) Falls eine Menge $E$ in $\Reals^{k}$ abgeschlossen und beschränkt, dann ist $E$ kompakt.
+\end{description}
+\vspace{-0.8em}
+Ein sehr einfaches Beispiel für die Erläutung der kompakten Menge $E$ ist z.B. $\left [ 1,2 \right ]$ mit $1$ und $2$ jeweils der linken und rechten Häufungspunkt. %Weil $1$ und $2$ gehört zur $E$ und der Abstand jeder beliebigen zwei Elementen in $E$ kleiner als z.B. $2$. Dagegen ist die Menge \left ( 1,2 \right ) nicht kompakt.  
+\begin{description}
+\item[Niveaumenge(engl. level set)]\cite{tu2010introduction}($s.94$)
+:~Eine Niveaumenge einer Abbildung $f:N \to M$ ist die Submenge $f^{-1}\left ( c \right )= \left \{ p\in N \mid f\left ( p \right )= c\right \}$ für einige $c\in M$.
+\end{description}
+\vspace{-0.8em}
+Also die Niveaumenge $f^{-1}\left ( c \right )$ besteht aus die Elemente der Definitionsmenge, deren Bildmenge eine Konstante $c$ ist.
+\begin{description}
+\item[Distribution]
+\end{description}
+\vspace{-0.8em}
+\begin{description}
+\item[Lokale Lipschitzstetigkeit(engl. locally Lipschitz continuity)]\cite{bronstein2012taschenbuch}($s.553$)
+:~Lipschitz-Bedingung bezüglich $y$ ist die Forderung $\left | f\left ( x,t \right ) -f\left ( y,t \right )\right |\leq L\left | x-y \right |$ für alle $\left ( x,t \right )$ und $\left ( y,t \right )$. L ist eine beliebige Konstante.
+\end{description}
+\vspace{-0.8em}
+das heißt, wenn die Ableitung der Funktion von $f$ beschränkt ist, erfordert sie Lipschitz-Bedingung. Die Lipschitzstetigkeit ist stärker als Stetigkeit.
+
+
+Lefschetz-fixed-point-formula, Poincare-Hopf Theorem %没写！！！！！！
+%剩下 同伦（球）和分布！！！！！！
+
+
+
+
+
+
+
+
+
+Ein nichtlineares Zustandsraummodell lässt sich durch Gl. \ref{Zustandsraummodell} darstellen:
+\begin{eqnarray}
+\dot{\vect{x}}\left ( t \right )=\vect{f}\left (\vect{x}\left ( t \right ),u\left ( t \right )  \right ),~~~t\geq 0,~~~\vect{f}:\Reals^{n}\times\Reals^{m}\to\Reals^{n},~~~\vect{f}\left ({\vect{x}_{0}},0  \right )=\vect{0}
+\label{Zustandsraummodell}
+\end{eqnarray}
+mit $\vect{x}$ dem Systemzustand, $\vect{f}$ der nichtlinearen Zustandsfunktion, $u$ der Eingangsgröße und $\vect{x}_{0}$ dem initialen Zustand. 
+
+Jetzt stellt sich die Frage: gibt es die Möglichkeit, dass das obere nichtlineare System um die Ruhelage $\vect{x}=\vect{x}_{0}$ mit einer nichtlinearen Zustandsrückführung (nämlich hier $u$) asymptotisch stabilisierbar sein kann? Zum Antworten der Frage etabliert der amerikanische Mathematiker Roger W. Brockett das folgende berühmte Kriterium\cite{brockett1983asymptotic}:
+\begin{theorem}[Notwendige Bedingung]
+Deutsch oder Englisch???
+\end{theorem}
+Ein leichter verwirrter Punkt dieses Kriterium liegt in die Bedingung von $\vect{f}$ und $u$ in Gl. \ref{Zustandsraummodell}. Nach der Beschreibung des Theorems sind beide $\vect{f}$ und $u$ \emph{stetig differenzierbar}(engl. continuously differentiable), und in dem Beweis zitiert Brockett eine stetig differenzierbare Lyapunov Funktion, die aber im Original \emph{glatt} ist.(siehe \cite{brockett1983asymptotic} s.186 und \cite{wilson1967structure} s.324.) In anderen Literaturen sind auch unterschiedliche Annahmen ermöglicht: \cite{coron2007control} und \cite{orsi2003necessary} setzen $u$ \emph{stetig und zeitinvariant} als bekannt voraus, während $\vect{f}$ jeweils glatt und stetig und zeitinvariant. In \cite{stern2002brockett} und \cite{colonius2012nichtlineare} richten sie sich nach einer strengeren Bedingung: \emph{lokal lipschitz}. Im Buch vom argentinischen Mathematiker Eduardo D. Sontag \cite{sontag2013mathematical} werden die Annahme von $\vect{f}$ und $u$ gleich wie Brockett($C^{1}$). Die vierte strenge Voraussetzung werde von G. Oriolo und Y. Nakamura in \cite{oriolo1991control} aufgestellt, dass $\vect{f}$ \emph{stetig differenzierbar} und $u$ \emph{glatt} sein muss.
+
+Zurück auf Brocketts Beweis 

@@ -1,0 +1,16 @@
+k_ori = 12s (res_ori = 1 * pe(k, 0.1, 15))
+
+res = 1 * pe(k, 0.1, 10)
+
+first_guess = {'seed': 5}
+
+dt_sim = 0.001
+
+S = ControlSystem(f, a, b, xa, xb, ua, ub, su=20, sx=10, kx=3, use_chains=False, k=par, sol_steps=100, dt_sim=dt_sim, first_guess=first_guess, maxIt=2)
+
+t == 0.99
+
+a = 0s  b = 0.01s
+
+ua = ua_ori(0.99)  ub = 0
+

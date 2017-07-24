@@ -33,33 +33,33 @@ def f(x,u, par, evalconstr=True):
             -(1 / l) * (g * sin(x3) + u1 * cos(x3)) # -g/l*s - 1/l*c*u1
         ]
 
-    # ff = [k * eq for eq in ff]
+    ff = [k * eq for eq in ff]
 
     if evalconstr:
-        res = pe(k, 0.1, 10) #  pe(k, 0, 10)
+        res = 1*pe(k, 0.1, 10) #  pe(k, 0, 10)
         ff.append(res)
     return ff
 
-def f(x, u):
-
-    x1, x2, x3, x4 = x       # system state variables
-    u1, = u                  # input variable
-
-    l = 0.5     # length of the pendulum rod (distance to center of mass)
-    g = 9.81    # gravitational acceleration
-
-    s = sin(x3)
-    c = cos(x3)
-
-    ff = [  x2,
-            u1,
-            x4,
-            -(1 / l) * (g * sin(x3) + u1 * cos(x3)) # -g/l*s - 1/l*c*u1
-        ]
-
-    # ff = [k * eq for eq in ff]
-
-    return ff
+# def f(x, u):
+#
+#     x1, x2, x3, x4 = x       # system state variables
+#     u1, = u                  # input variable
+#
+#     l = 0.5     # length of the pendulum rod (distance to center of mass)
+#     g = 9.81    # gravitational acceleration
+#
+#     s = sin(x3)
+#     c = cos(x3)
+#
+#     ff = [  x2,
+#             u1,
+#             x4,
+#             -(1 / l) * (g * sin(x3) + u1 * cos(x3)) # -g/l*s - 1/l*c*u1
+#         ]
+#
+#     # ff = [k * eq for eq in ff]
+#
+#     return ff
 
 
 if 0:
@@ -77,17 +77,17 @@ if 0:
 
 # then we specify all boundary conditions
 a = 0.0
-xa = [1.0, 0.0, 0.0, 0.0]
+xa = [0.0, 0.0, 0.0, 0.0]
 
 b = 1.0
-xb = [0.0, 0.0, 0.0, 0.0]
+xb = [1.0, 0.0, 0.0, 0.0]
 
 ua = [0.0]
 ub = [0.0]
 par = [1, 2.0]
 # now we create our Trajectory object and alter some method parameters via the keyword arguments
 S = ControlSystem(f, a, b, xa, xb, ua, ub,
-                  su=10, sx=10, kx=10, use_chains=False, k=par, sol_steps=100, maxIt=10 )  # k must be a list
+                  su=2, sx=2, kx=2, use_chains=False, k=par, sol_steps=100, maxIt=10 )  # k must be a list
 
 # time to run the iteration
 x, u, par = S.solve()
@@ -134,7 +134,7 @@ for i in ax:
 
 plt.show()
 
-plt.figure(3)
-plt.plot(range(len(S.k_list)), S.k_list, '.')
-plt.show()
-print len(S.k_list)
+# plt.figure(3)
+# plt.plot(range(len(S.k_list)), S.k_list, '.')
+# plt.show()
+# print len(S.k_list)

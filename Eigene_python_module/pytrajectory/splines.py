@@ -496,8 +496,10 @@ class Spline(object):
         # Problem the interpolator will be called later with the nodes as argument
         # -> Error if the nodes are out of bounds
         # -> allow extrapolation for small excess
-        if tt[-1] < self.nodes[-1]:
+        if tt[-1] < self.nodes[-1]: # normally this will not be reached
             dt = tt[1] - tt[0]
+            from IPython import embed as IPS
+            IPS()
             assert self.nodes[-1] - tt[-1] < dt/10
 
         return interp1d(tt, xx, fill_value="extrapolate")

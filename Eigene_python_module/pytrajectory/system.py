@@ -307,6 +307,7 @@ class TransitionProblem(object):
         assert tt[-1] == self.b
 
         if not np.allclose(xx[0, :], self.dyn_sys.xa):
+
             logging.warn("boundary values and reference solution not consistent at Ta")
         if not np.allclose(xx[-1, :], self.dyn_sys.xb):
             logging.warn("boundary values and reference solution not consistent at Tb")
@@ -577,7 +578,7 @@ class TransitionProblem(object):
 
             labels = self.dyn_sys.states + self.dyn_sys.inputs
 
-            if 1: #1
+            if 0: #1
                 plt.figure(figsize=fs)
                 for i in xrange(len(data)):
                     plt.subplot(rows, 2, i+1)
@@ -910,6 +911,11 @@ class DynamicalSystem(object):
         self.z_par = kwargs.get('k', [1.0])
 
         # analyse the given system
+        # if kwargs.has_key('refsol'):
+        #     self.n_states, self.n_inputs, self.n_par = self._determine_system_dimensions(n=len(xa[0]))
+        # else:
+        #     self.n_states, self.n_inputs, self.n_par = self._determine_system_dimensions(n=len(xa))
+
         self.n_states, self.n_inputs, self.n_par = self._determine_system_dimensions(n=len(xa))
 
         # collect some information about penalty constraints

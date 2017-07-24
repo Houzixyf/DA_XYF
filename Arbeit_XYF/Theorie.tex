@@ -1,0 +1,159 @@
+\chapter{Theorie}
+\label{Theorie}
+%Dieser Kapitel befasst sich einige Erläuterungen von Brockett-Bedingung...
+% ====================================================
+\section{Erläuterung zur Brockett-Bedingung}
+\label{Erläuterung zur Brockett-Bedingung}
+In Anbetracht von der mathematische Beschreibung und dem Beweis für Brockett-Bedingung ist zuerst die Erklärung einiger mathematischen Terme notwendig.    
+\begin{description} 
+\item[Stetigkeit (engl.: continuous)]
+\cite[S.250]{grosche2003teubner}:~Es sei $a\subseteq M$. Die Funktion $f:M\subseteq\Reals\to\Reals$ ist genau dann im Punkt $a$ stetig, wenn es zu jeder reellen Zahl $\varepsilon>0$ eine reelle Zahl $\delta>0$ gibt, sodass
+$\left | f\left ( x \right )-f\left ( a \right ) \right |< \varepsilon$ für alle $x\subseteq M$ mit $\left | x-a \right |< \delta $ gilt.  
+\end{description}
+\vspace{-0.8em}
+D.h. eine stetige Funktion erfüllt die Bedingung: wenn der Abstand zweier Elemente der Definitionsmenge infinitesimal ist, muss der Abstand ihrer entsprechenden Wertemenge auch infinitesimal sein.
+\begin{description}
+\item[Stetige Differenzierbarkeit (engl.: continuously differentiable)]
+\cite[S.256]{rudin2009analysis}:~Eine differenzierbare Abbildung $\vect{f}:E\subset\Reals^{n}\to \Reals^{m}$ sei stetig differenzierbar in $E$, wenn ${\vect{f}}'$ eine stetige Abbildung von $E$ in $L\left ( \Reals^{n},\Reals^{m} \right )$ ist, wobei $E$ eine offene Menge und $L\left ( X,Y \right )$ Raum linearer Abbildungen ist.
+\item[Klasse $C^{k}$ (engl.: class $C^{k}$)]
+\cite[S.265]{grosche2003teubner}:~Eine Funktion auf einer offenen Umgebung des Punktes $p$ stetige Ableitungen bis zur Ordnung $k$ besitzt.
+\end{description}
+\vspace{-0.8em}
+Basierend auf die obige Definition hat eine Funktion von Klasse $C^{1}$ die Ableitung 1. Ordnung, die auch stetig ist.
+\begin{description}
+\item[Glatte Funktion (engl.: smooth function)]
+\cite[S.5]{tu2010introduction}:~Ein Synonym für $C^{\infty}$ ist ``Glatt''.
+\end{description}
+\vspace{-0.8em}
+Eine glatte Funktion ist nämlich eine Funktion mit stetigen Ableitungen zur unendlichen Ordnung.
+\begin{description}
+\item[Surjektiv (engl.: onto)]
+\cite[S.931]{grosche2003teubner}:~Gegeben sei die Abbildung $f:X \to Y$. Betrachtet die Gleichung $f\left ( x \right )=y$. Wenn die Gleichung für jedes $y\in Y$ eine Lösung $x\in X$ besitzt, d.h. $f\left ( X \right )=Y$, dann heißt $f$ genau dann \emph{surjektiv}.
+\end{description}
+\vspace{-0.8em}
+Falls jedes Element $y$ der Wertemenge $Y$ kann erreicht werden, dann ist diese Abbildung surjektiv. 
+\begin{description}
+\item[Homotopie (engl.: homotopy)]
+\cite[]{}(noch nicht geschrieben wird.)
+\end{description}
+\vspace{-0.8em}
+\begin{description}
+\item[Häufungspunkt (engl.: limit point)]
+\cite[S.35]{rudin2009analysis}:~Ein Punkt $p$ ist ein \emph{Häufungspunkt} der Menge $E$, wenn in jeder Umgebung von $p$ ein Punkt $q\in E$ mit $q\neq p$ liegt.
+\item[Abgeschlossene Menge (engl.: closed set)]
+\cite[S.36]{rudin2009analysis}:~$E$ heißt abgeschlossen, wenn jeder Häufungspunkt von $E$ in $E$ liegt.
+\item[Beschränkte Menge (engl.: bounded set)]
+\cite[S.36]{rudin2009analysis}:~$E$ ist beschränkt, wenn eine reelle Zahl $M$ und ein Punkt $q\in X$ existieren, sodass der Abstand von $(p,q)$ kleiner als $M$ für alle $p\in E$ gilt. $X$ ist hier ein metrischer Raum, dessen Teilmenge $E$ ist.
+\item[Kompakte Menge (engl.: compact set)]
+\cite[S.45]{rudin2009analysis}:~(Satz, nicht Definition) Falls eine Menge $E$ in $\Reals^{k}$ abgeschlossen und beschränkt, dann ist sie kompakt.
+\end{description}
+\vspace{-0.8em}
+Ein sehr einfaches Beispiel der kompakten Menge $E$ ist z.B. $\left [ 1,2 \right ]$ mit $1$ und $2$ jeweils dem linken und rechten Häufungspunkt. %Weil $1$ und $2$ gehört zur $E$ und der Abstand jeder beliebigen zwei Elementen in $E$ kleiner als z.B. $2$. Dagegen ist die Menge \left ( 1,2 \right ) nicht kompakt.  
+\begin{description}
+\item[Niveaumenge (engl.: level set)]
+\cite[S.94]{tu2010introduction}:~Eine Niveaumenge einer Abbildung $f:N \to M$ ist die Submenge $f^{-1}\left ( c \right )= \left \{ p\in N \mid f\left ( p \right )= c\right \}$ für einige $c\in M$.
+\end{description}
+\vspace{-0.8em}
+Also die Niveaumenge $f^{-1}\left ( c \right )$ besteht aus die Elemente der Definitionsmenge, deren Bildmenge eine Konstante $c$ ist.
+\begin{description}
+\item[Distribution]
+\end{description}
+%\vspace{-0.8em}
+\begin{description}
+\item[Lefschetz-fixed-point-formula]
+\end{description}
+\begin{description}
+\item[Lokale Lipschitzstetigkeit (engl.: locally Lipschitz continuity)]
+\cite[S.553]{bronstein2012taschenbuch}:~Lipschitz-Bedingung bezüglich $y$ ist die Forderung $\left | f\left ( x,t \right ) -f\left ( y,t \right )\right |\leq L\left | x-y \right |$ für alle $\left ( x,t \right )$ und $\left ( y,t \right )$. Inzwischen ist $L$ eine beliebige Konstante.
+\end{description}
+\vspace{-0.8em}
+Das heißt, wenn die Ableitung der Funktion von $f$ beschränkt ist, erfordert sie Lipschitz-Bedingung. Die Lipschitzstetigkeit ist stärker als Stetigkeit.
+
+
+%Lefschetz-fixed-point-formula, Poincare-Hopf Theorem %没写！！！！！！
+
+
+
+
+
+
+
+
+
+
+Ein nichtlineares Zustandsraummodell lässt sich durch Gl. \ref{Zustandsraummodell} darstellen:
+\begin{eqnarray}
+\dot{\vect{x}}\left ( t \right )=\vect{f}\left (\vect{x}\left ( t \right ),u\left ( t \right )  \right ),~~~t\geq 0,~~~\vect{f}:\Reals^{n}\times\Reals^{m}\to\Reals^{n},~~~\vect{f}\left ({\vect{x}_{0}},0  \right )=\vect{0}
+\label{Zustandsraummodell}
+\end{eqnarray}
+mit $\vect{x}$ dem Systemzustand, $\vect{f}$ der nichtlinearen Zustandsfunktion, $u$ der Eingangsgröße und $\vect{x}_{0}$ dem initialen Zustand. 
+
+Jetzt stellt sich die Frage: gibt es die Möglichkeit, dass das obere nichtlineare System um die Ruhelage $\vect{x}=\vect{x}_{0}$ mit einer nichtlinearen Zustandsrückführung (nämlich hier $u$) asymptotisch stabilisierbar sein kann? Zum Antworten der Frage etabliert der amerikanische Mathematiker Roger W. Brockett das folgende berühmte Kriterium\cite{brockett1983asymptotic}:
+\begin{theorem}[Brockett-Bedingung\cite{brockett1983asymptotic}]
+Betrachtet man das System $(\ref{Zustandsraummodell})$ mit $\vect{f}$ stetig differenzierbar in der Umgebung von $(\vect{x}_{0},0)$ ist. Angenommen, dass $(\vect{x}_{0},0)$ in $\Reals^{n}\times\Reals^{m}$ asymptotisch stabil unter einer stetigen differenzierbaren Rückführung $u$ ist, dann ist das Bild der Abbildung
+\begin{center}$\left ( \vect{x},u \right ) \mapsto f\left ( \vect{x},u \right )$\end{center}
+surjektiv zur offenen Menge, die 0 enthält.
+\end{theorem}
+Ein leicht verwirrender Punkt dieses Kriterium liegt in die Bedingungen von $\vect{f}$ und $u$ in Gl. \ref{Zustandsraummodell}. Nach der Beschreibung des Theorems sind beide $\vect{f}$ und $u$ \emph{stetig differenzierbar}, und in dem Beweis zitiert Brockett eine stetig differenzierbare Lyapunov Funktion, die aber im Original \emph{glatt} ist. (siehe \cite[S.186]{brockett1983asymptotic} und \cite[S.324]{wilson1967structure}.) In anderen Literaturen sind auch unterschiedliche Annahmen ermöglicht: \cite{coron2007control} und \cite{orsi2003necessary} setzen $\vect{f}$ und $u$ \emph{stetig und zeitinvariant} als bekannt voraus, während in \cite{stern2002brockett} und \cite{colonius2012nichtlineare} bringen die Autoren strengeren Bedingung vor: \emph{lokal lipschitz}. Im Buch vom argentinischen Mathematiker Eduardo D. Sontag \cite{sontag2013mathematical} werden die Bedingung von $\vect{f}$ und $u$ gleich wie Brockett ($C^{1}$). Eine noch strengere Voraussetzung werde von G. Oriolo und Y. Nakamura in \cite{oriolo1991control} aufgestellt, dass $\vect{f}$ \emph{stetig differenzierbar} und $u$ \emph{glatt} sein muss.
+
+Zurück auf Brocketts Beweis?????????????????????????
+
+\begin{proof}[\textbf{Skizze des Beweises} (\cite{brockett1983asymptotic},\cite{liberzon2012switching})]~Falls die Ruhelage $(\vect{x}_{0},0)$ asymptotisch stabil ist, existiert es nach \cite{wilson1967structure} eine glatte Lyapunov Funktion $V$, die eine sphärischer homotopy Niveaumenge $V^{-1}(c)$ ($c$ eine kleine Konstante) hat. Wegen der Kompaktheit von $V^{-1}(c)$ ist die Richtung von $f(\vect{x},u)$ \emph{in} der Menge $R:= \left \{ \vect{x}:V\left (\vect{x}  \right )\leq c \right \}$. Es existiert auch $\xi \in \Reals^{n}$ mit $\left \| \xi \right \|$ genügend klein, dass $f(\vect{x},u)-\xi$ auch \emph{in} $R$ zeigt. Durch die Anwendung des Fixpunktsatz gilt es $f(\vect{x},u)-\xi=0$ (oder $f(\vect{x},u)=\xi$) für einige $\vect{x}$ in $R$. Weil $\left \| \xi \right \|$ beliebig und sehr klein ist, bedeutet die obige Funktion, dass $f$ lösbar in beliebiger Umgebung von 0 ist.
+\end{proof} %\qed  
+
+\section{Methode zur Lösung des Quadratmittelproblems}
+\label{Methode-zur-Lösung-des-Quadratmittelproblems}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Das Quadratmittelproblem einer Funktionsvektor ist wie folgt definiert\cite{knorrenschild2017numerische}:
+\begin{definition}[Quadratmittelproblem]
+Gegeben ist eine Funktionsvektor ${\vect{F\left (\vect{x}\right )}}: \Reals^{n}\to \Reals^{m}$. Eine Vektor ${\vect{x}^{\ast}}$ ist zu finden, dass die euklidische Norm der Funktionsvektor minimiert wird:
+\begin{eqnarray}
+{\vect{x}^{\ast}} = \mathop {\min }\limits_{\vect{x}}\left | {\vect{F}}\left ( {\vect{x}} \right ) \right |_{2}^{2} = \mathop {\min }\limits_{\vect{x}}\left ( \sum_{i=1}^{m}\left ( f_{i}\left ( \vect{x} \right ) \right )^{2}\right )
+\label{Def_LSP}\notag\\
+\end{eqnarray}
+mit $f_{i}: \Reals^{n}\to \Reals^{1}$.
+\end{definition}
+\subsection{Gauß-Newton-Verfahren}
+\label{Gauß-Newton-Verfahren}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Sogenanntes Problem kann man mit verschieden Verfahren lösen. Eine typische Methode ist das Gauß-Newton-Verfahren, das durch die lineare Annäherung die nichtlineare Probleme löst. Mit der Ableitung 1. Ordnung der Funktion $\vect{F(\vect{x})}$ wird das Iterationsverfahren mit linearer Konvergenzordnung konvergiert. Im Folgenden wird mit der Taylorentwicklung von $\vect{F}$ und $f$ angefangen\cite{madsen2004methods}:
+\begin{equation}
+\begin{aligned}
+f\left ( \vect{x}+\vect{h} \right ) &= f\left ( \vect{x} \right ) + f'\left ( \vect{x} \right )\cdot \vect{h} \overset{f' = \matr{J}}{=} f\left ( \vect{x} \right ) + \matr{J}\left ( \vect{x} \right )\cdot \vect{h} + o\left ( \vect{h}^{2} \right ) \approx \vect{g}\left ( \vect{h} \right )\\
+\vect{F}\left ( \vect{x}+\vect{h} \right ) &= f\left ( \vect{x}+\vect{h} \right )^ \mathrm{ T }\cdot f\left ( \vect{x}+\vect{h} \right )=\left ( f+\matr{J}\vect{h} \right )^ \mathrm{ T }\left ( f+\matr{J}\vect{h} \right )\\ &= f^ \mathrm{ T }f+2\vect{h}^ \mathrm{ T }\matr{J}^ \mathrm{ T }f + \vect{h}^ \mathrm{ T }\matr{J}^ \mathrm{ T }\matr{J}\vect{h} \approx \vect{G}\left ( \vect{h} \right )
+\end{aligned}
+\end{equation}
+Das Symbol $\matr{J}$ steht für die Jacobian-Matrix. Nach der Ableitung des vorletzten Terms erhält man die 1.- und 2. Ableitung von $\vect{G}$:
+\begin{eqnarray}
+\vect{G}'\left ( \vect{h} \right )  &=& 2\matr{J}^\mathrm{T}f + 2\matr{J}^\mathrm{T}\matr{J}\vect{h}\label{eq:G_1}\\
+\vect{G}''\left ( \vect{h} \right ) &=& 2\matr{J}^\mathrm{T}\matr{J}\label{eq:G_2}
+\end{eqnarray}
+Angenommen, dass $\vect{G}''$ positive definit ist\footnote{Das ist ein Nachteil von Gauß-Newton-Verfahren. Die Positivdefinitkeit kann nicht immer gesichert werden}. Sei $\vect{G}'\left (\vect{h}_{\ast} \right ) = \vect{0}$, ist $\vect{h}_{\ast}$ lokal Minimizer. Zur Berechnung die Schrittweite$\vect{h}$ lässt sich Gl. \ref{eq:G_1} verschwinden:
+\begin{equation}
+\left ( \matr{J}^\mathrm{T} \matr{J} \right ) \cdot \vect{h}  = -\matr{J}^\mathrm{T}f\label{eq:cal_NW_hs}
+\end{equation}
+Der stationäre Punkt $\vect{x}^{\ast}$ wird aus der vorherige Punkt $\vect{x_{-}}$ und $\vect{h}_{\ast}$ berechnet:
+\begin{equation}
+\vect{x}^{\ast} = \vect{x_{-}} + \vect{h}_{\ast} = \vect{x_{-}} - \left ( \matr{J}^\mathrm{T} \matr{J} \right )^\mathrm{-1} \cdot \matr{J}^\mathrm{T}f\label{eq:newton-xs}
+\end{equation} 
+Linear Konvergenzordnung bedeutet, dass $\norm{\vect{x}_{k+1} -\vect{x}_{\ast}} \leqslant \alpha \norm{\vect{x}_{k}-\vect{x}_{\ast}}$ mit $0 \leqslant \alpha \leqslant 1$. Eine weitere Beschränkung liegt darin, dass der Anfangsschätzwert $\vect{x}_{0}$ in der Näher von $\vect{x}_{\ast}$ sein muss. Aber manchmal fällt das GN-Verfahren solche Bedingungen. Daher wird in nächsten Abschnitt eine andere Methode vorgestellt, die obige Bedingungen erfüllt kann. 
+\subsection{Levenberg-Marquadt-Algorithmus}
+\label{Levenberg-Marquadt-Algorithmus}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Der nach Kenneth Levenberg und Donald Marquardt benannte Algorithmus ist tatsächlich eine Mischung von Methode des steilsten Abstiegs und Gauß-Newton-Verfahren. Gl. \ref{eq:LM_cal_hs} zeigt die detaillierte Form von Schrittweite $\vect{h}$\cite{madsen2004methods}\cite{von2015einfuhrung}:
+\begin{equation}
+\left ( \matr{J}^\mathrm{T} \matr{J} + \mu\matr{I}\right ) \cdot \vect{h}  = -\matr{J}^\mathrm{T}f
+\label{eq:LM_cal_hs}
+\end{equation}
+$\matr{I}$ ist die Einheitsmatrix, $\mu$ ist der Dämpfungsparameter.Aufgrund des Dämpfungparameters ist die Positivdefinitkeit der Matrix $\matr{J}^\mathrm{T} \matr{J} + \mu\matr{I}$ gesichert. Falls $\mu$ groß ist(das passiert am Anfang der Iteration), ist die Darstellung von Schrittweite ähnlich wie Methode des steilsten Abstiegs, damit die Funktion bei $\vect{x}$ weit von Zielpunkt schnell konvergiert wird. Andernfalls bei kleines $\mu$ oder in der Umgebung von $\vect{x}_{\ast}$ die LM-Algorithmus drückt wie NM-Verfahren aus. Das heißt, in den letzten Schritte wird die Funktion auch schnell konvergiert.
+
+\section{Erweiterung von PyTrajectory}
+\label{Erweiterung_von_PyTrajectory}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Pytrajectory ist ein Python Paket zur Trajektorie-Entwurf für nicht lineares System. Das Paket ist auf Python 2.Version entwickelt. Für weitere Informationen kann man \href{https://pytrajectory.readthedocs.io/en/master/guide/about.html}{Pytrajectory} klicken.\\
+Eine Aufgabe bei der Erweiterung von PyTrajectory liegt darin, die Gütefunktionalen und Parametern (insbesondere die Überführungszeit) zu berücksichtigen. Es ist gehofft, die Überführungszeit $T$ nicht vom Nutzer  explizit vorgegeben wird, sondern anhand der Systemgleichungen mit Levenberg-Marquadt-Methode automatisch optimiert wird. Anfangspunkt ist die Ansetzung der Zeittransformation von $t = t$ zum $t = k\tau$, womit $k$ eine zusätzliche freie Parameter ist. Dann folgt die untere Gleichungtransformation:
+\begin{eqnarray}
+\dot{x} &=& \frac{\mathrm{d} x}{\mathrm{d} t} = F\left ( x,t \right ) \label{eq:ori}\\
+\dot{x}_{new} &=& \frac{\mathrm{d} x}{\mathrm{d} \tau} = \frac{\mathrm{d} x}{\mathrm{d} t}\cdot \frac{\mathrm{d} t}{\mathrm{d} \tau} = k\cdot \frac{\mathrm{d} x}{\mathrm{d} t} = k\cdot F(x,t) = F_{new}\left ( x,t \right )\label{eq:mit_k}
+\end{eqnarray}
+Bei $k>1$ verlangsamen das System, bei $k<1$ beschleunigt es.

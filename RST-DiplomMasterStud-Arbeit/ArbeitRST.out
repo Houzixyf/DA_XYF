@@ -1,3 +1,7 @@
 \BOOKMARK [0][-]{chapter.1}{Theorie}{}% 1
 \BOOKMARK [1][-]{section.1.1}{Erl\344uterung zur Brockett-Bedingung}{chapter.1}% 2
-\BOOKMARK [0][-]{chapter*.2}{Literaturverzeichnis}{}% 3
+\BOOKMARK [1][-]{section.1.2}{Methode zur L\366sung des Quadratmittelproblems}{chapter.1}% 3
+\BOOKMARK [2][-]{subsection.1.2.1}{Gau\337-Newton-Verfahren}{section.1.2}% 4
+\BOOKMARK [2][-]{subsection.1.2.2}{Levenberg-Marquadt-Algorithmus}{section.1.2}% 5
+\BOOKMARK [1][-]{section.1.3}{Erweiterung von PyTrajectory}{chapter.1}% 6
+\BOOKMARK [0][-]{chapter*.3}{Literaturverzeichnis}{}% 7

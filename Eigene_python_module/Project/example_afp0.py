@@ -30,15 +30,15 @@ def f(x,u, par, evalconstr=True):
     c = cos(x3)
 
     ff = [x2,
-          m * s * (-l * x4 ** 2 + g * c) / (M + m * s ** 2) + 1 / (M + m * s ** 2) * u1,
+          u1,
           x4,
-          s * (-m * l * x4 ** 2 * c + g * (M + m)) / (M * l + m * l * s ** 2) + c / (M * l + l * m * s ** 2) * u1
+          -(1 / l) * (g * sin(x3) + u1 * cos(x3))  # -g/l*s - 1/l*c*u1
           ]
 
-    # ff = [k * eq for eq in ff]
+    ff = [k * eq for eq in ff]
 
     if evalconstr:
-        res = pe(k, .5, 10)
+        res = pe(k, 0.1, 5)
         ff.append(res)
 
     return ff
@@ -62,14 +62,14 @@ a = 0.0
 xa = [0.0, 0.0, 0.0, 0.0]
 
 b = 1.0
-xb = [1.0, 0.0, 0.0, 0.0]
+xb = [0.0, 0.0, np.pi, 0.0]
 
 ua = [0.0]
 ub = [0.0]
-par = [10.0, 2.0]
+par = [1.5]
 # now we create our Trajectory object and alter some method parameters via the keyword arguments
 S = ControlSystem(f, a, b, xa, xb, ua, ub,
-                  su=2, sx=2, kx=2, use_chains=False, k=par, sol_steps=100)  # k must be a list
+                  su=4, sx=4, kx=2, use_chains=False, k=par, sol_steps=100, maxIt=4)  # k must be a list
 
 # time to run the iteration
 x, u, par = S.solve()

@@ -147,11 +147,11 @@ def find_integrator_chains(dyn_sys):
             f[i] = f[i].subs(1.0, 1)
 
         for xx in state_sym:
-            if f[i] == xx:
+            if f[i] == xx :# * par_sym[0]
                 chaindict[xx] = state_sym[i]
 
         for uu in input_sym:
-            if f[i] == uu:
+            if f[i] == uu :# * par_sym[0]
                 chaindict[uu] = state_sym[i]
 
     # chaindict looks like this:  {x2: x1, u1: x2, x4: x3}

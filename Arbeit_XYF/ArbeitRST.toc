@@ -1,0 +1,9 @@
+\select@language {ngerman}
+\select@language {ngerman}
+\contentsline {chapter}{\numberline {1}Theorie}{1}{chapter.1}
+\contentsline {section}{\numberline {1.1}Erl\IeC {\"a}uterung zur Brockett-Bedingung}{1}{section.1.1}
+\contentsline {section}{\numberline {1.2}Methode zur L\IeC {\"o}sung des Quadratmittelproblems}{3}{section.1.2}
+\contentsline {subsection}{\numberline {1.2.1}Gau\IeC {\ss }-Newton-Verfahren}{4}{subsection.1.2.1}
+\contentsline {subsection}{\numberline {1.2.2}Levenberg-Marquadt-Algorithmus}{4}{subsection.1.2.2}
+\contentsline {section}{\numberline {1.3}Erweiterung von PyTrajectory}{5}{section.1.3}
+\contentsline {chapter}{\nonumberline Literaturverzeichnis}{6}{chapter*.2}
