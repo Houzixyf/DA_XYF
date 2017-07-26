@@ -1,20 +1,19 @@
-# -*- coding: utf-8 -*-
+# IMPORTS
 import numpy as np
 import sympy as sp
 from sympy.utilities.lambdify import _get_namespace
+import time
 from scipy.interpolate import interp1d, UnivariateSpline
 import scipy.integrate
 from scipy.linalg import expm
-from matplotlib import pyplot as plt
 from collections import OrderedDict
-import copy
-import time
 
-import splines
-from simulation import Simulator
+from pytrajectory.splines import Spline
+from pytrajectory.simulation import Simulator
 from log import logging, Timer
 
 from ipHelp import IPS
+
 
 
 class NanError(ValueError):
@@ -25,19 +24,9 @@ class Container(object):
     """
     Simple and flexible data structure to store all kinds of objects
     """
-
-    # prevent pycharm from complaining (in a special usecase of this class)
-    tt = None
-    xx = None
-    uu = None
-
     def __init__(self, **kwargs):
         for key, value in kwargs.iteritems():
             self.__setattr__(str(key), value)
-
-    @property
-    def dict(self):
-        return self.__dict__
 
 
 class IntegChain(object):
@@ -158,11 +147,11 @@ def find_integrator_chains(dyn_sys):
             f[i] = f[i].subs(1.0, 1)
 
         for xx in state_sym:
-            if f[i] == xx:
+            if f[i] == xx :# * par_sym[0]
                 chaindict[xx] = state_sym[i]
 
         for uu in input_sym:
-            if f[i] == uu:
+            if f[i] == uu :# * par_sym[0]
                 chaindict[uu] = state_sym[i]
 
     # chaindict looks like this:  {x2: x1, u1: x2, x4: x3}
@@ -542,7 +531,7 @@ def cse_lambdify(args, expr, **kwargs):
     return cse_fnc
 
 
-def saturation_functions(y_fnc, dy_fnc, y0, y1, first_deriv=True):
+def saturation_functions(y_fnc, dy_fnc, y0, y1):
     """
     Creates callable saturation function and its first derivative to project
     the solution found for an unconstrained state variable back on the original
@@ -565,9 +554,6 @@ def saturation_functions(y_fnc, dy_fnc, y0, y1, first_deriv=True):
     y1 : float
         Upper saturation limit.
 
-    first_deriv :
-        flag whether or not also return the first derivative
-
     Returns
     -------
 
@@ -589,9 +575,6 @@ def saturation_functions(y_fnc, dy_fnc, y0, y1, first_deriv=True):
         y = y_fnc(t)
         return y1 - (y1-y0)/(1.0+np.exp(m*y))
 
-    if not first_deriv:
-        return psi_y
-
     # and this its first derivative
     def dpsi_dy(t):
         y = y_fnc(t)
@@ -601,26 +584,7 @@ def saturation_functions(y_fnc, dy_fnc, y0, y1, first_deriv=True):
     return psi_y, dpsi_dy
 
 
-def switch_on(x, xmin, xmax, m=None, scale=1):
-    """
-    return a smooth function which is ≈1*scale between xmin and xmax and ≈0 elswhere
-
-    :param x:       independent variable
-    :param xmin:
-    :param xmax:
-    :param m:       slope at the (smooth) saltus. default: None -> heuristic calculation
-    :param scale:   scaling factor of result
-    :return:
-    """
-    assert xmin < xmax
-    if m is None:
-        m = 50/(xmax - xmin)
-
-    res = 1 - 1/(1 + sp.exp(m*(x - xmin))) - 1/(1 + sp.exp(m*(xmax - x)))
-    return res*scale
-
-
-def penalty_expression(x, xmin, xmax, m=5, scale=1):
+def penalty_expression(x, xmin, xmax):
     """
     return a quadratic parabola (vertex in the middle between xmin and xmax)
     which is almost zero between xmin and xmax (exponentially faded).
@@ -628,39 +592,14 @@ def penalty_expression(x, xmin, xmax, m=5, scale=1):
     :param x:
     :param xmin:
     :param xmax:
-    :param m:       slope at the (smooth) saltus
-    :param scale:   scaling factor of result
     :return:
     """
-
-    if not isinstance(x, (sp.Symbol, float, int, np.number)):
-        msg = "unexpected type for variable in penalty expression: %s" % type(x)
-        raise TypeError(msg)
-
-    if xmin == xmax:
-        logging.warning("penalty expression: xmin == xmax == %s" % xmin)
-
+    m = 5
     xmid = xmin + (xmax - xmin)/2
     # first term: parabola -> 0,                            second term: 0 -> parabola
     res = (x-xmid)**2/(1 + sp.exp(m*(x - xmin))) + (x-xmid)**2/(1 + sp.exp(m*(xmax - x)))
-    res *= scale
     # sp.plot(res, (x, xmin-xmid, xmax+xmid))
     return res
-
-
-def unconstrain(var, vmin, vmax):
-    """
-    :param var:     symbol (unconstrained variable)
-    :param vmin:
-    :param vmax:
-
-    :return: m, psi, dpsi (psi is a function which fulfills  vmin < psi(x) < vmax for all real x)
-    """
-    m = 4.0/(vmax - vmin)
-    psi = vmax - (vmax - vmin)/(1. + sp.exp(m*var))
-    dpsi = (4.*sp.exp(m*var))/(1. + sp.exp(m*var)) ** 2
-
-    return m, psi, dpsi
 
 
 def consistency_error(I, x_fnc, u_fnc, dx_fnc, ff_fnc, par, npts=500, return_error_array=False):
@@ -777,7 +716,7 @@ if __name__ == '__main__':
                             [np.exp(-np.sin(3.0) + np.cos(1.0))]])
 
 
-def new_spline(Tend, n_parts, targetvalues, tag, bv=None, use_std_approach=True):
+def new_spline(Tend, n_parts, targetvalues, tag, bv=None):
     """
     :param Tend:
     :param n_parts:
@@ -787,37 +726,14 @@ def new_spline(Tend, n_parts, targetvalues, tag, bv=None, use_std_approach=True)
     :return:                Spline object
     """
 
-    s = splines.Spline(0, Tend, n=n_parts, bv=bv, tag=tag, nodes_type="equidistant",
-                       use_std_approach=use_std_approach)
+    s = Spline(0, Tend, n=n_parts, bv=bv, tag=tag, nodes_type="equidistant",
+                 use_std_approach="use_std_approach")
 
     s.make_steady()
     assert np.ndim(targetvalues[0]) == 1
     assert np.ndim(targetvalues[1]) == 1
     s.interpolate(targetvalues, set_coeffs=True)
     return s
-
-
-def eval_sol(masterobject, sol, tt):
-    """
-    This function take an arbitrary solution for the free parameters and constructs a
-    list of arrays like [x1(tt), x2(tt), ... um(tt)]
-    where xi and uj are evaluations of splines corresponding to the free coeffs in `sol`.
-
-    This is usefull to visualize a intermediate result of the solver or an initial guess.
-
-    :param masterobject:
-    :param sol:
-    :return:
-    """
-
-    traj = copy.deepcopy(masterobject.eqs.trajectories)
-    traj.set_coeffs(sol)
-
-    res = []
-    for s in traj.splines.values():
-        res.append(vector_eval(s.f, tt))
-
-    return res
 
 
 def siumlate_with_input(tp, inputseq, n_parts ):
@@ -836,46 +752,6 @@ def siumlate_with_input(tp, inputseq, n_parts ):
     tt, xx, uu = sim.simulate()
 
     return tt, xx, uu
-
-
-def calc_chebyshev_nodes(a, b, npts, include_borders=True):
-    """
-    Return roots of chebyshev polybnomials in [a, b] (and optionally including borders).
-    Serves to determine the evaluation points for interpolation (e.g. for refsol.)
-
-    :param a:       left border
-    :param b:       right border
-    :param npts:    number of points
-    :param include_borders:
-                    flag whether or not borders should be included
-    :return:        list of chebyshev nodes (including borders)
-    """
-    # determine rank of chebychev polynomial
-    # of which to calculate zero points
-    nc = int(npts)
-
-    if not include_borders:
-        # we will remove the outer most points later
-        nc += 2
-
-    # calculate zero points of chebychev polynomial --> in [-1,1]
-    cheb_cpts = [np.cos((2.0*i + 1)/(2*(nc + 1))*np.pi) for i in xrange(nc)]
-    cheb_cpts.sort()
-
-    # map chebychev nodes from [-1,1] to our interval [a,b],
-    # this means: scale the nodes such that node_min == a and node_max == b
-
-    na = min(cheb_cpts)
-    nb = max(cheb_cpts)
-
-    normed_cheb_nodes = (np.array(cheb_cpts) - na)/(nb - na)
-    # values now between 0 and 1 (including borders)
-    chpts = a + normed_cheb_nodes*(b-a)
-
-    if not include_borders:
-        return chpts[1:-1]
-
-    return chpts
 
 
 def calc_gramian(A, B, T, info=False):
@@ -910,7 +786,6 @@ def ddot(*args):
     return reduce(np.dot, args, 1)
 
 
-# noinspection PyPep8Naming
 def calc_linear_bvp_solution(A, B, T, xa, xb, xref=None):
     """
     calculate the textbook solution to the linear bvp
@@ -935,7 +810,6 @@ def calc_linear_bvp_solution(A, B, T, xa, xb, xref=None):
 
     G = calc_gramian(A, B, T)
     Ginv = np.linalg.inv(G)
-
     def input_fnc(t):
         e = expm(A*(T-t))
         term2 = ddot(expm(A*T), xa)
@@ -953,81 +827,21 @@ def copy_splines(splinedict):
 
     res = OrderedDict()
     for k, v in splinedict.items():
-        S = splines.Spline(v.a, v.b, n=v.n, tag=v.tag, bv=v._boundary_values,
-                           use_std_approach=v._use_std_approach)
+        S = Spline(v.a, v.b, n=v.n, tag=v.tag, bv=v._boundary_values,
+                   use_std_approach=v._use_std_approach)
         S.masterobject = v.masterobject
-        S._dep_array = v._dep_array.copy()
-        S._dep_array_abs = v._dep_array_abs.copy()
+        S._dep_array = v._dep_array
+        S._dep_array_abs = v._dep_array_abs
         # S._steady_flag = v._steady_flag
         if v._steady_flag:
             S.make_steady()
-        S._coeffs = v._coeffs.copy()
+        S._coeffs = v._coeffs
         S.set_coefficients(coeffs=v._coeffs)
-        S._coeffs_sym = v._coeffs_sym.copy()
+        S._coeffs_sym = v._coeffs_sym
         S._prov_flag = v._prov_flag
-        S._indep_coeffs = v._indep_coeffs.copy()
 
         res[k] = S
     return res
-
-
-# noinspection PyPep8Naming
-def make_refsol_by_simulation(tp, u_values, plot_u=False, plot_x_idx=0):
-    """
-    Create a "reference solution" by Simulating the system with a given input signal
-
-    :param tp:          TransitionProblem object (contains system dynamics and boundary values)
-    :param u_values:    Sequence of values for the input, will be interpolated by a spline
-    :param plot_u:      Flag whether or not plot the input
-    :param plot_x_idx:  Index up to which the state should be plotted
-                        (default = 0 -> don't plot x)
-
-    :return:            Container with tt, xx, uu and raise_spline_parts
-    """
-
-    Ta, Tb = tp.a, tp.b
-    tt1 = np.linspace(Ta, Tb, len(u_values))
-
-    uspline = new_spline(Tb, n_parts=10, targetvalues=(tt1, u_values), tag='u1')
-
-    x_start = tp.dyn_sys.xa
-    ff = tp.eqs.sys.f_num_simulation
-    sim = Simulator(ff, Tb, x_start, uspline.f)
-    tt, xx, uu = sim.simulate()
-    uu = np.atleast_2d(uu)
-
-    refsol = Container(tt=tt, xx=xx, uu=uu, n_raise_spline_parts=0)
-
-    plot_flag = False
-
-    if plot_u:
-        # this serves for designing the input signal
-        tt2 = np.linspace(Ta, Tb, 1000)
-        uu = vector_eval(uspline.f, tt2)
-        plt.plot(tt2, uu)
-        plot_flag = True
-
-    assert isinstance(plot_x_idx, (int, str))
-
-    if plot_x_idx is "all" or plot_x_idx is True:
-        # all is the only allowed string value
-        # type bool is derived from int but we want True to behave like "all" not like 1
-        plot_x_idx = xx.shape[1]
-
-    assert isinstance(plot_x_idx, int)
-    if plot_x_idx > 0:
-        assert plot_x_idx <= xx.shape[1]
-        n = plot_x_idx
-        plt.figure()
-        plt.plot(tt, xx[:, :n])
-        plt.grid(1)
-        plot_flag = True
-
-    if plot_flag:
-        plt.show()
-        raise SystemExit
-
-    return refsol
 
 
 def make_refsol_callable(refsol):
@@ -1063,18 +877,11 @@ def make_refsol_callable(refsol):
 
 def random_refsol_xx(tt, xa, xb, n_points, x_lower, x_upper, seed=0):
     """
-    Generates some random spline curves respecting boundaray conditions and limits.
-    This "solution" will in general not be compatible with the system dynamics.
-     It might serve as (random) initial guess.
+    generates some random spline curves respecting boundaray conditions and limits
 
     :param tt:
     :param xa:
     :param xb:
-    :param n_points:
-    :param x_lower:
-    :param x_upper:
-    :param seed:
-
     :return:
     """
 
@@ -1119,3 +926,4 @@ def reshape_wrapper(arr, dim=None, **kwargs):
             return np.zeros((1, 0))
         else:
             return np.zeros((0, 1))
+

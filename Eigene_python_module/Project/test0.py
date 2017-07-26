@@ -23,7 +23,7 @@ def f(x, u, par, evalconstr=True):
           k*u1]
 
     if evalconstr:
-        res = 1 * pe(k, 0.1, 10)
+        res = 0 * pe(k, 0.1, 10)
         ff.append(res)
     return ff
 
@@ -64,9 +64,9 @@ if use_refsol:
 
 
 
-first_guess = {'seed':1} # {'seed':1}
+# first_guess = {'seed':1} # {'seed':1}
 # now we create our Trajectory object and alter some method parameters via the keyword arguments
-S = ControlSystem(f, a, b, xa, xb, ua, ub, su=2, sx=2, kx=2, use_chains=False, par=par, first_guess=first_guess, refsol=None)  # k must be a list
+S = ControlSystem(f, a, b, xa, xb, ua, ub, su=2, sx=2, kx=2, use_chains=False, k=par, first_guess=None, refsol=None)  # k must be a list
 
 # time to run the iteration
 x, u, par = S.solve()
@@ -99,15 +99,7 @@ if save_res:
 
 
 
-
-
-
-
-
-
-
-
-plot = False
+plot = False # using Refsol
 if plot:
     import matplotlib.pyplot as plt
     ax1 = plt.subplot(211)
@@ -135,7 +127,7 @@ if plot:
     plt.ylabel(r'$u_{1}$')
     plt.show()
 
-plot = True
+plot = True # without Refsol
 if plot:
     import matplotlib.pyplot as plt
     ax1 = plt.subplot(211)

@@ -3,7 +3,7 @@ import inspect
 from scipy.integrate import ode
 
 from ipHelp import IPS
-
+import pickle
 
 class Simulator(object):
     """
@@ -27,7 +27,7 @@ class Simulator(object):
         Time step.
     """
 
-    def __init__(self, ff, T, start, u, z_par=None, dt=0.01):
+    def __init__(self, ff, T, start, u, z_par, dt=0.01):# dt=0.01
         """
 
         :param ff:      vectorfield function
@@ -46,11 +46,7 @@ class Simulator(object):
         self.ut = []
         self.nu = len(np.atleast_1d(self.u(0)))
 
-        # handle absence of additional free parameters
-        if z_par is None:
-            z_par = []
         self.pt = z_par
-
         # time steps
         self.t = []
 
@@ -82,7 +78,7 @@ class Simulator(object):
         """
         x = list(self.solver.integrate(self.solver.t+self.dt))
         t = round(self.solver.t, 5)  ##:: round(2.123456,5)=2.12346
-
+        save_res = False
         if 0 <= t <= self.T:
             self.xt.append(x)
             ##:: when t=0.0: [[0.0, 0.0, 1.2566370614359172, 0.0], 
@@ -90,7 +86,19 @@ class Simulator(object):
             self.ut.append(self.u(t))
             ##:: [array([ 0.]), array([ 1.55669143])] for t=0.0 and t=0.01
             self.t.append(t) # [0.0, 0.01]
-
+            if t == 0.99 and save_res:
+                res_x = self.xt
+                res_u = self.ut
+                res_t = t
+                save_res_x = open('d:\\x_refsol.plk', 'wb')
+                pickle.dump(res_x, save_res_x)
+                save_res_x.close()
+                save_res_u = open('d:\\u_refsol.plk', 'wb')
+                pickle.dump(res_u, save_res_u)
+                save_res_u.close()
+                save_res_t = open('d:\\t_refsol.plk', 'wb')
+                pickle.dump(res_t, save_res_t)
+                save_res_t.close()
         return t, x
 
     def simulate(self):
@@ -103,9 +111,28 @@ class Simulator(object):
 
         List of numpy arrays with time steps and simulation data of system and input variables.
         """
+        path = 'd:\temp_data' # 'E:\Yifan_Xue\DA\Data\Data_for_Brockett_pe(k,0.1,15)_t_0.99'
         t = 0
         while t <= self.T:
             t, y = self.calcstep()
 
+            save_refsol = False
+            if t == 0.99 and save_refsol:
+                res_x = self.xt[-1]
+                res_u = self.ut[-1]
+                res_t = self.t[-1]
+                save_res_x = open(path+'\\x.plk', 'wb')
+                pickle.dump(res_x, save_res_x)
+                save_res_x.close()
+                save_res_u = open(path+'\\u.plk', 'wb')
+                pickle.dump(res_u, save_res_u)
+                save_res_u.close()
+                save_res_t = open(path+'\\t.plk', 'wb')
+                pickle.dump(res_t, save_res_t)
+                save_res_t.close()
+
         self.ut = np.array(self.ut).reshape(-1, self.nu)
+
+
+
         return [np.array(self.t), np.array(self.xt), np.array(self.ut)]

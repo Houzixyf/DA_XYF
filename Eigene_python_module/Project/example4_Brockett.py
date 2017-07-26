@@ -65,7 +65,8 @@ a = 0.0
 b = 1.0
 par = [1.5]
 
-plot = False
+S_time = 0.99
+
 T_time = []
 SP = []
 Time_SP = []
@@ -80,7 +81,7 @@ D = []
 
 path = 'E:\Yifan_Xue\DA\Data\Data_for_Brockett_pe(k,0.1,15)_t_0.99'
 
-use_refsol = False
+use_refsol = True
 if use_refsol:
     refsol_x_place = open(path+'\\x_refsol.plk', 'rb')
     refsol_x = pickle.load(refsol_x_place)
@@ -94,27 +95,28 @@ if use_refsol:
     refsol_t = pickle.load(refsol_t_place)
     refsol_t_place.close()
 
-    # b = 0.1
+    b = round(1.0 - S_time, 5)
     xa = refsol_x[0]
+    xb = refsol_x[-1]
     ua = refsol_u[0]
+    ub = refsol_u[-1]
 
     Refsol = Container()
     Refsol.tt = refsol_t
     Refsol.xx = refsol_x
     Refsol.uu = refsol_u
+    Refsol.n_raise_spline_parts = 0
 
-
-check_Brockett = False
+check_Brockett = True
 if check_Brockett:
-    che_for_xx = open(path + '\\x.plk', 'rb')
+    che_for_xx = open(path + '\\x_refsol.plk', 'rb')
     che_xx = pickle.load(che_for_xx)
+    che_xx = che_xx[0]
     che_for_xx.close()
-    che_for_uu = open(path + '\\u.plk', 'rb')
+    che_for_uu = open(path + '\\u_refsol.plk', 'rb')
     che_uu = pickle.load(che_for_uu)
+    che_uu = che_uu[0]
     che_for_uu.close()
-    # che_for_tt = open(Data + '\\t.plk', 'rb')
-    # che_tt = pickle.load(che_for_tt)
-    # che_for_tt.close()
     print ('xa_old:{}'.format(che_xx))
 
 
@@ -150,8 +152,6 @@ for i in range(1):
                         print ('xa_new:{}'.format(xa))
                         ua = che_uu
                         # ua = [0.0]
-                        a = 0.0
-                        b = 0.01
                         print('*********************')
                         print('Begint the new loop')
                         print('*********************')
@@ -170,7 +170,7 @@ for i in range(1):
                         print('x1(b)={}, x2(b)={}, u(b)={}, k={}'.format(S.sim_data[1][-1][0], S.sim_data[1][-1][1], S.sim_data[2][-1][0], S.eqs.sol[-1]))
                         T_time.append(T_end - T_start)
                         SP.append(S.nIt)
-                        if S.reached_accuracy:
+                        if S.reached_accuracy == True:
                             reached = 'True'
                         else:
                             reached = 'False'
@@ -209,103 +209,43 @@ if check_Brockett:
         for i, row in enumerate(U_Umgebung):
             for j, col in enumerate(row):
                 booksheet.write(i, j, col)
-        #workbook.save('d:\\U_Umgebung.xls')
 
         booksheet2 = workbook.add_sheet('D', cell_overwrite_ok=False )
         for i, row in enumerate(D):
             for j, col in enumerate(row):
                 booksheet2.write(i, j, col)
-        #workbook.save('d:\\U_Umgebung.xls')
 
         booksheetx_1 = workbook.add_sheet('X1', cell_overwrite_ok=False)
         for i, row in enumerate(X1_Umgebung):
             for j, col in enumerate(row):
                 booksheetx_1.write(i, j, col)
-        #workbook.save('d:\\U_Umgebung.xls')
 
         booksheetx_2 = workbook.add_sheet('X2', cell_overwrite_ok=False)
         for i, row in enumerate(X2_Umgebung):
             for j, col in enumerate(row):
                 booksheetx_2.write(i, j, col)
-        #workbook.save('d:\\U_Umgebung.xls')
 
         booksheetx_3 = workbook.add_sheet('X3', cell_overwrite_ok=False)
         for i, row in enumerate(X3_Umgebung):
             for j, col in enumerate(row):
                 booksheetx_3.write(i, j, col)
-        #workbook.save('d:\\U_Umgebung.xls')
 
         booksheetx_4 = workbook.add_sheet('X4', cell_overwrite_ok=False)
         for i, row in enumerate(X4_Umgebung):
             for j, col in enumerate(row):
                 booksheetx_4.write(i, j, col)
-        #workbook.save('d:\\U_Umgebung.xls')
 
         booksheetR = workbook.add_sheet('Reached_Accuracy', cell_overwrite_ok=False)
         for i, row in enumerate(Reached_Accuracy):
             booksheetR.write(i, 0, row)
-        #workbook.save('d:\\U_Umgebung.xls')
 
         booksheetK = workbook.add_sheet('K', cell_overwrite_ok=False)
         for i, row in enumerate(K_List):
             booksheetK.write(i, 0, row)
         workbook.save('d:\\U_Umgebung.xls')
 
-
-
-
-if 0: # plot
-    if plot:
-        import matplotlib.pyplot as plt
-
-        t = S.sim_data[0]
-        print t
-        plt.figure(1)
-        nx = 2
-        if len(xa) % 2 == 0:  # a.size
-            mx = len(xa) / nx
-        else:
-            mx = len(xa) / nx + 1
-
-        ax = xrange(len(xa))
-
-        for i in ax:
-            plt.subplot(mx, nx, i + 1)
-            plt.plot(t, S.sim_data[1][:, i])
-            # plt.title()
-            plt.xlabel('t')
-            plt.ylabel(r'$x_{}$'.format(i + 1))
-
-        plt.figure(2)
-        if len(ua) % 2 == 0:
-            nu = 2
-            mu = len(ua) / nu
-        elif len(ua) == 1:
-            nu = 1
-            mu = 1
-        else:
-            nu = 2
-            mu = len(ua) / nu + 1
-
-        ax = xrange(len(ua))
-
-        for i in ax:
-            plt.subplot(mu, nu, i + 1)
-            # plt.xlim(0,0.051)
-            plt.plot(t, S.sim_data[2][:, i])
-            #     plt.title()
-            plt.xlabel('t')
-            plt.ylabel(r'$u_{}$'.format(i + 1))
-
-        plt.show()
 print '\n'
 print ('Time, Number of Iteration, Reached accuracy or not: {}').format(Time_SP)
-
-# save_sol_cx_cu = False  # save Coeffs cx100... and cu100...
-# if save_sol_cx_cu:
-#     sol_cx_cu = open('d:\\cx_cu.plk', 'wb')
-#     pickle.dump(S.eqs.solver.sol, sol_cx_cu)
-#     sol_cx_cu.close()
 
 from IPython import embed as IPS
 IPS()
