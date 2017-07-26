@@ -13,14 +13,12 @@ from pytrajectory import penalty_expression as pe
 import time
 log.console_handler.setLevel(10)
 from IPython import embed as IPS
-import auxiliary
+from pytrajectory.auxiliary import Container
 import pickle
 # first, we define the function that returns the vectorfield
 
 
 # 加上pe()的好处是最终的结果中，输入u的值会比较小，说明用一个较小的输入就可以控制系统； 但是 k 的范围依然需要手动确定，并不是给任意一个 k 都可以得到结果。
-
-
 
 def f(x, u, par, evalconstr=True):
     k, = par
@@ -65,77 +63,80 @@ a = 0.0
 b = 1.0
 par = [1.5]
 
-plot = False
-T_time = []
-SP = []
-Time_SP = []
-Reached_Accuracy = []
-
-
-save_refsol = True
+path = 'E:\Yifan_Xue\DA\Data\Data_for_Brockett_pe(k,0.1,15)_t_0.99'
 use_refsol = False
 if use_refsol:
-    refsol = auxiliary.Container()
+    refsol_x_place = open(path + '\\x_refsol.plk', 'rb')
+    refsol_x = pickle.load(refsol_x_place)
+    refsol_x_place.close()
 
-    ref_for_xx = open('d:\\x_refsol.plk', 'rb')
-    refsol.xx = pickle.load(ref_for_xx)
-    ref_for_xx.close()
-    ref_for_uu = open('d:\\x_refsol.plk', 'rb')
-    refsol.uu = pickle.load(ref_for_uu)
-    ref_for_uu.close()
-    ref_for_tt = open('d:\\x_refsol.plk', 'rb')
-    refsol.tt = pickle.load(ref_for_tt)
-    ref_for_tt.close()
-    xa = refsol.xx
+    refsol_u_place = open(path + '\\u_refsol.plk', 'rb')
+    refsol_u = pickle.load(refsol_u_place)
+    refsol_u_place.close()
 
+    refsol_t_place = open(path + '\\t_refsol.plk', 'rb')
+    refsol_t = pickle.load(refsol_t_place)
+    refsol_t_place.close()
 
+    b = 0.1
+    xa = refsol_x[0]
+    xb = refsol_x[-1]
+    ua = refsol_u[0]
+    ub = refsol_u[-1]
 
-
-
-
-
-# use_refsol = False # use refsol
-
-for i in range(1):
-    # first_guess = {'seed': 5}
-
-
-    par = [1.5]  # par must re-init
-    dt_sim = 0.01
-    # now we create our Trajectory object and alter some method parameters via the keyword arguments
-    S = ControlSystem(f, a, b, xa, xb, ua, ub, su=20, sx=10, kx=3, use_chains=False, k=par, sol_steps=100, dt_sim=0.001,  maxIt=2)  # k must be a list,  k=par, refsol=refsol, first_guess=first_guess, first_guess=first_guess,
-    T_start = time.time()
-    x, u, par = S.solve()
-
-    if save_refsol:
-
-       i, = np.where(S.sim_data_tt == 0.99)
-       res_x = S.sim_data_xx[i[0]:]
-       res_u = S.sim_data_uu[i[0]:]
-       res_t = S.sim_data_tt[i[0]:]-0.99
-       save_res_x = open('d:\\x_refsol.plk', 'wb')
-       pickle.dump(res_x, save_res_x)
-       save_res_x.close()
-       save_res_u = open('d:\\u_refsol.plk', 'wb')
-       pickle.dump(res_u, save_res_u)
-       save_res_u.close()
-       save_res_t = open('d:\\t_refsol.plk', 'wb')
-       pickle.dump(res_t, save_res_t)
-       save_res_t.close()
+    Refsol = Container()
+    Refsol.tt = refsol_t
+    Refsol.xx = refsol_x
+    Refsol.uu = refsol_u
 
 
 
 
 
-    T_end = time.time()
-    print('x1(b)={}, x2(b)={}, u(b)={}, k={}'.format(S.sim_data[1][-1][0], S.sim_data[1][-1][1], S.sim_data[2][-1][0], S.eqs.sol[-1]))
+plot = False
+# T_time = []
+# SP = []
+# Time_SP = []
+# Reached_Accuracy = []
 
-    IPS()
-    T_time.append(T_end - T_start)
-    SP.append(S.nIt)
-    Reached_Accuracy.append(S.reached_accuracy)
-    Time_SP.append([T_time[i], SP[i], Reached_Accuracy[i]])
-    print ('Time to solve with seed-{}(s): {}'.format(i, T_time[-1]))
+
+first_guess = {'seed': 5}
+dt_sim = 0.001
+# now we create our Trajectory object and alter some method parameters via the keyword arguments   refsol=refsol,
+S = ControlSystem(f, a, b, xa, xb, ua, ub, su=20, sx=10, kx=3, use_chains=False, k=par, sol_steps=100, dt_sim=dt_sim, refsol=None, maxIt=2, first_guess=first_guess)  # k must be a list,  k=par, refsol=refsol, first_guess=first_guess, first_guess=first_guess,
+# T_start = time.time()
+x, u, par = S.solve()
+
+save_res = True
+if save_res:
+    i, = np.where(S.sim_data_tt == 0.99)
+    res_x_data = S.sim_data_xx[i[0]:]
+    res_x_place = open(path + '\\x_refsol.plk', 'wb')
+    pickle.dump(res_x_data, res_x_place)
+    res_x_place.close()
+
+    res_u_data = S.sim_data_uu[i[0]:]
+    res_u_place = open(path + '\\u_refsol.plk', 'wb')
+    pickle.dump(res_u_data, res_u_place)
+    res_u_place.close()
+
+    res_t_data = S.sim_data_tt[i[0]:] - 0.9
+    res_t_data[-1] = round(res_t_data[-1], 5)
+    res_t_place = open(path + '\\t_refsol.plk', 'wb')
+    pickle.dump(res_t_data, res_t_place)
+    res_t_place.close()
+
+
+
+#T_end = time.time()
+print('x1(b)={}, x2(b)={}, u(b)={}, k={}'.format(S.sim_data[1][-1][0], S.sim_data[1][-1][1], S.sim_data[2][-1][0], S.eqs.sol[-1]))
+
+# IPS()
+# T_time.append(T_end - T_start)
+# SP.append(S.nIt)
+# Reached_Accuracy.append(S.reached_accuracy)
+# Time_SP.append([T_time[i], SP[i], Reached_Accuracy[i]])
+# print ('Time to solve with seed-{}(s): {}'.format(i, T_time[-1]))
 
 
 
@@ -184,8 +185,8 @@ if 0: # plot
             plt.ylabel(r'$u_{}$'.format(i + 1))
 
         plt.show()
-print '\n'
-print ('Time, Number of Iteration, Reached accuracy or not: {}').format(Time_SP)
+# print '\n'
+# print ('Time, Number of Iteration, Reached accuracy or not: {}').format(Time_SP)
 
 
 from IPython import embed as IPS

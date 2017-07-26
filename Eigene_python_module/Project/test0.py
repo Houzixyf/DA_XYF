@@ -1,162 +1,166 @@
-"""
+'''
 This example of the inverted pendulum demonstrates the basic usage of
 PyTrajectory as well as its visualisation capabilities.
-
-
-This version is used to investigate the influence of an additional free parameter.
-"""
+'''
 
 # import all we need for solving the problem
-from pytrajectory import ControlSystem, log
-import numpy as np
+from pytrajectory import ControlSystem
 from pytrajectory import penalty_expression as pe
 import pickle
+import numpy as np
 from pytrajectory.auxiliary import Container
-log.console_handler.setLevel(10)
-
-
-use_refsol = True # use refsol
-Data = 'd:\\temp_data'
-if use_refsol:
-    refsol = Container()
-
-    ref_for_xx = open(Data+'\\x_refsol.plk', 'rb')
-    refsol.xx = pickle.load(ref_for_xx)
-    ref_for_xx.close()
-    ref_for_uu = open(Data+'\\u_refsol.plk', 'rb')
-    refsol.uu = pickle.load(ref_for_uu)
-    ref_for_uu.close()
-    ref_for_tt = open(Data+'\\t_refsol.plk', 'rb')
-    refsol.tt = pickle.load(ref_for_tt)
-    refsol.tt[-1] = round(refsol.tt[-1],5)
-    ref_for_tt.close()
-    refsol.n_raise_spline_parts = 0
-
-
-check_Brockett = False
-if check_Brockett:
-    che_for_xx = open(Data + '\\x.plk', 'rb')
-    che_xx = pickle.load(che_for_xx)
-    che_for_xx.close()
-    che_for_uu = open(Data + '\\u.plk', 'rb')
-    che_uu = pickle.load(che_for_uu)
-    che_for_uu.close()
-    che_for_tt = open(Data + '\\t.plk', 'rb')
-    che_tt = pickle.load(che_for_tt)
-    che_for_tt.close()
-    print ('xa_old:{}'.format(che_xx))
-    xa = che_xx
-    print ('xa_new:{}'.format(xa))
-    ua = che_uu
-    # ua = [0.0]
-    a = 0.0
-    b = 0.01
-    print('*********************')
-    print('Begint the new loop')
-    print('*********************')
-
-
-
+# the next imports are necessary for the visualisatoin of the system
 
 
 # first, we define the function that returns the vectorfield
-def f(x,u, par, evalconstr=True):
-    k, = par
-    x1, x2 = x       # system state variables
-    u1, = u                  # input variable
+def f(x, u, par, evalconstr=True):
+    x1, x2= x  # system variables
+    u1, = u  # input variable
+    k = par[0]
 
-
-    ff = [  x2,
-            u1,
-        ]
-
-    ff = [k * eq for eq in ff]
+    # this is the vectorfield
+    ff = [k*x2,
+          k*u1]
 
     if evalconstr:
-        res = pe(k, .5, 10)# value of k in 0.5 and 10 is about 0
+        res = 1 * pe(k, 0.1, 10)
         ff.append(res)
     return ff
-
-
-if 0:
-    from matplotlib import pyplot as plt
-    from ipHelp import IPS
-    import sympy as sp
-    kk = np.linspace(-20, 20)
-    x = sp.Symbol('x')
-    pefnc = sp.lambdify(x, pe(x, 0, 10), modules='numpy')
-    #IPS()
-    plt.plot(kk, pefnc(kk))
-    plt.plot(kk, (kk-5)**2)
-    plt.show()
 
 
 # then we specify all boundary conditions
 a = 0.0
 xa = [0.0, 0.0]
-xa = refsol.xx[0]
 
 b = 1.0
 xb = [1.0, 0.0]
-b = 0.01
 
 ua = [0.0]
 ub = [0.0]
-par = [1.0, 2.0]
+par = [1.5]
+
+use_refsol = False
+if use_refsol:
+    refsol_x_place = open('d://res_x.pkl', 'rb')
+    refsol_x = pickle.load(refsol_x_place)
+    refsol_x_place.close()
+
+    refsol_u_place = open('d://res_u.pkl', 'rb')
+    refsol_u = pickle.load(refsol_u_place)
+    refsol_u_place.close()
+
+    refsol_t_place = open('d://res_t.pkl', 'rb')
+    refsol_t = pickle.load(refsol_t_place)
+    refsol_t_place.close()
+    b = 0.1
+    xa = refsol_x[0]
+    ua = refsol_u[0]
+
+    Refsol = Container()
+    Refsol.tt = refsol_t
+    Refsol.xx = refsol_x
+    Refsol.uu = refsol_u
+
+
+
+
+first_guess = None # {'seed':1}
 # now we create our Trajectory object and alter some method parameters via the keyword arguments
-S = ControlSystem(f, a, b, xa, xb, ua, ub,
-                  su=2, sx=2, kx=2, use_chains=False, k=par, sol_steps=100, dt_sim=0.01, refsol=refsol)  # k must be a list
+S = ControlSystem(f, a, b, xa, xb, ua, ub, su=2, sx=2, kx=2, use_chains=False, par=par, first_guess=first_guess, refsol=None)  # k must be a list
 
 # time to run the iteration
 x, u, par = S.solve()
-save_refsol = False
-if save_refsol:
-    i, = np.where(S.sim_data_tt == 0.99)
-    res_x = S.sim_data_xx[i[0]:]
-    res_u = S.sim_data_uu[i[0]:]
-    res_t = S.sim_data_tt[i[0]:] - 0.99
-    save_res_x = open(Data + '\\x_refsol.plk', 'wb')
-    pickle.dump(res_x, save_res_x)
-    save_res_x.close()
-    save_res_u = open(Data + '\\u_refsol.plk', 'wb')
-    pickle.dump(res_u, save_res_u)
-    save_res_u.close()
-    save_res_t = open(Data + '\\t_refsol.plk', 'wb')
-    pickle.dump(res_t, save_res_t)
-    save_res_t.close()
-
-
 print('x1(b)={}, x2(b)={}, u(b)={}, k={}'.format(S.sim_data[1][-1][0], S.sim_data[1][-1][1], S.sim_data[2][-1][0], S.eqs.sol[-1]))
+from IPython import embed as IPS
+# IPS()
 
-# import matplotlib.pyplot as plt
-# plt.figure(1)
-# ax1 = plt.subplot(211)
-# ax2 = plt.subplot(212)
-#
-# t = S.sim_data[0]
-# x1 = S.sim_data[1][:, 0]
-# x2 = S.sim_data[1][:, 1]
-# u1 = S.sim_data[2][:, 0]
-#
-# plt.figure(1)
-# plt.sca(ax1)
-# plt.plot(t, x1, 'g')
-# plt.title(r'$\alpha$')
-# plt.xlabel('t')
-# plt.ylabel(r'$x_{1}$')
-#
-# plt.sca(ax2)
-# plt.plot(t, x2, 'r')
-# plt.xlabel('t')
-# plt.ylabel(r'$x_{2}$')
-#
-# plt.figure(2)
-# plt.plot(t, u1, 'b')
-# plt.xlabel('t')
-# plt.ylabel(r'$u_{1}$')
-# plt.show()
+save_res = False
+if save_res:
+    i, = np.where(S.sim_data_tt == 0.9)
+    res_x_data = S.sim_data_xx[i[0]:]
+    res_x_place = open('d://res_x.pkl', 'wb')
+    pickle.dump(res_x_data, res_x_place)
+    res_x_place.close()
 
-# plt.figure(3)
-# plt.plot(range(len(S.k_list)), S.k_list)
-# plt.show()
-# print len(S.k_list)
+    res_u_data = S.sim_data_uu[i[0]:]
+    res_u_place = open('d://res_u.pkl', 'wb')
+    pickle.dump(res_u_data, res_u_place)
+    res_u_place.close()
+
+    res_t_data = S.sim_data_tt[i[0]:]-0.9
+    res_t_data[-1] = round(res_t_data[-1],5)
+    res_t_place = open('d://res_t.pkl', 'wb')
+    pickle.dump(res_t_data, res_t_place)
+    res_t_place.close()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+plot = False
+if plot:
+    import matplotlib.pyplot as plt
+    ax1 = plt.subplot(211)
+    ax2 = plt.subplot(212)
+
+    t = S.sim_data[0]
+    x1 = S.sim_data[1][:, 0]
+    x2 = S.sim_data[1][:, 1]
+    u1 = S.sim_data[2][:, 0]
+
+    plt.sca(ax1)
+    plt.plot(t, x1, 'g')
+    plt.title(r'$\alpha$')
+    plt.xlabel('t')
+    plt.ylabel('x1')
+
+    plt.sca(ax2)
+    plt.plot(t,x2, 'r')
+    plt.xlabel('t')
+    plt.ylabel('x2')
+
+    plt.figure(2)
+    plt.plot(t, u1, 'b')
+    plt.xlabel('t')
+    plt.ylabel(r'$u_{1}$')
+    plt.show()
+
+plot = True
+if plot:
+    import matplotlib.pyplot as plt
+    ax1 = plt.subplot(211)
+    ax2 = plt.subplot(212)
+
+    i, = np.where(S.sim_data_tt==0.9)
+    t = S.sim_data[0][i[0]:]
+    x1 = S.sim_data[1][i[0]:, 0]
+    x2 = S.sim_data[1][i[0]:, 1]
+    u1 = S.sim_data[2][i[0]:, 0]
+
+    plt.sca(ax1)
+    plt.plot(t, x1, 'g')
+    plt.title(r'$\alpha$')
+    plt.xlabel('t')
+    plt.ylabel('x1')
+
+    plt.sca(ax2)
+    plt.plot(t,x2, 'r')
+    plt.xlabel('t')
+    plt.ylabel('x2')
+
+    plt.figure(2)
+    plt.plot(t, u1, 'b')
+    plt.xlabel('t')
+    plt.ylabel(r'$u_{1}$')
+    plt.show()
+
