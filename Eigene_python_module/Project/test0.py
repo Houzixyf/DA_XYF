@@ -64,7 +64,7 @@ if use_refsol:
 
 
 
-first_guess = None # {'seed':1}
+first_guess = {'seed':1} # {'seed':1}
 # now we create our Trajectory object and alter some method parameters via the keyword arguments
 S = ControlSystem(f, a, b, xa, xb, ua, ub, su=2, sx=2, kx=2, use_chains=False, par=par, first_guess=first_guess, refsol=None)  # k must be a list
 

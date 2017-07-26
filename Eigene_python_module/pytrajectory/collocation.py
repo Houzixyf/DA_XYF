@@ -45,7 +45,7 @@ class CollocationSystem(object):
         self._parameters['method'] = kwargs.get('method', 'leven')
         self._parameters['coll_type'] = kwargs.get('coll_type', 'equidistant')
         
-        tmp_par = kwargs.get('k', [1.0]*self.sys.n_par)
+        tmp_par = kwargs.get('par', [1.0]*self.sys.n_par)
         if len(tmp_par) > self.sys.n_par:
             logging.warning("Ignoring superfluous default values for afp.")
             tmp_par = tmp_par[:self.sys.n_par]
@@ -736,12 +736,12 @@ class CollocationSystem(object):
 
                 guess = np.hstack((guess, free_vars_guess))
 
-                msg = "Invalid length of initial guess."
-                assert len(guess) == len(self.all_free_parameters), msg
+            msg = "Invalid length of initial guess."
+            assert len(guess) == len(self.all_free_parameters), msg
 
                 # overwrite the suitable entries
                 # with the provided estimations of additional free parameters
-                guess[self._afp_index:] = self._parameters['z_par']
+            guess[self._afp_index:] = self._parameters['z_par']
 
         elif self.masterobject.refsol is not None:
             # TODO: handle free parameters
