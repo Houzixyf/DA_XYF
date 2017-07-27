@@ -41,7 +41,7 @@ def f(x, u, par, evalconstr=True):
     ff = [k * eq for eq in ff]
 
     if evalconstr:
-        res = 1 * pe(k, 0.1, 10)  # pe(k, 0.1, 15) -> k=11s
+        res = 1 * pe(k, 0.1, 15)  # pe(k, 0.1, 15) -> k=11s
         ff.append(res)
 
     return ff
@@ -97,9 +97,9 @@ if use_refsol:
 
     b = round(1.0 - S_time, 5)
     xa = refsol_x[0]
-    xb = refsol_x[-1]
+    # xb = refsol_x[-1]
     ua = refsol_u[0]
-    ub = refsol_u[-1]
+    # ub = refsol_u[-1]
 
     Refsol = Container()
     Refsol.tt = refsol_t
@@ -135,7 +135,7 @@ for i in range(1):
                 for d3 in [-1, 0, 1]:
                     for d4 in [-1, 0, 1]:
                         if d1 == 0 and d2 == 0 and d3 == 0 and d4 == 0:
-                            continue
+                            pass # continue
                         x_change = (d1 * delta_xx_1 + d2 * delta_xx_2 + d3 * delta_xx_3 + d4 * delta_xx_4)
 
                         # che_for_xx = open(Data+ '\\x.plk', 'rb')
@@ -242,7 +242,7 @@ if check_Brockett:
         booksheetK = workbook.add_sheet('K', cell_overwrite_ok=False)
         for i, row in enumerate(K_List):
             booksheetK.write(i, 0, row)
-        workbook.save('d:\\U_Umgebung.xls')
+        workbook.save(path + '\\U_Umgebung.xls')
 
 print '\n'
 print ('Time, Number of Iteration, Reached accuracy or not: {}').format(Time_SP)

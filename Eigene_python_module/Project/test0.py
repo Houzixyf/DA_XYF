@@ -1,6 +1,5 @@
 '''
-This example of the inverted pendulum demonstrates the basic usage of
-PyTrajectory as well as its visualisation capabilities.
+Doppelintegrator
 '''
 
 # import all we need for solving the problem
@@ -23,11 +22,11 @@ def f(x, u, par, evalconstr=True):
           k*u1]
 
     if evalconstr:
-        res = 0 * pe(k, 0.1, 10)
+        res = 1 * pe(k, 0.1, 10)
         ff.append(res)
     return ff
 
-
+path = 'E:\Yifan_Xue\DA\Data\Doppelintegrator_t_0.99'
 # then we specify all boundary conditions
 a = 0.0
 xa = [0.0, 0.0]
@@ -39,20 +38,21 @@ ua = [0.0]
 ub = [0.0]
 par = [1.5]
 
+S_time = 0.99
 use_refsol = False
 if use_refsol:
-    refsol_x_place = open('d://res_x.pkl', 'rb')
+    refsol_x_place = open(path+'\\res_x.pkl', 'rb')
     refsol_x = pickle.load(refsol_x_place)
     refsol_x_place.close()
 
-    refsol_u_place = open('d://res_u.pkl', 'rb')
+    refsol_u_place = open(path+'\\res_u.pkl', 'rb')
     refsol_u = pickle.load(refsol_u_place)
     refsol_u_place.close()
 
-    refsol_t_place = open('d://res_t.pkl', 'rb')
+    refsol_t_place = open(path+'\\res_t.pkl', 'rb')
     refsol_t = pickle.load(refsol_t_place)
     refsol_t_place.close()
-    b = 0.1
+    b = round(1.0-S_time,5)
     xa = refsol_x[0]
     ua = refsol_u[0]
 
@@ -60,7 +60,7 @@ if use_refsol:
     Refsol.tt = refsol_t
     Refsol.xx = refsol_x
     Refsol.uu = refsol_u
-
+    Refsol.n_raise_spline_parts = 0
 
 
 
@@ -76,20 +76,20 @@ from IPython import embed as IPS
 
 save_res = False
 if save_res:
-    i, = np.where(S.sim_data_tt == 0.9)
+    i, = np.where(S.sim_data_tt == S_time)
     res_x_data = S.sim_data_xx[i[0]:]
-    res_x_place = open('d://res_x.pkl', 'wb')
+    res_x_place = open(path+'\\res_x.pkl', 'wb')
     pickle.dump(res_x_data, res_x_place)
     res_x_place.close()
 
     res_u_data = S.sim_data_uu[i[0]:]
-    res_u_place = open('d://res_u.pkl', 'wb')
+    res_u_place = open(path+'\\res_u.pkl', 'wb')
     pickle.dump(res_u_data, res_u_place)
     res_u_place.close()
 
-    res_t_data = S.sim_data_tt[i[0]:]-0.9
+    res_t_data = S.sim_data_tt[i[0]:]-S_time
     res_t_data[-1] = round(res_t_data[-1],5)
-    res_t_place = open('d://res_t.pkl', 'wb')
+    res_t_place = open(path+'\\res_t.pkl', 'wb')
     pickle.dump(res_t_data, res_t_place)
     res_t_place.close()
 
@@ -127,7 +127,7 @@ if plot:
     plt.ylabel(r'$u_{1}$')
     plt.show()
 
-plot = True # without Refsol
+plot = False # without Refsol
 if plot:
     import matplotlib.pyplot as plt
     ax1 = plt.subplot(211)
