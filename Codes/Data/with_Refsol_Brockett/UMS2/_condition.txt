@@ -1,0 +1,18 @@
+k_ori = 12s (res_ori = 1 * pe(k, 0.1, 15))
+
+res = 1 * pe(k, 0.1, 15)
+
+
+
+dt_sim = 0.001
+
+S = ControlSystem(f, a, b, xa, xb, ua, ub, su=20, sx=10, kx=3, use_chains=False, k=par, sol_steps=100, dt_sim=dt_sim, refsol=Refsol, maxIt=2)
+
+t == 0.99
+
+a = 0s  b = 0.01s
+
+ua = che_uu  ub = 0
+
+with original system (No.41)
+
