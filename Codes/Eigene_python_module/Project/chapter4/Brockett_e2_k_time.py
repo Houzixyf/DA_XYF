@@ -86,7 +86,7 @@ for i in range(100):
 
 
 Save_in_Excel = True
-path = 'E:\Yifan_Xue\DA\Data\Brockett_e2_time'
+path = 'E:\Yifan_Xue\DA\Codes\Data\Brockett_e2_time'
 if 1:
     if Save_in_Excel:
         import xlwt

@@ -38,7 +38,7 @@ S_time = 0.9
 dt_sim = round((1.0 - S_time) / 10, 5)
 dt_sim=dt_sim
 
-path = 'E:\Yifan_Xue\DA\Data\with_Refsol_Brockett\Data_for_Brockett_e2_t_' + str(S_time)
+path = 'E:\Yifan_Xue\DA\Codes\Data\with_Refsol_Brockett\Data_for_Brockett_e2_t_' + str(S_time)
 
 use_refsol = True
 if use_refsol:

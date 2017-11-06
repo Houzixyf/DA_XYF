@@ -7,7 +7,7 @@ This is a temporary script file.
 import pickle
 import numpy as np
 
-path = 'E:\Yifan_Xue\DA\Data\without_Refsol_Brockett\Brockett_e2\delta_x_0.01'
+path = 'E:\Yifan_Xue\DA\Codes\Data\without_Refsol_Brockett\Brockett_e2\delta_x_0.01'
 
 get_u_list = True
 if get_u_list:

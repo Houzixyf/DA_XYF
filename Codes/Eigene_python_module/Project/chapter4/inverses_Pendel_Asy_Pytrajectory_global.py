@@ -35,7 +35,7 @@ ua = [0.0]
 ub = [0.0]
 
 
-path = 'E:\Yifan_Xue\DA\Data\without_Refsol_Brockett\Inverses_Pendel\delta_x_0.1'
+path = 'E:\Yifan_Xue\DA\Codes\Data\without_Refsol_Brockett\Inverses_Pendel\delta_x_0.1'
 T_time = []
 SP = []
 Time_SP = []

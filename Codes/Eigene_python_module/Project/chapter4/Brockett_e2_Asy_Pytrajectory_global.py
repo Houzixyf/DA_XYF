@@ -34,7 +34,7 @@ ub = [0.0, 0.0]
 par = [1]
 
 
-path = 'E:\Yifan_Xue\DA\Data\without_Refsol_Brockett\Brockett_e2\delta_x_0.001'
+path = 'E:\Yifan_Xue\DA\Codes\Data\without_Refsol_Brockett\Brockett_e2\delta_x_0.001'
 T_time = []
 SP = []
 Time_SP = []

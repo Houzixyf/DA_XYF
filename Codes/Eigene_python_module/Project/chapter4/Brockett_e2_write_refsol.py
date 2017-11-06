@@ -37,7 +37,7 @@ S_time = 0.9
 dt_sim = round((1.0 - S_time) / 10, 5)
 dt_sim=dt_sim
 
-path = 'E:\Yifan_Xue\DA\Data\with_Refsol_Brockett\Data_for_Brockett_e2_t_' + str(S_time)
+path = 'E:\Yifan_Xue\DA\Codes\Data\with_Refsol_Brockett\Data_for_Brockett_e2_t_' + str(S_time)
 S = ControlSystem(f, a, b, xa, xb, ua, ub, su=2, sx=2, kx=2, use_chains=False, k=par, sol_steps=100,maxIt=5)
 x, u, par = S.solve()
 print('x1(b)={}, x2(b)={}, u(b)={}, k={}'.format(S.sim_data[1][-1][0], S.sim_data[1][-1][1], S.sim_data[2][-1][0], par))
