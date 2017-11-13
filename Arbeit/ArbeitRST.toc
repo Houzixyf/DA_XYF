@@ -1,0 +1,37 @@
+\select@language {ngerman}
+\select@language {ngerman}
+\contentsline {chapter}{Symbolverzeichnis}{4}{section*.4}
+\contentsline {chapter}{\numberline {1}Einf\IeC {\"u}hrung}{7}{chapter.1}
+\contentsline {chapter}{\numberline {2}Brockett-Bedingung f\IeC {\"u}r unteraktuiertes mechanisches System}{9}{chapter.2}
+\contentsline {section}{\numberline {2.1}Mathematische Grundbegriffe}{9}{section.2.1}
+\contentsline {section}{\numberline {2.2}Erl\IeC {\"a}uterung zur Brockett-Bedingung}{11}{section.2.2}
+\contentsline {chapter}{\numberline {3}Trajektorieplanung durch L\IeC {\"o}sung einer Randwertaufgabe}{17}{chapter.3}
+\contentsline {section}{\numberline {3.1}Grundlage zum Entwurf der Trajektorieplanung}{17}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}Kollokationsverfahren}{17}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Methode zur L\IeC {\"o}sung des Quadratmittelproblems}{20}{subsection.3.1.2}
+\contentsline {subsubsection}{\nonumberline Gau\IeC {\ss }-Newton-Verfahren}{20}{section*.11}
+\contentsline {subsubsection}{\nonumberline Levenberg-Marquardt-Algorithmus}{21}{section*.12}
+\contentsline {section}{\numberline {3.2}Erweiterung der Funktion von PyTrajectory}{23}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Optimale \IeC {\"U}berf\IeC {\"u}hrungszeit}{24}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Einfluss der Startsch\IeC {\"a}tzung von $\boldsymbol c_{f}$}{30}{subsection.3.2.2}
+\contentsline {subsection}{\numberline {3.2.3}Beschr\IeC {\"a}nken des Wertbereichs von $k$}{32}{subsection.3.2.3}
+\contentsline {subsection}{\numberline {3.2.4}Straffunktion von k}{34}{subsection.3.2.4}
+\contentsline {chapter}{\numberline {4}Reglerentwurf durch Trajektorieplanung}{38}{chapter.4}
+\contentsline {section}{\numberline {4.1}Unteraktuierte mechanische Systeme}{38}{section.4.1}
+\contentsline {section}{\numberline {4.2}Reglerentwurf mittels \emph {PyTrajectory}}{40}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Ausgang: Brocketts nicht holonomen Doppelintegrator}{40}{subsection.4.2.1}
+\contentsline {subsubsection}{\nonumberline Trajektorienplanung mit \emph {PyTrajectory}}{40}{section*.34}
+\contentsline {subsection}{\numberline {4.2.2}Eingangsverlauf des inverse-Pendel-Systems}{43}{subsection.4.2.2}
+\contentsline {subsection}{\numberline {4.2.3}Entwurf des Steuergesetz mittels Trajektorien aus \emph {PyTrajectory}}{45}{subsection.4.2.3}
+\contentsline {section}{\numberline {4.3}Trajektorienplanung mit Polynomform von $\boldsymbol u(t)$}{47}{section.4.3}
+\contentsline {section}{\numberline {4.4}Reglerentwurf f\IeC {\"u}r den Brocketts nicht-holonomen Doppelintegrator in \cite {liberzon2012switching}}{48}{section.4.4}
+\contentsline {section}{\numberline {4.5}Ein dreiphasiger Reglerentwurf f\IeC {\"u}r Brocketts nichtholonomen Doppelintegrator}{51}{section.4.5}
+\contentsline {chapter}{\numberline {5}Zusammenfassung und Ausblick}{56}{chapter.5}
+\contentsline {section}{\numberline {5.1}Zusammenfassung}{56}{section.5.1}
+\contentsline {section}{\numberline {5.2}Ausblick}{57}{section.5.2}
+\contentsline {chapter}{Anhang \numberline {A}Appendix}{58}{Anhang.a.A}
+\contentsline {section}{\numberline {A.1}Zwei-Gelenke-Manipulator}{58}{section.a.A.1}
+\contentsline {section}{\numberline {A.2}Tabelle f\IeC {\"u}r die \IeC {\"U}berpr\IeC {\"u}fung der asymptotischen Stabilit\IeC {\"a}t des Brocketts nicht-holonomen Doppelintegrators}{61}{section.a.A.2}
+\contentsline {section}{\numberline {A.3}Rechenverlauf f\IeC {\"u}r $L_{Tra}$ in Abschnitt \ref {Ein_dreiphasiger_Reglerentwurf_f\IeC {\"u}r_den_Brocketts_nichtholonomischen_ Doppelintegrator}}{63}{section.a.A.3}
+\contentsline {section}{\numberline {A.4}Tabelle-Fehlerkorrektur}{63}{section.a.A.4}
+\contentsline {chapter}{\nonumberline Literaturverzeichnis}{64}{chapter*.60}

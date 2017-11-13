@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="2f9d0a52-c632-49d7-be35-51f29d0a1cca" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_u_Asymptotically stable_use_systemfunction.py" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_Asy_Pytrajectory_global.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_Asy_Pytrajectory_global.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.2.2_Doppelintegrator_cf_aus.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.2.2_Doppelintegrator_cf_aus.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/simulation.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/simulation.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_Subdivision/x1_-0.02-0.045_dx=0.005.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_Subdivision/x1_-0.02-0.045_dx=0.005.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/interfaceserver.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/interfaceserver.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/bp1_Brockett_e2_u_x_use_systemfunction.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/bp1_Brockett_e2_u_x_use_systemfunction.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.4_Doppelintegrator.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.4_Doppelintegrator.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.2.1_Doppelintegrator_k.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.2.1_Doppelintegrator_k.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.1_Doppelintegrator.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.1_Doppelintegrator.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/section_3.2.2_Inverses_Pendel.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/section_3.2.2_Inverses_Pendel.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett-Integrator_ck.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett-Integrator_ck.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/section_3.2.2_Doppelintegrator.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/section_3.2.2_Doppelintegrator.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.3.3_Inverses_Pendel_con_x.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.3.3_Inverses_Pendel_con_x.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/pytrajectory_3.2.2/collocation.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/pytrajectory_3.2.2/collocation.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_interpolation.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_interpolation.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/system.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/system.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.3.2_Inverses_Pendel_k.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.3.2_Inverses_Pendel_k.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_Asy_u(t)_global.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_Asy_u(t)_global.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.3.1_Inverses_Pendel_ori.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.3.1_Inverses_Pendel_ori.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/splines.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/splines.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/trajectories.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/trajectories.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/collocation.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/collocation.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/solver.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/solver.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/auxiliary.py" afterPath="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/auxiliary.py" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="psi_plot.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Codes/Project/chapter3/psi_plot.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.2.1_Doppelintegrator_k.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.1_Doppelintegrator.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.3.1_Inverses_Pendel_ori.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.3.2_Inverses_Pendel_k.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.3.3_Inverses_Pendel_con_x.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.3.4_Inverses_pendel_first_seed.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.2.2_Doppelintegrator_cf_aus.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.4_Doppelintegrator.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/section_3.2.2_Doppelintegrator.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/section_3.2.2_Inverses_Pendel.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/splines.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/simulation.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/auxiliary.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/trajectories.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/interfaceserver.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/solver.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/collocation.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/system.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_Asy_Pytrajectory_global.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_Subdivision/x1_-0.02-0.045_dx=0.005.py" />
+        <option value="$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/splines.py" />
+        <option value="$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/simulation.py" />
+        <option value="$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/auxiliary.py" />
+        <option value="$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/trajectories.py" />
+        <option value="$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/interfaceserver.py" />
+        <option value="$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/solver.py" />
+        <option value="$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/collocation.py" />
+        <option value="$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/system.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_interpolation.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett-Integrator_ck.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/bp1_Brockett_e2_u_x_use_systemfunction.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_u_Asymptotically stable_use_systemfunction.py" />
+        <option value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_Asy_u(t)_global.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1096" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DA" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DA" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Codes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DA" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DA" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scratches" />
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.Brockett_e2_Asy_u(t)_global">
+    <configuration default="false" name="Brockett-Integrator_ck" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DA" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett-Integrator_ck.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="bp1_Brockett_e2_u_x_use_systemfunction" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DA" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/bp1_Brockett_e2_u_x_use_systemfunction.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Brockett_e2_u_Asymptotically stable_use_systemfunction" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DA" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_u_Asymptotically stable_use_systemfunction.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Brockett_e2_u_Asymptotically stable_not_use_systemfunction" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DA" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_u_Asymptotically stable_not_use_systemfunction.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Brockett_e2_Asy_u(t)_global" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DA" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_Asy_u(t)_global.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DA" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Tox" factoryName="Tox">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DA" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Doctests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DA" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Nosetests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DA" />
+      <option name="_new_regexPattern" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;.&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method />
+    </configuration>
+    <list size="5">
+      <item index="0" class="java.lang.String" itemvalue="Python.Brockett-Integrator_ck" />
+      <item index="1" class="java.lang.String" itemvalue="Python.bp1_Brockett_e2_u_x_use_systemfunction" />
+      <item index="2" class="java.lang.String" itemvalue="Python.Brockett_e2_u_Asymptotically stable_use_systemfunction" />
+      <item index="3" class="java.lang.String" itemvalue="Python.Brockett_e2_u_Asymptotically stable_not_use_systemfunction" />
+      <item index="4" class="java.lang.String" itemvalue="Python.Brockett_e2_Asy_u(t)_global" />
+    </list>
+    <recent_temporary>
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Python.Brockett_e2_Asy_u(t)_global" />
+        <item index="1" class="java.lang.String" itemvalue="Python.Brockett_e2_u_Asymptotically stable_not_use_systemfunction" />
+        <item index="2" class="java.lang.String" itemvalue="Python.Brockett_e2_u_Asymptotically stable_use_systemfunction" />
+        <item index="3" class="java.lang.String" itemvalue="Python.bp1_Brockett_e2_u_x_use_systemfunction" />
+        <item index="4" class="java.lang.String" itemvalue="Python.Brockett-Integrator_ck" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2f9d0a52-c632-49d7-be35-51f29d0a1cca" name="Default" comment="" />
+      <created>1510069159268</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1510069159268</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3299389" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/pytrajectory_3.4/system.py" />
+    <entry file="file://$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda2/Lib/site-packages/matplotlib/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.2.1_Doppelintegrator_k.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.3.1_Inverses_Pendel_ori.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.1_Doppelintegrator.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.3.2_Inverses_Pendel_k.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.3.3_Inverses_Pendel_con_x.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.2.2_Doppelintegrator_cf_aus.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.4_Doppelintegrator.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/3.3.4_Inverses_pendel_first_seed.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/section_3.2.2_Inverses_Pendel.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter3/section_3.2.2_Doppelintegrator.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/system.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/collocation.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/solver.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/interfaceserver.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/trajectories.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/auxiliary.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/simulation.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/pytrajectory/splines.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_Asy_Pytrajectory_global.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_Subdivision/x1_0.04_0.043_deltax=0.001.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_Subdivision/x1_-0.1-0_deltax_0.01.py" />
+    <entry file="file://$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/system.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="24" column="1" lean-forward="false" selection-start-line="24" selection-start-column="1" selection-end-line="24" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/collocation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="14" column="1" lean-forward="false" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/solver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="12" column="1" lean-forward="false" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/interfaceserver.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="15" column="1" lean-forward="false" selection-start-line="15" selection-start-column="1" selection-end-line="15" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/trajectories.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="10" column="1" lean-forward="false" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/auxiliary.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="1" lean-forward="false" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/simulation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="4" column="1" lean-forward="false" selection-start-line="4" selection-start-column="1" selection-end-line="4" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda2/Lib/site-packages/pytrajectory/splines.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="9" column="1" lean-forward="false" selection-start-line="9" selection-start-column="1" selection-end-line="9" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_Subdivision/x1_-0.02-0.045_dx=0.005.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_interpolation.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett-Integrator_ck.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/bp1_Brockett_e2_u_x_use_systemfunction.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_u_x_not_use_systemfunction.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_u_Asymptotically stable_not_use_systemfunction.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_u_Asymptotically stable_use_systemfunction.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Eigene_python_module/Project/chapter4/Brockett_e2_Asy_u(t)_global.py" />
+    <entry file="file://$PROJECT_DIR$/Codes/Project/chapter3/psi_plot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

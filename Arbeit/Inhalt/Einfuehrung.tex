@@ -1,0 +1,20 @@
+\chapter{Einführung}
+\label{Einführung}
+Im Bereich von der Engineering-Anwendung werden viele mechanischen Systeme in den letzten Jahren umfassend entwickelt. Darin existiert eine spezielle Klasse von Systemen, deren Anzahl der verallgemeinerten Koordinaten größer als die Zahl der unabhängigen Steuereingänge ist. Ein solches System wird als ``unteraktuiertes mechanisches System'' genannt. Ein interessantes Regelproblem liegt in der Bestimmung eines stetigen differenzierbaren Regelgesetz, mit dem eine Ruhelage dieses Systems asymptotisch stabil ist. 
+
+
+Zur Erforschung dieses Problems stellte der amerikanische Regeltheoretiker Roger W. Brockett das berühmte Theorem \cite{brockett1983asymptotic} auf, das eine notwendige Bedingung für die Existenz eines oben genannten Regelgesetz durch die Beurteilung der Surjektivität des Wertbereichs von Systemzustandsfunktionen liefert. Manche Systeme, beispielsweise das inverse-Pendel-System, erfüllen die Brockett-Bedingung während andere wie der nicht-holonome Doppelintegrator von Brockett die Bedingung nicht. Es ist interessant zu untersuchen, wie sich die Trajektorien dieser zwei Systeme aus der Umgebung einer Ruhelage in diese aussehen. Die Modellierung und Simulation werden in \emph{Python} mittels eines Python-Pakets durchgeführt.
+
+Das Python Softwarepaket \emph{PyTrajectory} ist vom Institut von RST entwickelt, um die Trajektorien mit gegebenen Randbedingungen (Anfangs- und Endwerte der Systemzustände sowie (optional) Eingänge) für nichtlineare Systeme zu entwerfen. Mit \emph{PyTrajectory} wird eine Trajektorie für ein voraus festgelegtes Zeitintervall geplant, die aber wegen der festen Endzeit im Allgemeinen nicht optimal ist. Deswegen ist eine Erweiterung dieses Pakets notwendig, mit dem die Überführungszeit als Teil des Optimierungsergebnisses ausgerechnet werden kann.
+
+Falls die Trajektorien aus \emph{PyTrajectory} von Anfangspunkten in einer Umgebung der Ruhelage in diese Ruhelage (Endzustand) eine ``Regelmäßigkeit'' besitzen, ist es möglich, mit Interpolation ein Steuergesetz zu entwerfen. Das wird in Kapitel \ref{ch:Reglerentwurf-durch-Trajektorieplanung} für Brocketts nicht-holonomen Doppelintegrator vollbracht. Dieses Modell wird ebenfalls mit einem Regelgesetz asymptotisch stabilisiert, welches auf einer Schraubenlinie mit möglichst geringer Bogenlänge basiert. 
+
+Die Arbeit umfasst fünf Kapitel, welche wie folgt gegliedert sind:
+
+Kapitel \ref{ch:Brockett_Bedingung_für_unteraktuiertes_mechanisches_System} gibt die Vorstellung der Brockett-Bedingung einschließlich dem Beweis. Ein Bespiel zur Anwendung der Bedingung wird auch diskutiert.
+
+In Kapitel \ref{ch:Trajektorieplanung_durch_Lösung_einer_Randwertaufgabe} schließt sich die Erklärung des Pakets \emph{PyTrajectory} an. Weiterhin wird die Funktion des Pakets für die Bestimmung der optimalen Überführungszeit erweitert.
+
+Kapitel \ref{ch:Reglerentwurf-durch-Trajektorieplanung} befasst sich mit dem Entwurf des Steuer- und Regelgesetz für Brocketts nicht-holonomen Doppelintegrator.
+
+Schließlich folgt in Kapitel \ref{ch:Zusammenfassung_und_Ausblick} eine Zusammenfassung dieser Arbeit und ein Ausblick.

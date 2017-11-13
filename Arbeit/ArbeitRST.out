@@ -1,0 +1,32 @@
+\BOOKMARK [0][-]{section*.4}{Symbolverzeichnis}{}% 1
+\BOOKMARK [0][-]{chapter.1}{Einf\374hrung}{}% 2
+\BOOKMARK [0][-]{chapter.2}{Brockett-Bedingung f\374r unteraktuiertes mechanisches System}{}% 3
+\BOOKMARK [1][-]{section.2.1}{Mathematische Grundbegriffe}{chapter.2}% 4
+\BOOKMARK [1][-]{section.2.2}{Erl\344uterung zur Brockett-Bedingung}{chapter.2}% 5
+\BOOKMARK [0][-]{chapter.3}{Trajektorieplanung durch L\366sung einer Randwertaufgabe}{}% 6
+\BOOKMARK [1][-]{section.3.1}{Grundlage zum Entwurf der Trajektorieplanung}{chapter.3}% 7
+\BOOKMARK [2][-]{subsection.3.1.1}{Kollokationsverfahren}{section.3.1}% 8
+\BOOKMARK [2][-]{subsection.3.1.2}{Methode zur L\366sung des Quadratmittelproblems}{section.3.1}% 9
+\BOOKMARK [1][-]{section.3.2}{Erweiterung der Funktion von PyTrajectory}{chapter.3}% 10
+\BOOKMARK [2][-]{subsection.3.2.1}{Optimale \334berf\374hrungszeit}{section.3.2}% 11
+\BOOKMARK [2][-]{subsection.3.2.2}{Einfluss der Startsch\344tzung von bold0mu mumu ccheadccccf}{section.3.2}% 12
+\BOOKMARK [2][-]{subsection.3.2.3}{Beschr\344nken des Wertbereichs von k}{section.3.2}% 13
+\BOOKMARK [2][-]{subsection.3.2.4}{Straffunktion von k}{section.3.2}% 14
+\BOOKMARK [0][-]{chapter.4}{Reglerentwurf durch Trajektorieplanung}{}% 15
+\BOOKMARK [1][-]{section.4.1}{Unteraktuierte mechanische Systeme}{chapter.4}% 16
+\BOOKMARK [1][-]{section.4.2}{Reglerentwurf mittels PyTrajectory}{chapter.4}% 17
+\BOOKMARK [2][-]{subsection.4.2.1}{Ausgang: Brocketts nicht holonomen Doppelintegrator}{section.4.2}% 18
+\BOOKMARK [2][-]{subsection.4.2.2}{Eingangsverlauf des inverse-Pendel-Systems}{section.4.2}% 19
+\BOOKMARK [2][-]{subsection.4.2.3}{Entwurf des Steuergesetz mittels Trajektorien aus PyTrajectory}{section.4.2}% 20
+\BOOKMARK [1][-]{section.4.3}{Trajektorienplanung mit Polynomform von bold0mu mumu uuheaduuuu\(t\)}{chapter.4}% 21
+\BOOKMARK [1][-]{section.4.4}{Reglerentwurf f\374r den Brocketts nicht-holonomen Doppelintegrator in liberzon2012switching}{chapter.4}% 22
+\BOOKMARK [1][-]{section.4.5}{Ein dreiphasiger Reglerentwurf f\374r Brocketts nichtholonomen Doppelintegrator}{chapter.4}% 23
+\BOOKMARK [0][-]{chapter.5}{Zusammenfassung und Ausblick}{}% 24
+\BOOKMARK [1][-]{section.5.1}{Zusammenfassung}{chapter.5}% 25
+\BOOKMARK [1][-]{section.5.2}{Ausblick}{chapter.5}% 26
+\BOOKMARK [0][-]{Anhang.a.A}{Anhang Appendix}{}% 27
+\BOOKMARK [1][-]{section.a.A.1}{Zwei-Gelenke-Manipulator}{Anhang.a.A}% 28
+\BOOKMARK [1][-]{section.a.A.2}{Tabelle f\374r die \334berpr\374fung der asymptotischen Stabilit\344t des Brocketts nicht-holonomen Doppelintegrators}{Anhang.a.A}% 29
+\BOOKMARK [1][-]{section.a.A.3}{Rechenverlauf f\374r LTra in Abschnitt ??}{Anhang.a.A}% 30
+\BOOKMARK [1][-]{section.a.A.4}{Tabelle-Fehlerkorrektur}{Anhang.a.A}% 31
+\BOOKMARK [0][-]{chapter*.60}{Literaturverzeichnis}{}% 32

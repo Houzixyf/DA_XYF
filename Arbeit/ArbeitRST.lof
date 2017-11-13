@@ -1,0 +1,56 @@
+\select@language {ngerman}
+\select@language {ngerman}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 2.1}{\ignorespaces Skizze des mobilen Roboters mit einem Voreinrad.}}{14}{figure.caption.8}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 3.1}{\ignorespaces Kollokationsabschnitte $h_{i}$ und Kollokationspunkte $\boldsymbol x_{i}$, $\boldsymbol u_{i}$.}}{18}{figure.caption.9}
+\contentsline {figure}{\numberline {\relax 3.2}{\ignorespaces 2 Trajektorienf\IeC {\"a}lle von beispielsweise dem Systemzustand}}{19}{figure.caption.10}
+\contentsline {figure}{\numberline {\relax 3.3}{\ignorespaces Trajektorie der Systemzustandskomponente $x_{1}$ und $x_{2}$ (Position und Geschwindigkeit).}}{23}{figure.caption.13}
+\contentsline {figure}{\numberline {\relax 3.4}{\ignorespaces Trajektorie des Systemeingangs $u_{1}$ (Wagenbeschleunigung).}}{23}{figure.caption.14}
+\contentsline {figure}{\numberline {\relax 3.5}{\ignorespaces Verlauf der Systemzust\IeC {\"a}nde vom System \textup {\hbox {\mathsurround \z@ \normalfont (\ignorespaces \ref {eq:Doppelintegrator_mit_k}\unskip \@@italiccorr )}}.}}{25}{figure.caption.15}
+\contentsline {figure}{\numberline {\relax 3.6}{\ignorespaces Verlauf des Systemeingangs und die Ver\IeC {\"a}nderungskurve von $k$ vom System \textup {\hbox {\mathsurround \z@ \normalfont (\ignorespaces \ref {eq:Doppelintegrator_mit_k}\unskip \@@italiccorr )}}.}}{25}{figure.caption.16}
+\contentsline {figure}{\numberline {\relax 3.7}{\ignorespaces Trajektorie der Systemzustandskomponente vom System \textup {\hbox {\mathsurround \z@ \normalfont (\ignorespaces \ref {eq:Doppelintegrator_mit_k}\unskip \@@italiccorr )}}.}}{26}{figure.caption.17}
+\contentsline {figure}{\numberline {\relax 3.8}{\ignorespaces Trajektorie des Systemeingangs vom System \textup {\hbox {\mathsurround \z@ \normalfont (\ignorespaces \ref {eq:Doppelintegrator_mit_k}\unskip \@@italiccorr )}}.}}{26}{figure.caption.18}
+\contentsline {figure}{\numberline {\relax 3.9}{\ignorespaces Struktur des inversen Pendels.}}{27}{figure.caption.19}
+\contentsline {figure}{\numberline {\relax 3.10}{\ignorespaces Verlauf der Zustandsparameter des inversen Pendel System (ohne $k$) mit dem virtuellen Eingang.\relax }}{28}{figure.caption.20}
+\contentsline {figure}{\numberline {\relax 3.11}{\ignorespaces Verlauf des virtuellen Eingangs des inversen Pendel System (ohne $k$).}}{29}{figure.caption.21}
+\contentsline {figure}{\numberline {\relax 3.12}{\ignorespaces Systemzustandskurven des inversen Pendel System (mit $k$) mit dem virtuellen Eingang.\relax }}{29}{figure.caption.22}
+\contentsline {figure}{\numberline {\relax 3.13}{\ignorespaces Systemeingang des inversen-Pendels (mit k) mit dem virtuellen Eingang.}}{30}{figure.caption.23}
+\contentsline {figure}{\numberline {\relax 3.14}{\ignorespaces Zustandsvariablenkurven des inversen-Pendels (mit k) mit dem virtuellen Eingang.}}{30}{figure.caption.24}
+\contentsline {figure}{\numberline {\relax 3.15}{\ignorespaces Systemeingangskurve des inversen-Pendels (mit k) mit dem virtuellen Eingang.}}{31}{figure.caption.25}
+\contentsline {figure}{\numberline {\relax 3.16}{\ignorespaces Vergleich des Spline-Abschnittsanzahls mit unterschiedlichen Startsch\IeC {\"a}tzwerte von $\boldsymbol c_{f}$.}}{32}{figure.caption.26}
+\contentsline {figure}{\numberline {\relax 3.17}{\ignorespaces Die Kurve der S\IeC {\"a}ttigungsfunktion $\psi $ mit $k^{+}=6.0$ und $k^{-}=-6.0$.\relax }}{33}{figure.caption.27}
+\contentsline {figure}{\numberline {\relax 3.18}{\ignorespaces Die Entwicklung von $\kappa $ in der transformierten Koordinaten und von $k$ in der originalen Koordinaten f\IeC {\"u}r das Doppelintegrator System.}}{33}{figure.caption.28}
+\contentsline {figure}{\numberline {\relax 3.19}{\ignorespaces Die Entwicklung von $\kappa $ und $k$ f\IeC {\"u}r Doppelintegrator System.}}{34}{figure.caption.29}
+\contentsline {figure}{\numberline {\relax 3.20}{\ignorespaces Die Entwicklung von $\kappa $ und $k$ f\IeC {\"u}r das inverse-Pendel System. $k$ muss innerhalb von ($0-10$) bleiben.\relax }}{35}{figure.caption.30}
+\contentsline {figure}{\numberline {\relax 3.21}{\ignorespaces Straffunktion von k.}}{35}{figure.caption.31}
+\contentsline {figure}{\numberline {\relax 3.22}{\ignorespaces Die Trajektorien von Systemzustandsvariablen und Systemeingang des Doppelintegrator-Systems.\relax }}{36}{figure.caption.32}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 4.1}{\ignorespaces Skizze des W\IeC {\"u}rfels als die Umgebung von der Ruhelage. Die orange Kreuze sind die ausgew\IeC {\"a}hlten Anfangspunkte in einer Quadrate.\relax }}{41}{figure.caption.33}
+\contentsline {figure}{\numberline {\relax 4.2}{\ignorespaces Eingangsverl\IeC {\"a}ufe $u_{1}$ mit verschiedenen $\boldsymbol x_{0}$ f\IeC {\"u}r Brocketts nicht-holonomen Doppelintegrator mittels \emph {PyTrajectory}.\relax }}{42}{figure.caption.35}
+\contentsline {figure}{\numberline {\relax 4.3}{\ignorespaces Eingangsverl\IeC {\"a}ufe $u_{2}$ mit verschiedenen $\boldsymbol x_{0}$ f\IeC {\"u}r den Brocketts nicht-holonomen Doppelintegrator mittels \emph {PyTrajectory}.\relax }}{42}{figure.caption.36}
+\contentsline {figure}{\numberline {\relax 4.4}{\ignorespaces Zustands- und Eingangsverl\IeC {\"a}ufe des Doppelintegrator-Systems.\relax }}{43}{figure.caption.37}
+\contentsline {figure}{\numberline {\relax 4.5}{\ignorespaces Eingangsverl\IeC {\"a}ufe mit den Anfangswerten von $x_{1}$ zwischen $-0.10$ und $-0.01$.\relax }}{44}{figure.caption.38}
+\contentsline {figure}{\numberline {\relax 4.6}{\ignorespaces Eingangsverl\IeC {\"a}ufe mit den Anfangswerten von $x_{1}$ zwischen $-1.0$ und $-0.4$.\relax }}{44}{figure.caption.39}
+\contentsline {figure}{\numberline {\relax 4.7}{\ignorespaces Eingangsverl\IeC {\"a}ufe mit den Anfangswerten von $x_{1}$ zwischen $-1.0$ und $-0.5$ und $x_{2}$ zwischen $0.2$ und $2.9$.\relax }}{45}{figure.caption.40}
+\contentsline {figure}{\numberline {\relax 4.8}{\ignorespaces Eingangsverlauf mit dem Anfangszustand von $x_{1}$ in $(-0.05,-0.04)$ mit Interpolation.\relax }}{46}{figure.caption.41}
+\contentsline {figure}{\numberline {\relax 4.9}{\ignorespaces Zustandsverlauf mit dem Anfangszustand von $x_{1}$ in $(-0.05,-0.04)$ mit Interpolation.\relax }}{46}{figure.caption.42}
+\contentsline {figure}{\numberline {\relax 4.10}{\ignorespaces Verlauf der Zustandskomponente mittels Polynom-Ansatz f\IeC {\"u}r $\boldsymbol u$.\relax }}{49}{figure.caption.43}
+\contentsline {figure}{\numberline {\relax 4.11}{\ignorespaces Verlauf der Systemeing\IeC {\"a}nge mittels Polynom-Ansatz f\IeC {\"u}r $\boldsymbol u$.\relax }}{49}{figure.caption.44}
+\contentsline {figure}{\numberline {\relax 4.12}{\ignorespaces Zustandsverl\IeC {\"a}ufe in Zylinderkoordinaten mit dem Startwert $(0,5,5)$.\relax }}{51}{figure.caption.45}
+\contentsline {figure}{\numberline {\relax 4.13}{\ignorespaces 3D-Kurve von Systemzustand in Zylinderkoordinaten mit dem Startwert $(0,5,5)$.\relax }}{51}{figure.caption.46}
+\contentsline {figure}{\numberline {\relax 4.14}{\ignorespaces Trajektorien von $r,\varphi ,z$ mit unterschiedlichen Anfangswerten.\relax }}{52}{figure.caption.47}
+\contentsline {figure}{\numberline {\relax 4.15}{\ignorespaces Skizze der Trajektorie des Zustandsvektors mit der Schraubenlinie.\relax }}{53}{figure.caption.48}
+\contentsline {figure}{\numberline {\relax 4.16}{\ignorespaces Zustandsverl\IeC {\"a}ufe mit dem Startwert $(0,5,5)$.\relax }}{54}{figure.caption.49}
+\contentsline {figure}{\numberline {\relax 4.17}{\ignorespaces 3D-Kurve des Systemzustands mit dem Startwert $(0,5,5)$.\relax }}{54}{figure.caption.50}
+\contentsline {figure}{\numberline {\relax 4.18}{\ignorespaces Zustandsverl\IeC {\"a}ufe mit unterschiedlichen Anfangswerten.\relax }}{55}{figure.caption.51}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax A.1}{\ignorespaces Skizze eines Zwei-Gelenke-Manipulators.\relax }}{58}{figure.caption.52}
+\contentsline {figure}{\numberline {\relax A.2}{\ignorespaces Trajektorien des Systemeingangs mit unterschiedlichen Anfangswerten von $x_{3}$\relax }}{59}{figure.caption.53}
+\contentsline {figure}{\numberline {\relax A.3}{\ignorespaces Trajektorien des Systemeingangs mit unterschiedlichen Anfangswerten von $x_{1}$.\relax }}{60}{figure.caption.54}
+\contentsline {figure}{\numberline {\relax A.4}{\ignorespaces Trajektorien des Systemeingangs mit unterschiedlichen Anfangswerten von $x_{1}$ und $x_{3}$.\relax }}{60}{figure.caption.55}
+\contentsline {figure}{\numberline {\relax A.5}{\ignorespaces Eingangsverlauf $u_{1}$ des Brocketts nicht-holonomen Doppelintegrator.\relax }}{62}{figure.caption.57}
+\contentsline {figure}{\numberline {\relax A.6}{\ignorespaces Eingangsverlauf $u_{2}$ des Brocketts nicht-holonomen Doppelintegrator.\relax }}{62}{figure.caption.58}
+\addvspace {10\p@ }

@@ -1,0 +1,154 @@
+\documentclass[arbeit=diplom,oneside,BCOR=12mm]{ArbeitRST}
+% Die Option BCOR legt den Rand für die Bindekorrektur links fest
+% (verschiebt das ganze Dokument nach rechts auf dem Papier, damit
+% Platz zum Binden ist
+
+
+% Paket zum Erzeugen von Blindtext 
+% ================================
+% (ist nur für dieses Beispieldokument sinnvoll)
+\usepackage{blindtext}
+\usepackage{color}
+\usepackage{algpseudocode}
+\usepackage[toc,page]{appendix}
+\usepackage{supertabular}
+\usepackage{epstopdf}
+
+\newcommand*{\matr}[1]{\mathbf{#1}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+%\usepackage{subfig}
+
+% \usepackage[colorlinks,linkcolor=blue]{hyperref}
+
+% Zwei Parameter zum Verändern des Layouts
+% ========================================
+% \parindent -> Legt fest, mit welcher Einrückung jeder neue
+%               Absatz beginnen soll
+% \parskip -> Legt fest, wieviel vertikaler Abstand zwischen zwei
+%             Absätzen liegen soll
+%
+% Tipp: Entweder parindent auf Null und parskip auf einen Wert
+% ungleich Null (z.B. 2ex) oder umgekehrt. Beide Werte ungleich
+% Null macht satztechnisch keinen Sinn. 1ex = Breite des 
+% Buchstabens x
+\setlength{\parindent}{0ex}
+\setlength{\parskip}{2ex}
+
+
+% Einige Einstellungen für das hyperref-Paket
+% =========================================== 
+% Hiermit können Links, Gleichungsnummern etc. farbig dargestellt
+% werden was die Navigation im elektronischen Dokument vereinfacht. An
+% dieser Stelle können Sie die Farbgebung anpassen. Druckversion bitte
+% ohne farbige Links erstellen, siehe Option unten!
+\hypersetup{
+    unicode=false,          % non-Latin characters in Acrobat’s bookmarks
+    pdftoolbar=true,        % show Acrobat’s toolbar?
+    pdfmenubar=true,        % show Acrobat’s menu?
+    pdffitwindow=false,     % window fit to page when opened
+    pdfstartview={FitH},    % fits the width of the page to the window
+    pdftitle={RST Vorlage}, % title
+    pdfauthor={Author},     % author
+    pdfsubject={Subject},   % subject of the document
+    pdfcreator={Creator},   % creator of the document
+    pdfproducer={Producer}, % producer of the document
+    pdfkeywords={keyword1} {key2} {key3}, % list of keywords
+    pdfnewwindow=true,      % links in new window
+    colorlinks=true,        % false: boxed links; true: colored links
+    linkcolor=blue,         % color of internal links (change box color with linkbordercolor)
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=cyan           % color of external links
+}
+
+% Entfernt die farbigen Markierungen - bitte Druckversion mit dieser Option kompilieren
+%\hypersetup{hidelinks}
+
+
+
+% =================================================================
+\begin{document}
+
+% Titelseite
+% ==========
+
+% Name des Verfassers
+\author{Yifan Xue}
+
+% Geburtsort
+\geburtsort{Xi'an, China}
+
+% Geburtsdatum
+\geburtsdatum{25.03.1992}
+
+% Titel der Arbeit
+\title{Trajektorienplanung und Regelung für unteraktuierte mechanische Systeme}
+
+% Untertitel
+\subtitle{}
+
+% Angabe der Betreuer
+\betreuer{Dr.-Ing. C. Knoll}
+%\betreuer{}
+
+% Datum der Einreichung
+\date{24.10.2017}
+
+% Titelseite erstellen
+\maketitle
+
+
+% Selbstständigkeitserklärung
+% ===========================
+
+% Ort der Selbstständigkeitserklärung (Standard: Dresden)
+\selbstort{Dresden}
+
+% Datum der Selbstständigkeitserklärung (Standard: aktuelles Systemdatum)
+\selbstdatum{24. Oktober 2017}
+
+% Selbstständigkeitserklärung erstellen
+\selbststaendigkeitserklaerung
+
+
+% Kurzfassung / Abstract
+% ======================
+\kurzfassung{Unter unteraktuierte Systeme versteht man mechanische Systeme mit weniger Aktoren als mechanische Freiheitsgrade. Einige davon erfüllen die Brockett-Bedingung zur Überprüfung der asymptotischen Stabilität einer gewünschten Ruhelage mittels einer stetig differenzierbaren Rückführung nicht. In der vorliegenden Arbeit werden einige Modelle der unteraktuierten Systeme untersucht. Genauer gesagt wird das mit dem am Institut RST entworfenen Python-Paket \emph{PyTrajectory} zur Trajektorienplanung auf diese Modelle angewendet. Das Paket wird dazu um die Möglichkeit erweitert, neben dem Eingangsverlauf auch eine geeignete Überführungszeit zu bestimmen.  Gemäß des Ergebnises von \emph{PyTrajectory} wird ein Steuergesetz für Brocketts nicht-holonomes Doppelintegrator-System mit Anfangswerten der Zustandsvariablen innerhalb einer kleinen Umgebung der Ruhelage im Ursprung entworfen. Einige Regelgesetze für die Überführungstrajektorien in einem größeren Bereich werden ebenfalls aufgestellt.}{Mechanical system with less actuators than degree of freedom is called unactuated system. Some of these violate the Brockett’s stabilization condition thus cannot be stabilized to equilibrium point by a continuously differentiable control law. In this thesis, the author develops the function of the python package \emph{PyTrajectory} which was released by the institute RST so that an execution time of trajectories can be calculated instead of given by the users. According to the simulation results from \emph{PyTrajectory} it is possible to design a control law for the brockett’s nonholonomic integrator that leads the states of the system moving from any start point in a limited neighborhood of the origin to the equilibrium point. The author also introduces some other control laws to solve this problem in a wider region of start points.}
+
+
+% Inhaltsverzeichnis
+% ==================
+\tableofcontents% Inhaltsverzeichnis
+\listoffigures
+\listoftables
+
+
+% Inhalt kann entweder in separate LaTeX-Dateien ausgelagert werden (hier: inhalt.tex)
+% und dann mittels \input{} geladen werden...
+%\input{inhalt}
+\input{Inhalt/Symbolsverzeichnis}
+\input{Inhalt/Einfuehrung}
+\input{Inhalt/Brockett-Theorem}
+\input{Inhalt/Trajektorieplanung}
+\input{Inhalt/Reglerentwurf-durch-Trajektorieplanung}
+\input{Inhalt/Zusammenfassung}
+\input{Inhalt/Appendix}
+% ...oder man schreibt direkt in dieser Datei (weniger übersichtlich)
+
+% ==================================
+% Literaturverzeichnis
+% ==================================
+\nocite{FLMR95ijc,Mik57de}
+
+\bibliography{ArbeitRST}
+
+\bibliographystyle{gerabbrv}
+%\bibliographystyle{gerplain}
+
+\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
